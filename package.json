@@ -47,7 +47,7 @@
       "path": "node_modules/cz-conventional-changelog"
     },
     "ghooks": {
-      "pre-commit": "npm run test:single && npm run lint"
+      "pre-commit": "npm run test:single && npm run check-coverage && npm run lint"
     }
   },
   "dependencies": {}
