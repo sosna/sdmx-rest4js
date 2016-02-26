@@ -10,4 +10,4 @@ detail =
   # The referenced artefacts will be returned as stubs.
   REFERENCE_STUBS: 'referencestubs'
 
-exports.MetadataDetail = detail
+exports.MetadataDetail = Object.freeze detail

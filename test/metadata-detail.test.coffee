@@ -16,3 +16,6 @@ describe 'Metadata detail', ->
       expectedDetails.should.contain value
       count++
     count.should.equal expectedDetails.length
+
+  it 'should be immutable', ->
+    MetadataDetail.should.be.frozen

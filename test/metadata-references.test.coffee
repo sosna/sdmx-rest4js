@@ -38,3 +38,6 @@ describe 'Metadata references', ->
       expectedReferences.should.contain value
       count++
     count.should.equal expectedReferences.length
+
+  it 'should be immutable', ->
+    MetadataReferences.should.be.frozen

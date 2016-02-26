@@ -1,4 +1,5 @@
 should = require('chai').should()
+assert = require('chai').assert
 {MetadataType} = require('../src/metadata-types.coffee')
 
 describe 'Metadata types', ->
@@ -33,3 +34,6 @@ describe 'Metadata types', ->
       expectedTypes.should.contain value
       count++
     count.should.equal expectedTypes.length
+
+  it 'should be immutable', ->
+    MetadataType.should.be.frozen

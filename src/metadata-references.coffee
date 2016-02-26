@@ -35,4 +35,4 @@ references =
     if value isnt 'structure' then references[key] = value
 )()
 
-exports.MetadataReferences = references
+exports.MetadataReferences = Object.freeze references

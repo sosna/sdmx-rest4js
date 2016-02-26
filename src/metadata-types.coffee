@@ -22,4 +22,4 @@ types =
   ATTACHMENT_CONSTRAINT: 'attachmentconstraint'
   STRUCTURE: 'structure'
 
-exports.MetadataType = types
+exports.MetadataType = Object.freeze types
