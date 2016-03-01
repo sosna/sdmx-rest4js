@@ -2,6 +2,7 @@
 {MetadataReferences} = require './metadata-references.coffee'
 {MetadataType} = require './metadata-types.coffee'
 {NestedNCNameIDType, IDType, VersionType} = require './sdmx-patterns.coffee'
+{isValidEnum, isValidPattern} = require './validators.coffee'
 
 defaults =
   agencyID: 'all'
@@ -10,33 +11,14 @@ defaults =
   detail: MetadataDetail.FULL
   references: MetadataReferences.NONE
 
-validEnum = (input, list, name, errors) ->
-  found = false
-  for key, value of list
-    if value == input then found = true
-  if not found
-    errors.push """
-      #{input} is not in the list of supported #{name} \
-      (#{value for key, value of list})
-    """
-  found
-
-validPattern = (input, regex, name, errors) ->
-  valid = input.match regex
-  if not valid
-    errors.push """
-      #{input} is not compliant with the pattern defined for #{name} (#{regex})
-    """
-  valid
-
 validQuery = (query) ->
   errors = []
-  isValid = validEnum(query.resource, MetadataType, 'resources', errors) and
-    validPattern(query.agencyID, NestedNCNameIDType, 'agencies', errors) and
-    validPattern(query.resourceID, IDType, 'resource ids', errors) and
-    validPattern(query.version, VersionType, 'versions', errors) and
-    validEnum(query.detail, MetadataDetail, 'details', errors) and
-    validEnum(query.references, MetadataReferences, 'references', errors)
+  isValid = isValidEnum(query.resource, MetadataType, 'resources', errors) and
+    isValidPattern(query.agencyID, NestedNCNameIDType, 'agencies', errors) and
+    isValidPattern(query.resourceID, IDType, 'resource ids', errors) and
+    isValidPattern(query.version, VersionType, 'versions', errors) and
+    isValidEnum(query.detail, MetadataDetail, 'details', errors) and
+    isValidEnum(query.references, MetadataReferences, 'references', errors)
   return {
     isValid: isValid
     errors: errors
