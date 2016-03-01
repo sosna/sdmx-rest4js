@@ -1,8 +1,9 @@
 {MetadataDetail} = require './metadata-detail.coffee'
 {MetadataReferences} = require './metadata-references.coffee'
 {MetadataType} = require './metadata-types.coffee'
-{NestedNCNameIDType, IDType, VersionType} = require './sdmx-patterns.coffee'
-{isValidEnum, isValidPattern} = require './validators.coffee'
+{NestedNCNameIDType, IDType, VersionType} =
+  require '../utils/sdmx-patterns.coffee'
+{isValidEnum, isValidPattern} = require '../utils/validators.coffee'
 
 defaults =
   agencyID: 'all'

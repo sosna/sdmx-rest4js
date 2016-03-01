@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{MetadataDetail} = require '../src/metadata-detail.coffee'
+{MetadataDetail} = require '../../src/metadata/metadata-detail.coffee'
 
 describe 'Metadata detail', ->
 

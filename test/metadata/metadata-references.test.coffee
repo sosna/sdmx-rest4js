@@ -1,10 +1,9 @@
 should = require('chai').should()
-assert = require('chai').assert
-{MetadataType} = require('../src/metadata-types.coffee')
+{MetadataReferences} = require('../../src/metadata/metadata-references.coffee')
 
-describe 'Metadata types', ->
+describe 'Metadata references', ->
 
-  expectedTypes = [
+  expectedReferences = [
     'datastructure'
     'metadatastructure'
     'categoryscheme'
@@ -25,15 +24,20 @@ describe 'Metadata types', ->
     'categorisation'
     'contentconstraint'
     'attachmentconstraint'
-    'structure'
+    'none'
+    'parents'
+    'parentsandsiblings'
+    'children'
+    'descendants'
+    'all'
   ]
 
-  it 'should contain all expected types of metadata and only those', ->
+  it 'should contain all expected references and only those', ->
     count = 0
-    for key, value of MetadataType
-      expectedTypes.should.contain value
+    for key, value of MetadataReferences
+      expectedReferences.should.contain value
       count++
-    count.should.equal expectedTypes.length
+    count.should.equal expectedReferences.length
 
   it 'should be immutable', ->
-    MetadataType.should.be.frozen
+    MetadataReferences.should.be.frozen

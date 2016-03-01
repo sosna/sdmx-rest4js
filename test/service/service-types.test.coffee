@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{ServiceTypes} = require '../src/service-types.coffee'
+{ServiceTypes} = require '../../src/service/service-types.coffee'
 
 describe 'Service types', ->
 
