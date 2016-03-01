@@ -88,6 +88,10 @@ query = class MetadataQuery
       references: @refs ? defaults.references
     input = validQuery query
     throw Error createMessage(input.errors) unless input.isValid
+    query.uri = """
+    /#{query.resource}/#{query.agencyID}/#{query.resourceID}/#{query.version}\
+    ?detail=#{query.detail}&references=#{query.references}
+    """
     query
 
   @from: (options) ->

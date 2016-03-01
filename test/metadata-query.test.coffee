@@ -10,6 +10,7 @@ describe 'Metadata query', ->
 
   it 'should have the expected properties', ->
     query = new MetadataQuery(MetadataType.CODELIST).build()
+    query.should.be.an 'object'
     query.should.have.property 'resource'
     query.should.have.property 'agencyID'
     query.should.have.property 'resourceID'
@@ -248,3 +249,10 @@ describe 'Metadata query', ->
     query.version.should.equal 'latest'
     query.detail.should.equal 'full'
     query.references.should.equal 'none'
+
+  it 'should be possible to get the URI representation of a query', ->
+    query = new MetadataQuery(MetadataType.CODELIST).build()
+    query.should.be.an 'object'
+    query.should.have.property 'uri'
+    uri = '/codelist/all/all/latest?detail=full&references=none'
+    query.uri.should.equal uri
