@@ -3,7 +3,8 @@
 {MetadataType} = require './metadata-types.coffee'
 {NestedNCNameIDType, IDType, VersionType} =
   require '../utils/sdmx-patterns.coffee'
-{isValidEnum, isValidPattern} = require '../utils/validators.coffee'
+{isValidEnum, isValidPattern, createErrorMessage} =
+  require '../utils/validators.coffee'
 
 defaults =
   agencyID: 'all'
@@ -24,12 +25,6 @@ validQuery = (query) ->
     isValid: isValid
     errors: errors
   }
-
-createMessage = (errors) ->
-  msg = 'Not a valid metadata query: \n'
-  for error in errors
-    msg += "- #{error} \n"
-  msg
 
 # A query for structural metadata, as defined by the SDMX RESTful API.
 query = class MetadataQuery
@@ -70,7 +65,8 @@ query = class MetadataQuery
       detail: @info ? defaults.detail
       references: @refs ? defaults.references
     input = validQuery query
-    throw Error createMessage(input.errors) unless input.isValid
+    throw Error createErrorMessage(input.errors, 'metadata query') \
+      unless input.isValid
     query.uri = """
     /#{query.resource}/#{query.agencyID}/#{query.resourceID}/#{query.version}\
     ?detail=#{query.detail}&references=#{query.references}

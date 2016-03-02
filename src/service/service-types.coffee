@@ -18,4 +18,4 @@ versions =
   # A shortcut to the most recent version of the SDMX RESTful API
   LATEST: 'sdmx-rest-v1.1.0'
 
-exports.ServiceTypes = Object.freeze versions
+exports.ServiceType = Object.freeze versions

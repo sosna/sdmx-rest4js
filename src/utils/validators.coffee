@@ -17,5 +17,12 @@ validPattern = (input, regex, name, errors) ->
     """
   valid
 
+createErrorMessage = (errors, type) ->
+  msg = "Not a valid #{type}: \n"
+  for error in errors
+    msg += "- #{error} \n"
+  msg
+
 exports.isValidEnum = validEnum
 exports.isValidPattern = validPattern
+exports.createErrorMessage = createErrorMessage
