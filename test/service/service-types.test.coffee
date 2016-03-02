@@ -16,7 +16,7 @@ describe 'Service types', ->
     for key, value of ServiceTypes
       expectedServices.should.contain value
       count++
-    count.should.equal expectedServices.length
+    count.should.equal expectedServices.length + 1 # takes latest into account
 
   it 'should be immutable', ->
     ServiceTypes.should.be.frozen

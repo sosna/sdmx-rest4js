@@ -15,4 +15,7 @@ versions =
   # query for items within item schemes.
   SDMX_REST_v1_1_0: 'sdmx-rest-v1.1.0'
 
+  # A shortcut to the most recent version of the SDMX RESTful API
+  LATEST: 'sdmx-rest-v1.1.0'
+
 exports.ServiceTypes = Object.freeze versions
