@@ -1,24 +1,36 @@
 {MetadataDetail} = require './metadata-detail.coffee'
 {MetadataReferences} = require './metadata-references.coffee'
-{MetadataType} = require './metadata-types.coffee'
-{NestedNCNameIDType, IDType, VersionType} =
+{MetadataType, isItemScheme} = require './metadata-types.coffee'
+{NestedNCNameIDType, IDType, VersionType, NestedIDType} =
   require '../utils/sdmx-patterns.coffee'
 {isValidEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators.coffee'
 
 defaults =
-  agencyID: 'all'
-  resourceID: 'all'
+  agency: 'all'
+  id: 'all'
   version: 'latest'
   detail: MetadataDetail.FULL
   references: MetadataReferences.NONE
+  item: 'all'
+
+canHaveItem = (query, errors) ->
+  allowed = query.item is 'all' or isItemScheme query.resource
+  if not allowed
+    errors.push """
+    #{query.resource} is not an item scheme and therefore it is not possible
+    to query by item
+    """
+  allowed
 
 validQuery = (query) ->
   errors = []
   isValid = isValidEnum(query.resource, MetadataType, 'resources', errors) and
-    isValidPattern(query.agencyID, NestedNCNameIDType, 'agencies', errors) and
-    isValidPattern(query.resourceID, IDType, 'resource ids', errors) and
+    isValidPattern(query.agency, NestedNCNameIDType, 'agencies', errors) and
+    isValidPattern(query.id, IDType, 'resource ids', errors) and
     isValidPattern(query.version, VersionType, 'versions', errors) and
+    isValidPattern(query.item, NestedIDType, 'items', errors) and
+    canHaveItem(query, errors) and
     isValidEnum(query.detail, MetadataDetail, 'details', errors) and
     isValidEnum(query.references, MetadataReferences, 'references', errors)
   return {
@@ -31,23 +43,18 @@ query = class MetadataQuery
 
   defaults: Object.freeze defaults
 
-  constructor: (@res) ->
+  constructor: (@resource) ->
 
-  agencyID: (@agency) ->
+  agency: (@agencyId) ->
     @
 
-  # Same as above but cover typos.
-  agencyId: (@agency) ->
-    @
-
-  resourceID: (@id) ->
-    @
-
-  # Same as above but cover typos.
-  resourceId: (@id) ->
+  id: (@artefactId) ->
     @
 
   version: (@ver) ->
+    @
+
+  item: (@itemId) ->
     @
 
   detail: (@info) ->
@@ -58,24 +65,25 @@ query = class MetadataQuery
 
   build: () ->
     query =
-      resource: @res
-      agencyID: @agency ? defaults.agencyID
-      resourceID: @id ? defaults.resourceID
+      resource: @resource
+      agency: @agencyId ? defaults.agency
+      id: @artefactId ? defaults.id
       version: @ver ? defaults.version
       detail: @info ? defaults.detail
       references: @refs ? defaults.references
+      item: @itemId ? defaults.item
     input = validQuery query
     throw Error createErrorMessage(input.errors, 'metadata query') \
       unless input.isValid
-    query.uri = """
-    /#{query.resource}/#{query.agencyID}/#{query.resourceID}/#{query.version}\
+    query.url = """
+    /#{query.resource}/#{query.agency}/#{query.id}/#{query.version}\
     ?detail=#{query.detail}&references=#{query.references}
     """
     query
 
   @from: (options) ->
-    new MetadataQuery(options?.resource).agencyID(options?.agencyID)
-    .resourceID(options?.resourceID).version(options?.version)
-    .detail(options?.detail).references(options?.references).build()
+    new MetadataQuery(options?.resource).agency(options?.agency)
+    .id(options?.id).version(options?.version).detail(options?.detail)
+    .references(options?.references).build()
 
 exports.MetadataQuery = query

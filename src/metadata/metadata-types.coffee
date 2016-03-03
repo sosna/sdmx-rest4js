@@ -1,4 +1,15 @@
 # Specifies the types of structural metadata defined in SDMX.
+itemSchemes = [
+  'categoryscheme'
+  'conceptscheme'
+  'codelist'
+  'organisationscheme'
+  'agencyscheme'
+  'dataproviderscheme'
+  'dataconsumerscheme'
+  'organisationunitscheme'
+]
+
 types =
   DATA_STRUCTURE: 'datastructure'
   METADATA_STRUCTURE: 'metadatastructure'
@@ -23,3 +34,4 @@ types =
   STRUCTURE: 'structure'
 
 exports.MetadataType = Object.freeze types
+exports.isItemScheme = (type) -> type in itemSchemes
