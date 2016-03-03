@@ -5,8 +5,7 @@ NestedNCNameIDType = /// ^
   $ ///
 
 IDType = /// ^
-  [A-Za-z]             # Must begin with a letter
-  [A-Za-z0-9_\-]*      # May be followed by letters, numbers, _ or -
+  [A-Za-z0-9_@$\-]+    # Letters, numbers, _, @, $ or -
   $ ///
 
 VersionType = /// ^
@@ -17,6 +16,12 @@ VersionType = /// ^
   )                    # Ends the OR clause
   $ ///
 
+NestedIDType = /// ^
+  [A-Za-z0-9_@$\-]+       # Letters, numbers, _, @, $ or -
+  (\.[A-Za-z0-9_@$\-]+)*  # Potentially hierarchical (e.g. A.B.C)
+  $ ///
+
 exports.NestedNCNameIDType = NestedNCNameIDType
 exports.IDType = IDType
 exports.VersionType = VersionType
+exports.NestedIDType = NestedIDType
