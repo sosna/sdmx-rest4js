@@ -251,10 +251,3 @@ describe 'Metadata query', ->
     query.version.should.equal 'latest'
     query.detail.should.equal 'full'
     query.references.should.equal 'none'
-
-  it 'should be possible to get the URL representation of a query', ->
-    query = new MetadataQuery(MetadataType.CODELIST).build()
-    query.should.be.an 'object'
-    query.should.have.property 'url'
-    url = '/codelist/all/all/latest?detail=full&references=none'
-    query.url.should.equal url

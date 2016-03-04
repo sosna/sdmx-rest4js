@@ -70,8 +70,6 @@ query = class MetadataQuery
     input = validQuery query
     throw Error createErrorMessage(input.errors, 'metadata query') \
       unless input.isValid
-    query.url = "/#{query.resource}/#{query.agency}/#{query.id}/\
-    #{query.version}?detail=#{query.detail}&references=#{query.references}"
     query
 
   @from: (options) ->
