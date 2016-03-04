@@ -17,10 +17,8 @@ defaults =
 canHaveItem = (query, errors) ->
   allowed = query.item is 'all' or isItemScheme query.resource
   if not allowed
-    errors.push """
-    #{query.resource} is not an item scheme and therefore it is not possible
-    to query by item
-    """
+    errors.push "#{query.resource} is not an item scheme and therefore it is \
+    not possible to query by item"
   allowed
 
 validQuery = (query) ->
@@ -33,10 +31,7 @@ validQuery = (query) ->
     canHaveItem(query, errors) and
     isValidEnum(query.detail, MetadataDetail, 'details', errors) and
     isValidEnum(query.references, MetadataReferences, 'references', errors)
-  return {
-    isValid: isValid
-    errors: errors
-  }
+  {isValid: isValid, errors: errors}
 
 # A query for structural metadata, as defined by the SDMX RESTful API.
 query = class MetadataQuery
@@ -75,10 +70,8 @@ query = class MetadataQuery
     input = validQuery query
     throw Error createErrorMessage(input.errors, 'metadata query') \
       unless input.isValid
-    query.url = """
-    /#{query.resource}/#{query.agency}/#{query.id}/#{query.version}\
-    ?detail=#{query.detail}&references=#{query.references}
-    """
+    query.url = "/#{query.resource}/#{query.agency}/#{query.id}/\
+    #{query.version}?detail=#{query.detail}&references=#{query.references}"
     query
 
   @from: (options) ->
