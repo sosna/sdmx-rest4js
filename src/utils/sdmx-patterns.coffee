@@ -1,27 +1,92 @@
-NestedNCNameIDType = /// ^
+NCNameIDType = ///
   [A-Za-z]                      # Must begin with a letter
   [A-Za-z0-9_\-]*               # May be followed by letters, numbers, _ or -
-  (\.[A-Za-z][A-Za-z0-9_\-]*)*  # May be followed by a dot and other IDs
+  ///
+
+NCNameIDTypeAlone = /// ^
+  #{NCNameIDType.source}
   $ ///
 
-IDType = /// ^
+NestedNCNameIDType = ///
+  #{NCNameIDType.source}      # An ID
+  (
+    \.                        # May be followed by a dot and other IDs
+    #{NCNameIDType.source}
+  )*
+  ///
+
+NestedNCNameIDTypeAlone = /// ^
+  #{NestedNCNameIDType.source}
+  $ ///
+
+IDType = ///
   [A-Za-z0-9_@$\-]+    # Letters, numbers, _, @, $ or -
+  ///
+
+IDTypeAlone = /// ^
+  #{IDType.source}
   $ ///
 
-VersionType = /// ^
-  (                    # Starts the OR clause
-  all                  # The string all
-  | latest             # Or the string latest
-  | [0-9]+(\.[0-9]+)*  # Or a version number (e.g. 1.0)
-  )                    # Ends the OR clause
+VersionNumber = ///
+  [0-9]+(\.[0-9]+)*   # A version number (e.g. 1.0)
+  ///
+
+VersionType = ///
+  (                           # Starts the OR clause
+  all                         # The string all
+  | latest                    # Or the string latest
+  | #{VersionNumber.source}   # Or a version number
+  )                           # Ends the OR clause
+  ///
+
+VersionTypeAlone = /// ^
+  #{VersionType.source}
   $ ///
 
-NestedIDType = /// ^
+NestedIDType = ///
   [A-Za-z0-9_@$\-]+       # Letters, numbers, _, @, $ or -
   (\.[A-Za-z0-9_@$\-]+)*  # Potentially hierarchical (e.g. A.B.C)
+  ///
+
+NestedIDTypeAlone = /// ^
+  #{NestedIDType.source}
   $ ///
 
-exports.NestedNCNameIDType = NestedNCNameIDType
-exports.IDType = IDType
-exports.VersionType = VersionType
-exports.NestedIDType = NestedIDType
+SeriesKeyType = /// ^
+  (#{IDType.source}([+]#{IDType.source})*)? # One or more dimension values
+                                            # separated by a +
+  (
+    [.]                                        # Potentially followed by a dot
+    (#{IDType.source}([+]#{IDType.source})*)?  # and repeating above pattern
+  )*
+  $ ///
+
+FlowRefType = /// ^
+  (
+  #{IDType.source}
+  | (
+    #{NestedNCNameIDType.source}
+    \,#{IDType.source}
+    (\,(latest | (#{VersionNumber.source})))?
+    )
+  )
+  $ ///
+
+ProviderRefType = /// ^
+  (#{NestedNCNameIDType.source},)? # May start with the agency owning the scheme
+  #{IDType.source}                 # The id of the provider
+  $ ///
+
+ReportingPeriodType = /// ^
+  \d{4}\-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
+  $ ///
+
+exports.NCNameIDType = NCNameIDTypeAlone
+exports.NestedNCNameIDType = NestedNCNameIDTypeAlone
+exports.IDType = IDTypeAlone
+exports.VersionType = VersionTypeAlone
+exports.NestedIDType = NestedIDTypeAlone
+exports.FlowRefType = FlowRefType
+exports.ProviderRefType = ProviderRefType
+exports.ReportingPeriodType = ReportingPeriodType
+exports.SeriesKeyType = SeriesKeyType
