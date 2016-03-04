@@ -4,7 +4,7 @@ assert = require('chai').assert
 {MetadataDetail} = require '../../src/metadata/metadata-detail.coffee'
 {MetadataReferences} = require '../../src/metadata/metadata-references.coffee'
 {MetadataQuery} = require '../../src/metadata/metadata-query.coffee'
-{MetadataType} = require '../../src/metadata/metadata-types.coffee'
+{MetadataType} = require '../../src/metadata/metadata-type.coffee'
 
 describe 'Metadata query', ->
 
@@ -251,10 +251,3 @@ describe 'Metadata query', ->
     query.version.should.equal 'latest'
     query.detail.should.equal 'full'
     query.references.should.equal 'none'
-
-  it 'should be possible to get the URL representation of a query', ->
-    query = new MetadataQuery(MetadataType.CODELIST).build()
-    query.should.be.an 'object'
-    query.should.have.property 'url'
-    url = '/codelist/all/all/latest?detail=full&references=none'
-    query.url.should.equal url

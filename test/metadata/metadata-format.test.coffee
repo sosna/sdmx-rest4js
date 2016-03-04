@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{MetadataFormats} = require '../../src/metadata/metadata-formats.coffee'
+{MetadataFormat} = require '../../src/metadata/metadata-format.coffee'
 
 describe 'Metadata formats', ->
 
@@ -10,10 +10,10 @@ describe 'Metadata formats', ->
 
   it 'should contain all expected formats and only those', ->
     count = 0
-    for key, value of MetadataFormats
+    for key, value of MetadataFormat
       expectedFormats.should.contain value
       count++
     count.should.equal expectedFormats.length
 
   it 'should be immutable', ->
-    MetadataFormats.should.be.frozen
+    MetadataFormat.should.be.frozen

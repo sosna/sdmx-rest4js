@@ -1,4 +1,4 @@
-{ServiceType} = require '../../src/service/service-types.coffee'
+{ServiceType} = require '../../src/service/service-type.coffee'
 {isValidEnum, createErrorMessage} = require '../utils/validators.coffee'
 
 defaults =
@@ -14,10 +14,7 @@ validService = (q) ->
   errors = []
   isValid = isValidUrl(q.url, errors) and
     isValidEnum(q.api, ServiceType, 'versions of the SDMX RESTful API', errors)
-  return {
-    isValid: isValid
-    errors: errors
-  }
+  {isValid: isValid, errors: errors}
 
 service = class Service
 
@@ -45,7 +42,7 @@ service = class Service
       api: @version ? defaults.api
     input = validService service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
-    return service
+    service
 
   @from: (opts) ->
     new Service(opts?.url).provider(opts?.id, opts?.name).api(opts.api).build()
