@@ -4,7 +4,7 @@ assert = require('chai').assert
 {MetadataDetail} = require '../../src/metadata/metadata-detail.coffee'
 {MetadataReferences} = require '../../src/metadata/metadata-references.coffee'
 {MetadataQuery} = require '../../src/metadata/metadata-query.coffee'
-{MetadataType} = require '../../src/metadata/metadata-types.coffee'
+{MetadataType} = require '../../src/metadata/metadata-type.coffee'
 
 describe 'Metadata query', ->
 

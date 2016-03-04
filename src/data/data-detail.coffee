@@ -1,5 +1,5 @@
 # Specifies the amount of information to be returned for data queries.
-detail =
+details =
 
   # All data and documentation, including annotations.
   FULL: 'full'
@@ -14,4 +14,4 @@ detail =
   # observations
   NO_DATA: 'nodata'
 
-exports.DataDetail = Object.freeze detail
+exports.DataDetail = Object.freeze details

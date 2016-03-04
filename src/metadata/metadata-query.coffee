@@ -1,6 +1,6 @@
 {MetadataDetail} = require './metadata-detail.coffee'
 {MetadataReferences} = require './metadata-references.coffee'
-{MetadataType, isItemScheme} = require './metadata-types.coffee'
+{MetadataType, isItemScheme} = require './metadata-type.coffee'
 {NestedNCNameIDType, IDType, VersionType, NestedIDType} =
   require '../utils/sdmx-patterns.coffee'
 {isValidEnum, isValidPattern, createErrorMessage} =

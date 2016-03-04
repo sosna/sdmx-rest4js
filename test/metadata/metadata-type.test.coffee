@@ -1,6 +1,6 @@
 should = require('chai').should()
 assert = require('chai').assert
-{MetadataType} = require('../../src/metadata/metadata-types.coffee')
+{MetadataType} = require('../../src/metadata/metadata-type.coffee')
 
 describe 'Metadata types', ->
 

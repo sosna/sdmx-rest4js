@@ -1,4 +1,4 @@
-{ServiceType} = require '../../src/service/service-types.coffee'
+{ServiceType} = require '../../src/service/service-type.coffee'
 {isValidEnum, createErrorMessage} = require '../utils/validators.coffee'
 
 defaults =

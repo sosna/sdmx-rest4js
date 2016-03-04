@@ -1,5 +1,5 @@
 # Specifies the amount of information to be returned for metadata queries.
-detail =
+details =
 
   # All available information for all artefacts will be returned.
   FULL: 'full'
@@ -10,4 +10,4 @@ detail =
   # The referenced artefacts will be returned as stubs.
   REFERENCE_STUBS: 'referencestubs'
 
-exports.MetadataDetail = Object.freeze detail
+exports.MetadataDetail = Object.freeze details

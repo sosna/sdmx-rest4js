@@ -1,7 +1,7 @@
 should = require('chai').should()
 assert = require('chai').assert
 
-{ServiceType} = require '../../src/service/service-types.coffee'
+{ServiceType} = require '../../src/service/service-type.coffee'
 {Service} = require '../../src/service/service.coffee'
 
 describe 'Service', ->
