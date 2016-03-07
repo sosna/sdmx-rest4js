@@ -74,7 +74,7 @@ query = class MetadataQuery
 
   @from: (options) ->
     new MetadataQuery(options?.resource).agency(options?.agency)
-    .id(options?.id).version(options?.version).detail(options?.detail)
-    .references(options?.references).build()
+    .id(options?.id).version(options?.version).item(options?.item)
+    .detail(options?.detail).references(options?.references).build()
 
 exports.MetadataQuery = query

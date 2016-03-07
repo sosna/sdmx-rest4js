@@ -93,6 +93,14 @@ describe 'Metadata query', ->
     query = new MetadataQuery(MetadataType.CODELIST).item(item).build()
     query.should.have.property('item').that.equals item
 
+  it 'should be possible to set an item id via the from method', ->
+    item = 'A'
+    query = MetadataQuery.from({
+      resource: MetadataType.CODELIST
+      item: item
+    })
+    query.should.have.property('item').that.equals item
+
   it 'should not be possible to not set a resource type', ->
     try
       query = new MetadataQuery().build()
