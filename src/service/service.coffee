@@ -24,7 +24,7 @@ service = class Service
     id: 'ECB'
     name: 'European Central Bank'
     api: ServiceType.SDMX_REST_v1_0_2
-    url: 'http://sdw-wsrest.ecb.europa.eu'
+    url: 'http://sdw-wsrest.ecb.europa.eu/service'
 
   constructor: (@url) ->
 
