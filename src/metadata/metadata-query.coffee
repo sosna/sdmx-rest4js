@@ -16,7 +16,7 @@ defaults =
 
 canHaveItem = (query, errors) ->
   allowed = query.item is 'all' or isItemScheme query.resource
-  if not allowed
+  unless allowed
     errors.push "#{query.resource} is not an item scheme and therefore it is \
     not possible to query by item"
   allowed
@@ -58,7 +58,7 @@ query = class MetadataQuery
   references: (@refs) ->
     @
 
-  build: () ->
+  build: ->
     query =
       resource: @resource
       agency: @agencyId ? defaults.agency

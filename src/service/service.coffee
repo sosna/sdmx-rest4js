@@ -6,7 +6,7 @@ defaults =
 
 isValidUrl = (url, errors) ->
   valid = url
-  if not valid
+  unless valid
     errors.push "#{url} is not in a valid url"
   valid
 

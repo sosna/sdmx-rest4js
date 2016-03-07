@@ -44,6 +44,6 @@ generator = class Generator
       url = createMetadataQuery(@query, @service)
     else
       throw Error "#{@query} is not a valid SDMX data or metadata query"
-    return url
+    url
 
 exports.UrlGenerator = generator

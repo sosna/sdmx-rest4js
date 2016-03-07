@@ -31,8 +31,7 @@ references =
 # All the predefined SDMX types are valid references, except for the 'catch all'
 # `structure`
 (() ->
-  for key, value of MetadataType
-    if value isnt 'structure' then references[key] = value
+  references[key] = val for key, val of MetadataType when val isnt 'structure'
 )()
 
 exports.MetadataReferences = Object.freeze references

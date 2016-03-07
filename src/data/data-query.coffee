@@ -13,14 +13,14 @@ defaults =
 
 isValidHistory = (input, errors) ->
   valid = typeof input is 'boolean'
-  if not valid
+  unless valid
     errors.push "#{input} is not a valid value for history. Must be true or \
     false"
   valid
 
 isValidNObs = (input, name, errors) ->
   valid = typeof input is 'number' and input > 0
-  if not valid
+  unless valid
     errors.push "#{input} is not a valid value for #{name}. Must be a positive \
     integer"
   valid
@@ -77,7 +77,7 @@ query = class DataQuery
   history: (@hist) ->
     @
 
-  build: () ->
+  build: ->
     query =
       flow: @flow
       key: @series ? defaults.key
