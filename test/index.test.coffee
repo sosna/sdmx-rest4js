@@ -34,20 +34,20 @@ describe 'API', ->
       sdmxrest.getService 'UNKNOWN'
       assert.fail 'An error should have been triggered'
     catch error
-      error.message.should.contain 'Unknown service'
+      error.message.should.contain 'Unknown or invalid service'
 
   it 'should fail if the input to service is not of the expected type', ->
     try
       sdmxrest.getService 2
       assert.fail 'An error should have been triggered'
     catch error
-      error.message.should.contain 'Unknown service'
+      error.message.should.contain 'Unknown or invalid service'
 
     try
       sdmxrest.getService undefined
       assert.fail 'An error should have been triggered'
     catch error
-      error.message.should.contain 'Unknown service'
+      error.message.should.contain 'Unknown or invalid service'
 
   it 'should offer to create a data query from properties', ->
     input = {
@@ -118,12 +118,19 @@ describe 'API', ->
     url.should.contain query.flow
     url.should.contain query.key
 
+  it 'should offer to create a URL from partial metadata query and service', ->
+    url = sdmxrest.getUrl {resource: 'codelist', id: 'CL_FREQ'}, 'ECB'
+    url.should.be.a 'string'
+    url.should.contain 'sdw-wsrest.ecb.europa.eu'
+    url.should.contain 'codelist'
+    url.should.contain 'CL_FREQ'
+
   it 'should fail if input to URL are not of the expected types', ->
     try
       sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'
       assert.fail 'An error should have been triggered'
     catch error
-      error.message.should.contain 'not a valid SDMX data or metadata query'
+      error.message.should.contain 'Not a valid query'
 
     query = sdmxrest.getDataQuery {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}
 
@@ -131,10 +138,10 @@ describe 'API', ->
       sdmxrest.getUrl query, sdmxrest.getService 'TEST'
       assert.fail 'An error should have been triggered'
     catch error
-      error.message.should.contain 'Unknown service'
+      error.message.should.contain 'Unknown or invalid service'
 
     try
       sdmxrest.getUrl query
       assert.fail 'An error should have been triggered'
     catch error
-      error.message.should.contain 'not a valid service'
+      error.message.should.contain 'Unknown or invalid service'

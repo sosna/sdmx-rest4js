@@ -3,21 +3,27 @@
 {MetadataQuery} = require './metadata/metadata-query.coffee'
 {UrlGenerator} = require './utils/url-generator.coffee'
 
-getService = (id) ->
-  if typeof id is 'object'
-    return Service.from id
-  if typeof id is 'string' and Service[id]
-    return Service[id]
-  throw Error "Unknown service #{id}"
+getService = (input) ->
+  if typeof input is 'object'
+    return Service.from input
+  if typeof input is 'string' and Service[input]
+    return Service[input]
+  throw Error "Unknown or invalid service #{input}"
 
-getDataQuery = (opts) ->
-  return DataQuery.from opts
+getDataQuery = (input) ->
+  return DataQuery.from input
 
-getMetadataQuery = (opts) ->
-  return MetadataQuery.from opts
+getMetadataQuery = (input) ->
+  return MetadataQuery.from input
 
 getUrl = (query, service) ->
-  return new UrlGenerator().getUrl query, service
+  # URL generation requires all fields to be set. The 3 next lines are just
+  # in case partial objects are passed to the function.
+  s = getService service
+  throw Error 'Not a valid query' unless query?.flow or query?.resource
+  q = if query.flow then getDataQuery query else getMetadataQuery query
+
+  return new UrlGenerator().getUrl q, s
 
 exports.getService = getService
 exports.getDataQuery = getDataQuery
