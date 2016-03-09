@@ -4,6 +4,7 @@
 {MetadataQuery} = require '../metadata/metadata-query.coffee'
 
 createEntryPoint = (service) ->
+  throw Error "#{service.url} is not a valid service" unless service.url
   url = service.url
   url = url + '/' unless service.url.indexOf('/', service.url.length - 1) > -1
   url

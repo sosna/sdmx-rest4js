@@ -149,6 +149,20 @@ describe 'URL Generator', ->
     catch error
       error.message.should.contain 'not a valid SDMX data or metadata query'
 
+  it 'should not allow an empty service', ->
+    try
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        item: 'A'
+      })
+      gen = new UrlGenerator()
+      gen.getUrl query
+      assert.fail 'An error should have been triggered'
+    catch error
+      error.message.should.contain 'not a valid service'
+
   it 'should accept either a data or a metadata query', ->
     try
       gen = new UrlGenerator()
