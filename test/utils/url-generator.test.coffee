@@ -2,7 +2,7 @@ should = require('chai').should()
 assert = require('chai').assert
 
 {Service} = require '../../src/service/service.coffee'
-{ServiceType} = require '../../src/service/service-type.coffee'
+{ApiVersion} = require '../../src/utils/api-version.coffee'
 {DataQuery} = require '../../src/data/data-query.coffee'
 {MetadataQuery} = require '../../src/metadata/metadata-query.coffee'
 {UrlGenerator} = require '../../src/utils/url-generator.coffee'
@@ -30,7 +30,7 @@ describe 'URL Generator', ->
     })
     service = Service.from({
       url: 'http://test.com'
-      api: ServiceType.SDMX_REST_v1_1_0
+      api: ApiVersion.SDMX_REST_v1_1_0
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)
@@ -72,7 +72,7 @@ describe 'URL Generator', ->
     })
     service = Service.from({
       url: 'http://test.com'
-      api: ServiceType.SDMX_REST_v1_1_0
+      api: ApiVersion.SDMX_REST_v1_1_0
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)
@@ -84,7 +84,7 @@ describe 'URL Generator', ->
     query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
     service = Service.from({
       url: 'http://test.com'
-      api: ServiceType.SDMX_REST_v1_1_0
+      api: ApiVersion.SDMX_REST_v1_1_0
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)
@@ -110,7 +110,7 @@ describe 'URL Generator', ->
     })
     service = Service.from({
       url: 'http://test.com'
-      api: ServiceType.SDMX_REST_v1_0_2
+      api: ApiVersion.SDMX_REST_v1_0_2
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)

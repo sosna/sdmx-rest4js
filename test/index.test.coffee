@@ -1,5 +1,5 @@
 sdmxrest = require '../src/index.coffee'
-{ServiceType} = require '../src/service/service-type.coffee'
+{ApiVersion} = require '../src/utils/api-version.coffee'
 
 describe 'API', ->
 
@@ -27,7 +27,7 @@ describe 'API', ->
     service.should.have.property('id').that.equals input.id
     service.should.have.property('name').that.is.undefined
     service.should.have.property('url').that.equals input.url
-    service.should.have.property('api').that.equals ServiceType.LATEST
+    service.should.have.property('api').that.equals ApiVersion.LATEST
 
   it 'should fail if the service is unknown', ->
     try

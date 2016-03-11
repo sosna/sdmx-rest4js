@@ -1,5 +1,5 @@
 {Service} = require '../service/service.coffee'
-{ServiceType} = require '../service/service-type.coffee'
+{ApiVersion} = require '../utils/api-version.coffee'
 {DataQuery} = require '../data/data-query.coffee'
 {MetadataQuery} = require '../metadata/metadata-query.coffee'
 
@@ -14,9 +14,9 @@ createDataQuery = (query, service) ->
   url = url + "data/#{query.flow}/#{query.key}/#{query.provider}"
   url = url + "?dimensionAtObservation=#{query.obsDimension}"
   url = url + "&detail=#{query.detail}"
-  if (service.api isnt ServiceType.SDMX_REST_v1_0_0 and
-  service.api isnt ServiceType.SDMX_REST_v1_0_1 and
-  service.api isnt ServiceType.SDMX_REST_v1_0_2)
+  if (service.api isnt ApiVersion.SDMX_REST_v1_0_0 and
+  service.api isnt ApiVersion.SDMX_REST_v1_0_1 and
+  service.api isnt ApiVersion.SDMX_REST_v1_0_2)
     url = url + "&includeHistory=#{query.history}"
   url = url + "&startPeriod=#{query.start}" if query.start
   url = url + "&endPeriod=#{query.end}" if query.end
@@ -28,9 +28,9 @@ createDataQuery = (query, service) ->
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
   url = url + "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
-  if (service.api isnt ServiceType.SDMX_REST_v1_0_0 and
-  service.api isnt ServiceType.SDMX_REST_v1_0_1 and
-  service.api isnt ServiceType.SDMX_REST_v1_0_2)
+  if (service.api isnt ApiVersion.SDMX_REST_v1_0_0 and
+  service.api isnt ApiVersion.SDMX_REST_v1_0_1 and
+  service.api isnt ApiVersion.SDMX_REST_v1_0_2)
     url = url + "/#{query.item}"
   url = url + "?detail=#{query.detail}&references=#{query.references}"
   url
@@ -38,7 +38,7 @@ createMetadataQuery = (query, service) ->
 generator = class Generator
 
   getUrl: (@query, service) ->
-    @service = service ? ServiceType.LATEST
+    @service = service ? ApiVersion.LATEST
     if @query?.flow?
       url = createDataQuery(@query, @service)
     else if @query?.resource?

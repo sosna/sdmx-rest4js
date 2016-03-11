@@ -1,7 +1,7 @@
 should = require('chai').should()
 assert = require('chai').assert
 
-{ServiceType} = require '../../src/service/service-type.coffee'
+{ApiVersion} = require '../../src/utils/api-version.coffee'
 {Service} = require '../../src/service/service.coffee'
 
 describe 'Service', ->
@@ -17,7 +17,7 @@ describe 'Service', ->
   it 'should have the expected defaults', ->
     url = 'http://test.com'
     service = new Service(url).build()
-    service.should.have.property('api').that.equals ServiceType.LATEST
+    service.should.have.property('api').that.equals ApiVersion.LATEST
     service.should.have.property('id').that.is.undefined
     service.should.have.property('name').that.is.undefined
     service.should.have.property('url').that.equals url
@@ -35,7 +35,7 @@ describe 'Service', ->
     service.should.have.property('name').that.equals name
 
   it 'should be possible to set an API version', ->
-    api = ServiceType.SDMX_REST_v1_0_0
+    api = ApiVersion.SDMX_REST_v1_0_0
     service = new Service('http://test.com').api(api).build()
     service.should.have.property('api').that.equals api
 
@@ -78,7 +78,7 @@ describe 'Service', ->
     service.id.should.equal opts.id
     service.url.should.equal opts.url
     service.should.have.property('name').that.is.undefined
-    service.api.should.equal ServiceType.LATEST
+    service.api.should.equal ApiVersion.LATEST
 
   it 'should be possible to instantiate a service using its ID', ->
     service = Service.ECB

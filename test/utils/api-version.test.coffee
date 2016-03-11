@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{ServiceType} = require '../../src/service/service-type.coffee'
+{ApiVersion} = require '../../src/utils/api-version.coffee'
 
 describe 'Service types', ->
 
@@ -13,10 +13,10 @@ describe 'Service types', ->
 
   it 'should contain all expected service types and only those', ->
     count = 0
-    for key, value of ServiceType
+    for key, value of ApiVersion
       expectedServices.should.contain value
       count++
     count.should.equal expectedServices.length + 1 # takes latest into account
 
   it 'should be immutable', ->
-    ServiceType.should.be.frozen
+    ApiVersion.should.be.frozen

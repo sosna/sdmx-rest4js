@@ -1,8 +1,8 @@
-{ServiceType} = require '../../src/service/service-type.coffee'
+{ApiVersion} = require '../../src/utils/api-version.coffee'
 {isValidEnum, createErrorMessage} = require '../utils/validators.coffee'
 
 defaults =
-  api: ServiceType.LATEST
+  api: ApiVersion.LATEST
 
 isValidUrl = (url, errors) ->
   valid = url
@@ -13,7 +13,7 @@ isValidUrl = (url, errors) ->
 validService = (q) ->
   errors = []
   isValid = isValidUrl(q.url, errors) and
-    isValidEnum(q.api, ServiceType, 'versions of the SDMX RESTful API', errors)
+    isValidEnum(q.api, ApiVersion, 'versions of the SDMX RESTful API', errors)
   {isValid: isValid, errors: errors}
 
 service = class Service
@@ -23,7 +23,7 @@ service = class Service
   @ECB:
     id: 'ECB'
     name: 'European Central Bank'
-    api: ServiceType.SDMX_REST_v1_0_2
+    api: ApiVersion.SDMX_REST_v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
 
   constructor: (@url) ->
