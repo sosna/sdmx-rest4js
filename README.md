@@ -1,4 +1,4 @@
-# sdmx-rest.js
+# sdmx-rest4js
 
 This library allows to easily work with the [SDMX RESTful API](https://github.com/sdmx-twg/sdmx-rest) from a JavaScript application.
 
