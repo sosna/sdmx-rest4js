@@ -1,5 +1,5 @@
 should = require('chai').should()
-{MetadataReferences} = require('../../src/metadata/metadata-references.coffee')
+{MetadataReferences} = require('../../src/metadata/metadata-references')
 
 describe 'Metadata references', ->
 

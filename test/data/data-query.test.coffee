@@ -1,8 +1,8 @@
 should = require('chai').should()
 assert = require('chai').assert
 
-{DataDetail} = require '../../src/data/data-detail.coffee'
-{DataQuery} = require '../../src/data/data-query.coffee'
+{DataDetail} = require '../../src/data/data-detail'
+{DataQuery} = require '../../src/data/data-query'
 
 describe 'Data queries', ->
 

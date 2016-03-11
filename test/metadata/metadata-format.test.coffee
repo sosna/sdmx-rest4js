@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{MetadataFormat} = require '../../src/metadata/metadata-format.coffee'
+{MetadataFormat} = require '../../src/metadata/metadata-format'
 
 describe 'Metadata formats', ->
 

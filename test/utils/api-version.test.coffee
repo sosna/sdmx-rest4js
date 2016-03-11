@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{ApiVersion} = require '../../src/utils/api-version.coffee'
+{ApiVersion} = require '../../src/utils/api-version'
 
 describe 'Service types', ->
 

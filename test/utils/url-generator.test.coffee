@@ -1,11 +1,11 @@
 should = require('chai').should()
 assert = require('chai').assert
 
-{Service} = require '../../src/service/service.coffee'
-{ApiVersion} = require '../../src/utils/api-version.coffee'
-{DataQuery} = require '../../src/data/data-query.coffee'
-{MetadataQuery} = require '../../src/metadata/metadata-query.coffee'
-{UrlGenerator} = require '../../src/utils/url-generator.coffee'
+{Service} = require '../../src/service/service'
+{ApiVersion} = require '../../src/utils/api-version'
+{DataQuery} = require '../../src/data/data-query'
+{MetadataQuery} = require '../../src/metadata/metadata-query'
+{UrlGenerator} = require '../../src/utils/url-generator'
 
 describe 'URL Generator', ->
 

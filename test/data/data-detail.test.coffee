@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{DataDetail} = require '../../src/data/data-detail.coffee'
+{DataDetail} = require '../../src/data/data-detail'
 
 describe 'Data detail', ->
 

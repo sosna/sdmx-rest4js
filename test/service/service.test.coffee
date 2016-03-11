@@ -1,8 +1,8 @@
 should = require('chai').should()
 assert = require('chai').assert
 
-{ApiVersion} = require '../../src/utils/api-version.coffee'
-{Service} = require '../../src/service/service.coffee'
+{ApiVersion} = require '../../src/utils/api-version'
+{Service} = require '../../src/service/service'
 
 describe 'Service', ->
 

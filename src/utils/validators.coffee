@@ -1,4 +1,4 @@
-{ReportingPeriodType} = require './sdmx-patterns.coffee'
+{ReportingPeriodType} = require './sdmx-patterns'
 
 validEnum = (input, list, name, errors) ->
   found = false

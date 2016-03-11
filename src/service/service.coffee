@@ -1,5 +1,5 @@
-{ApiVersion} = require '../../src/utils/api-version.coffee'
-{isValidEnum, createErrorMessage} = require '../utils/validators.coffee'
+{ApiVersion} = require '../../src/utils/api-version'
+{isValidEnum, createErrorMessage} = require '../utils/validators'
 
 defaults =
   api: ApiVersion.LATEST

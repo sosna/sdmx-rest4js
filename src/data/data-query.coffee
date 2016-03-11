@@ -1,8 +1,8 @@
-{DataDetail} = require './data-detail.coffee'
+{DataDetail} = require './data-detail'
 {FlowRefType, SeriesKeyType, ProviderRefType, NCNameIDType} =
-  require '../utils/sdmx-patterns.coffee'
+  require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, isValidPeriod, isValidDate, createErrorMessage} =
-  require '../utils/validators.coffee'
+  require '../utils/validators'
 
 defaults =
   key: 'all'

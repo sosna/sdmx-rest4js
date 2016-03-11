@@ -1,4 +1,4 @@
-{MetadataType} = require './metadata-type.coffee'
+{MetadataType} = require './metadata-type'
 
 # Specifies the references to be returned.
 #

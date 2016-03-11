@@ -1,7 +1,7 @@
-{Service} = require '../service/service.coffee'
-{ApiVersion} = require '../utils/api-version.coffee'
-{DataQuery} = require '../data/data-query.coffee'
-{MetadataQuery} = require '../metadata/metadata-query.coffee'
+{Service} = require '../service/service'
+{ApiVersion} = require '../utils/api-version'
+{DataQuery} = require '../data/data-query'
+{MetadataQuery} = require '../metadata/metadata-query'
 
 createEntryPoint = (service) ->
   throw Error "#{service.url} is not a valid service" unless service.url

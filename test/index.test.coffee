@@ -1,5 +1,5 @@
-sdmxrest = require '../src/index.coffee'
-{ApiVersion} = require '../src/utils/api-version.coffee'
+sdmxrest = require '../src/index'
+{ApiVersion} = require '../src/utils/api-version'
 
 describe 'API', ->
 

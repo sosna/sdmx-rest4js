@@ -1,10 +1,10 @@
 should = require('chai').should()
 assert = require('chai').assert
 
-{MetadataDetail} = require '../../src/metadata/metadata-detail.coffee'
-{MetadataReferences} = require '../../src/metadata/metadata-references.coffee'
-{MetadataQuery} = require '../../src/metadata/metadata-query.coffee'
-{MetadataType} = require '../../src/metadata/metadata-type.coffee'
+{MetadataDetail} = require '../../src/metadata/metadata-detail'
+{MetadataReferences} = require '../../src/metadata/metadata-references'
+{MetadataQuery} = require '../../src/metadata/metadata-query'
+{MetadataType} = require '../../src/metadata/metadata-type'
 
 describe 'Metadata query', ->
 

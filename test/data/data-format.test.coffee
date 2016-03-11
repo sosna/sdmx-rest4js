@@ -1,6 +1,6 @@
 should = require('chai').should()
 
-{DataFormat} = require '../../src/data/data-format.coffee'
+{DataFormat} = require '../../src/data/data-format'
 
 describe 'Data formats', ->
 
