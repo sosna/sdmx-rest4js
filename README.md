@@ -1,4 +1,4 @@
-# sdmx-rest4js
+# sdmx-rest4js [![Build Status](https://travis-ci.org/sosna/sdmx-rest4js.svg?branch=master)](https://travis-ci.org/sosna/sdmx-rest4js) [![codecov.io](https://codecov.io/github/sosna/sdmx-rest4js/coverage.svg?branch=master)](https://codecov.io/github/sosna/sdmx-rest4js?branch=master) [![ISC license](https://img.shields.io/badge/license-ISC%20license-brightgreen.svg)](https://en.wikipedia.org/wiki/ISC_license)
 
 This library allows to easily work with the [SDMX RESTful API](https://github.com/sdmx-twg/sdmx-rest) from a JavaScript application.
 
