@@ -1,7 +1,15 @@
-{Service} = require './service/service.coffee'
 {DataQuery} = require './data/data-query.coffee'
+{DataFormat} = require './data/data-format.coffee'
+{DataDetail} = require './data/data-detail.coffee'
 {MetadataQuery} = require './metadata/metadata-query.coffee'
+{MetadataFormat} = require './metadata/metadata-format.coffee'
+{MetadataDetail} = require './metadata/metadata-detail.coffee'
+{MetadataReferences} = require './metadata/metadata-references.coffee'
+{MetadataType} = require './metadata/metadata-type.coffee'
+{Service} = require './service/service.coffee'
 {UrlGenerator} = require './utils/url-generator.coffee'
+{ApiVersion} = require './utils/api-version.coffee'
+{SdmxPatterns} = require './utils/sdmx-patterns.coffee'
 
 getService = (input) ->
   if typeof input is 'object'
@@ -25,7 +33,23 @@ getUrl = (query, service) ->
 
   return new UrlGenerator().getUrl q, s
 
-exports.getService = getService
-exports.getDataQuery = getDataQuery
-exports.getMetadataQuery = getMetadataQuery
-exports.getUrl = getUrl
+module.exports =
+  getService: getService
+  getDataQuery: getDataQuery
+  getMetadataQuery: getMetadataQuery
+  getUrl: getUrl
+  data:
+    DataQuery: DataQuery
+    DataFormat: DataFormat
+    DataDetail: DataDetail
+  metadata:
+    MetadataQuery: MetadataQuery
+    MetadataFormat: MetadataFormat
+    MetadataDetail: MetadataDetail
+    MetadataReferences: MetadataReferences
+    MetadataType: MetadataType
+  service:
+    Service: Service
+  utils:
+    ApiVersion: ApiVersion
+    SdmxPatterns: SdmxPatterns
