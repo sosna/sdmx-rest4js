@@ -16,9 +16,8 @@ defaults =
 
 canHaveItem = (query, errors) ->
   allowed = query.item is 'all' or isItemScheme query.resource
-  unless allowed
-    errors.push "#{query.resource} is not an item scheme and therefore it is \
-    not possible to query by item"
+  errors.push "#{query.resource} is not an item scheme and therefore it is \
+  not possible to query by item" unless allowed
   allowed
 
 validQuery = (query) ->
@@ -36,45 +35,18 @@ validQuery = (query) ->
 # A query for structural metadata, as defined by the SDMX RESTful API.
 query = class MetadataQuery
 
-  defaults: Object.freeze defaults
-
-  constructor: (@resource) ->
-
-  agency: (@agencyId) ->
-    @
-
-  id: (@artefactId) ->
-    @
-
-  version: (@ver) ->
-    @
-
-  item: (@itemId) ->
-    @
-
-  detail: (@info) ->
-    @
-
-  references: (@refs) ->
-    @
-
-  build: ->
+  @from: (opts) ->
     query =
-      resource: @resource
-      agency: @agencyId ? defaults.agency
-      id: @artefactId ? defaults.id
-      version: @ver ? defaults.version
-      detail: @info ? defaults.detail
-      references: @refs ? defaults.references
-      item: @itemId ? defaults.item
+      resource: opts?.resource
+      agency: opts?.agency ? defaults.agency
+      id: opts?.id ? defaults.id
+      version: opts?.version ? defaults.version
+      detail: opts?.detail ? defaults.detail
+      references: opts?.references ? defaults.references
+      item: opts?.item ? defaults.item
     input = validQuery query
     throw Error createErrorMessage(input.errors, 'metadata query') \
       unless input.isValid
     query
-
-  @from: (options) ->
-    new MetadataQuery(options?.resource).agency(options?.agency)
-    .id(options?.id).version(options?.version).item(options?.item)
-    .detail(options?.detail).references(options?.references).build()
 
 exports.MetadataQuery = query
