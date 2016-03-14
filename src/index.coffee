@@ -39,17 +39,13 @@ module.exports =
   getMetadataQuery: getMetadataQuery
   getUrl: getUrl
   data:
-    DataQuery: DataQuery
     DataFormat: DataFormat
     DataDetail: DataDetail
   metadata:
-    MetadataQuery: MetadataQuery
     MetadataFormat: MetadataFormat
     MetadataDetail: MetadataDetail
     MetadataReferences: MetadataReferences
     MetadataType: MetadataType
-  service:
-    Service: Service
   utils:
     ApiVersion: ApiVersion
     SdmxPatterns: SdmxPatterns
