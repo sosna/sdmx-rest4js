@@ -6,11 +6,10 @@ defaults =
 
 isValidUrl = (url, errors) ->
   valid = url
-  unless valid
-    errors.push "#{url} is not in a valid url"
+  errors.push "#{url} is not in a valid url" unless valid
   valid
 
-validService = (q) ->
+isValidService = (q) ->
   errors = []
   isValid = isValidUrl(q.url, errors) and
     isValidEnum(q.api, ApiVersion, 'versions of the SDMX RESTful API', errors)
@@ -18,33 +17,20 @@ validService = (q) ->
 
 service = class Service
 
-  defaults: Object.freeze defaults
-
   @ECB:
     id: 'ECB'
     name: 'European Central Bank'
     api: ApiVersion.SDMX_REST_v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
 
-  constructor: (@url) ->
-
-  provider: (@id, @name) ->
-    @
-
-  api: (@version) ->
-    @
-
-  build: ->
+  @from: (opts) ->
     service =
-      id: @id
-      name: @name
-      url: @url
-      api: @version ? defaults.api
-    input = validService service
+      id: opts?.id
+      name: opts?.name
+      url: opts?.url
+      api: opts?.api ? defaults.api
+    input = isValidService service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
     service
-
-  @from: (opts) ->
-    new Service(opts?.url).provider(opts?.id, opts?.name).api(opts.api).build()
 
 exports.Service = service

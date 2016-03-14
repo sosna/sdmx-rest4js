@@ -7,7 +7,7 @@ assert = require('chai').assert
 describe 'Service', ->
 
   it 'should have the expected properties', ->
-    service = new Service('http://test.com').build()
+    service = Service.from({url: 'http://test.com'})
     service.should.be.an 'object'
     service.should.have.property 'id'
     service.should.have.property 'name'
@@ -16,7 +16,7 @@ describe 'Service', ->
 
   it 'should have the expected defaults', ->
     url = 'http://test.com'
-    service = new Service(url).build()
+    service = Service.from({url: url})
     service.should.have.property('api').that.equals ApiVersion.LATEST
     service.should.have.property('id').that.is.undefined
     service.should.have.property('name').that.is.undefined
@@ -26,22 +26,22 @@ describe 'Service', ->
     id = 'TEST'
     name = 'Test provider'
 
-    service = new Service('http://test.com').provider(id).build()
+    service = Service.from({url: 'http://test.com', id: id})
     service.should.have.property('id').that.equals id
     service.should.have.property('name').that.is.undefined
 
-    service = new Service('http://test.com').provider(id, name).build()
+    service = Service.from({url: 'http://test.com', id: id, name: name})
     service.should.have.property('id').that.equals id
     service.should.have.property('name').that.equals name
 
   it 'should be possible to set an API version', ->
     api = ApiVersion.SDMX_REST_v1_0_0
-    service = new Service('http://test.com').api(api).build()
+    service = Service.from({url: 'http://test.com', api: api})
     service.should.have.property('api').that.equals api
 
   it 'should not be possible to not set a url', ->
     try
-      service = new Service().build()
+      service = Service.from({})
       assert.fail 'An error should have been triggered'
     catch error
       error.message.should.contain 'Not a valid service'
@@ -49,36 +49,11 @@ describe 'Service', ->
 
   it 'should not be possible to set an invalid API version', ->
     try
-      service = new Service('http://test.com').api('test').build()
+      service = Service.from({url: 'http://test.com', api: 'test'})
       assert.fail 'An error should have been triggered'
     catch error
       error.message.should.contain 'Not a valid service'
       error.message.should.contain 'versions of the SDMX RESTful API'
-
-  it 'should be possible to get the default options', ->
-    service = new Service('http://test.com')
-    service.should.have.property 'defaults'
-    service.defaults.should.have.property 'api'
-
-  it 'should not be possible to change the default options', ->
-    service = new Service('http://test.com')
-    service.should.have.property 'defaults'
-    service.defaults.should.be.frozen
-
-  it 'should be possible to pass an object with options to create a service', ->
-    opts =
-      url: 'test.com'
-      id: 'TEST'
-    service = Service.from(opts)
-    service.should.be.an 'object'
-    service.should.have.property 'id'
-    service.should.have.property 'name'
-    service.should.have.property 'url'
-    service.should.have.property 'api'
-    service.id.should.equal opts.id
-    service.url.should.equal opts.url
-    service.should.have.property('name').that.is.undefined
-    service.api.should.equal ApiVersion.LATEST
 
   it 'should be possible to instantiate a service using its ID', ->
     service = Service.ECB
