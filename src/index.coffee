@@ -10,6 +10,7 @@
 {UrlGenerator} = require './utils/url-generator'
 {ApiVersion} = require './utils/api-version'
 {SdmxPatterns} = require './utils/sdmx-patterns'
+fetch = require 'isomorphic-fetch'
 
 getService = (input) ->
   if typeof input is 'object'
@@ -33,11 +34,27 @@ getUrl = (query, service) ->
 
   return new UrlGenerator().getUrl q, s
 
+checkStatus = (query, response) ->
+  code  = response?.status
+  unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
+    throw Error "Request failed with error code #{code}"
+
+request = (query, service, opts) ->
+  url = getUrl query, service
+  fetch(url)
+    .then((response) ->
+      checkStatus query, response
+      response.text())
+    .then((body) -> body)
+    .catch((error) ->
+      throw Error "Request failed: #{error}")
+
 module.exports =
   getService: getService
   getDataQuery: getDataQuery
   getMetadataQuery: getMetadataQuery
   getUrl: getUrl
+  request: request
   data:
     DataFormat: DataFormat
     DataDetail: DataDetail
