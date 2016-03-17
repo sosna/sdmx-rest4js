@@ -1,4 +1,4 @@
-{ApiVersion} = require '../../src/utils/api-version'
+{ApiVersion} = require '../utils/api-version'
 {isValidEnum, createErrorMessage} = require '../utils/validators'
 
 defaults =
