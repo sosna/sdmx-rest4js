@@ -187,3 +187,9 @@ describe 'API', ->
       {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, 'ECB'
     response.should.be.fulfilled
     response.should.not.be.rejected
+
+  it 'should throw an exception when not a valid URL', ->
+    response = sdmxrest.request \
+      {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, {url: 'ws.test'}
+    response.should.not.be.fulfilled
+    response.should.be.rejected

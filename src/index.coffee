@@ -41,7 +41,7 @@ checkStatus = (query, response) ->
 
 request = (query, service, opts) ->
   url = getUrl query, service
-  fetch(url)
+  fetch(url, opts)
     .then((response) ->
       checkStatus query, response
       response.text())
