@@ -166,7 +166,11 @@ getUrl = (query, service) ->
   return new UrlGenerator().getUrl q, s
 
 #
-# Executes the supplied query against the supplied service.
+# Executes the supplied query against the supplied service and returns a
+# Promise.
+#
+# The returned Promise should be handled using the *then* and *catch* methods
+# offered by a Promise.
 #
 # @example Executes the supplied query against the supplied service
 #   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB')
@@ -175,6 +179,8 @@ getUrl = (query, service) ->
 #   service to return a compressed SDMX-JSON message.
 #   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB',
 #     {headers: {accept: "application/json", accept-encoding: "gzip"}})
+#     .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
 #
 # @param [Object] query the query to be executed
 # @param [Object|String] service the service against which the query should be
