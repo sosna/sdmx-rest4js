@@ -178,7 +178,7 @@ getUrl = (query, service) ->
 # @example Executes the supplied query against the supplied service, asking the
 #   service to return a compressed SDMX-JSON message.
 #   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB',
-#     {headers: {accept: "application/json", accept-encoding: "gzip"}})
+#     {headers: {accept: DataFormat.SDMX_JSON, accept-encoding: "gzip"}})
 #     .then(function(data) {console.log(data);})
 #     .catch(function(error) {console.log(error);});
 #
