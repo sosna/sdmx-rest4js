@@ -13,19 +13,17 @@ defaults =
 
 isValidHistory = (input, errors) ->
   valid = typeof input is 'boolean'
-  unless valid
-    errors.push "#{input} is not a valid value for history. Must be true or \
-    false"
+  errors.push "#{input} is not a valid value for history. Must be true or \
+  false" unless valid
   valid
 
 isValidNObs = (input, name, errors) ->
   valid = typeof input is 'number' and input > 0
-  unless valid
-    errors.push "#{input} is not a valid value for #{name}. Must be a positive \
-    integer"
+  errors.push "#{input} is not a valid value for #{name}. Must be a positive \
+  integer" unless valid
   valid
 
-validQuery = (q) ->
+isValidQuery = (q) ->
   errors = []
   isValid = isValidPattern(q.flow, FlowRefType, 'flows', errors) and
     isValidPattern(q.key, SeriesKeyType, 'series key', errors) and
@@ -43,63 +41,22 @@ validQuery = (q) ->
 # A query for data, as defined by the SDMX RESTful API.
 query = class DataQuery
 
-  defaults: Object.freeze defaults
-
-  constructor: (@flow) ->
-
-  key: (@series) ->
-    @
-
-  provider: (@providerRef) ->
-    @
-
-  start: (@startPeriod) ->
-    @
-
-  end: (@endPeriod) ->
-    @
-
-  updatedAfter: (@lastQuery) ->
-    @
-
-  firstNObs: (@firstN) ->
-    @
-
-  lastNObs: (@lastN) ->
-    @
-
-  obsDimension: (@dim) ->
-    @
-
-  detail: (@info) ->
-    @
-
-  history: (@hist) ->
-    @
-
-  build: ->
+  @from: (opts) ->
     query =
-      flow: @flow
-      key: @series ? defaults.key
-      provider: @providerRef ? defaults.provider
-      start: @startPeriod
-      end: @endPeriod
-      updatedAfter: @lastQuery
-      firstNObs: @firstN
-      lastNObs: @lastN
-      obsDimension: @dim ? defaults.obsDimension
-      detail: @info ? defaults.detail
-      history: @hist ? defaults.history
-    input = validQuery query
+      flow: opts?.flow
+      key: opts?.key ? defaults.key
+      provider: opts?.provider ? defaults.provider
+      start: opts?.start
+      end: opts?.end
+      updatedAfter: opts?.updatedAfter
+      firstNObs: opts?.firstNObs
+      lastNObs: opts?.lastNObs
+      obsDimension: opts?.obsDimension ? defaults.obsDimension
+      detail: opts?.detail ? defaults.detail
+      history: opts?.history ? defaults.history
+    input = isValidQuery query
     throw Error createErrorMessage(input.errors, 'data query') \
       unless input.isValid
     query
-
-  @from: (options) ->
-    new DataQuery(options?.flow).key(options?.key).provider(options?.provider)
-      .start(options?.start).end(options?.end)
-      .updatedAfter(options?.updatedAfter).firstNObs(options?.firstNObs)
-      .lastNObs(options?.lastNObs).obsDimension(options?.obsDimension)
-      .detail(options?.detail).history(options?.history).build()
 
 exports.DataQuery = query

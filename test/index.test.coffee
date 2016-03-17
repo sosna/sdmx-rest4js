@@ -1,5 +1,11 @@
 sdmxrest = require '../src/index'
 {ApiVersion} = require '../src/utils/api-version'
+chai = require 'chai'
+chaiAsPromised = require 'chai-as-promised'
+chai.use chaiAsPromised
+should = chai.should()
+assert = chai.assert
+nock = require 'nock'
 
 describe 'API', ->
 
@@ -8,20 +14,17 @@ describe 'API', ->
     sdmxrest.should.have.property 'getDataQuery'
     sdmxrest.should.have.property 'getMetadataQuery'
     sdmxrest.should.have.property 'getUrl'
+    sdmxrest.should.have.property 'request'
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.should.have.property('metadata').that.is.an 'object'
-    sdmxrest.should.have.property('service').that.is.an 'object'
     sdmxrest.should.have.property('utils').that.is.an 'object'
     sdmxrest.should.have.property('data').that.is.an 'object'
-    sdmxrest.data.should.have.property 'DataQuery'
     sdmxrest.data.should.have.property 'DataFormat'
     sdmxrest.data.should.have.property 'DataDetail'
     sdmxrest.metadata.should.have.property 'MetadataDetail'
     sdmxrest.metadata.should.have.property 'MetadataFormat'
-    sdmxrest.metadata.should.have.property 'MetadataQuery'
     sdmxrest.metadata.should.have.property 'MetadataReferences'
     sdmxrest.metadata.should.have.property 'MetadataType'
-    sdmxrest.service.should.have.property 'Service'
     sdmxrest.utils.should.have.property 'ApiVersion'
     sdmxrest.utils.should.have.property 'SdmxPatterns'
 
@@ -161,3 +164,32 @@ describe 'API', ->
       assert.fail 'An error should have been triggered'
     catch error
       error.message.should.contain 'Unknown or invalid service'
+
+  it 'should offer the possibility to execute a request', ->
+    query = nock('http://sdw-wsrest.ecb.europa.eu')
+      .get((uri) -> uri.indexOf('EXR') > -1)
+      .reply 200, 'OK'
+    response = sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+    response.should.eventually.equal 'OK'
+
+  it 'should throw an exception in case of issues with a request', ->
+    query = nock('http://sdw-wsrest.ecb.europa.eu')
+      .get((uri) -> uri.indexOf('TEST') > -1)
+      .reply 404
+    response = sdmxrest.request {flow: 'TEST'}, 'ECB'
+    response.should.be.rejected
+
+  it 'should not throw an except for a 404 with updatedAfter', ->
+    query = nock('http://sdw-wsrest.ecb.europa.eu')
+      .get((uri) -> uri.indexOf('ICP') > -1)
+      .reply 404
+    response = sdmxrest.request \
+      {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, 'ECB'
+    response.should.be.fulfilled
+    response.should.not.be.rejected
+
+  it 'should throw an exception when not a valid URL', ->
+    response = sdmxrest.request \
+      {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, {url: 'ws.test'}
+    response.should.not.be.fulfilled
+    response.should.be.rejected
