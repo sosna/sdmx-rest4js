@@ -35,7 +35,7 @@ describe 'Service', ->
     service.should.have.property('name').that.equals name
 
   it 'should be possible to set an API version', ->
-    api = ApiVersion.SDMX_REST_v1_0_0
+    api = ApiVersion.v1_0_0
     service = Service.from({url: 'http://test.com', api: api})
     service.should.have.property('api').that.equals api
 

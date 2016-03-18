@@ -20,8 +20,26 @@ service = class Service
   @ECB:
     id: 'ECB'
     name: 'European Central Bank'
-    api: ApiVersion.SDMX_REST_v1_0_2
+    api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
+
+  @SDMXGR:
+    id: 'SDMXGR'
+    name: 'SDMX Global Registry'
+    api: ApiVersion.v1_1_0
+    url: 'http://registry.sdmx.org/FusionRegistry/ws/rest'
+
+  @EUROSTAT:
+    id: 'EUROSTAT'
+    name: 'Eurostat'
+    api: ApiVersion.v1_0_2
+    url: 'http://www.ec.europa.eu/eurostat/SDMX/diss-web/rest'
+
+  @OECD:
+    id: 'OECD'
+    name: 'Organisation for Economic Co-operation and Development'
+    api: ApiVersion.v1_0_2
+    url: 'http://stats.oecd.org/SDMX-JSON'
 
   @from: (opts) ->
     service =
