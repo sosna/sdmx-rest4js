@@ -30,7 +30,7 @@ describe 'URL Generator', ->
     })
     service = Service.from({
       url: 'http://test.com'
-      api: ApiVersion.SDMX_REST_v1_1_0
+      api: ApiVersion.v1_1_0
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)
@@ -72,7 +72,7 @@ describe 'URL Generator', ->
     })
     service = Service.from({
       url: 'http://test.com'
-      api: ApiVersion.SDMX_REST_v1_1_0
+      api: ApiVersion.v1_1_0
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)
@@ -84,7 +84,7 @@ describe 'URL Generator', ->
     query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
     service = Service.from({
       url: 'http://test.com'
-      api: ApiVersion.SDMX_REST_v1_1_0
+      api: ApiVersion.v1_1_0
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)
@@ -110,7 +110,7 @@ describe 'URL Generator', ->
     })
     service = Service.from({
       url: 'http://test.com'
-      api: ApiVersion.SDMX_REST_v1_0_2
+      api: ApiVersion.v1_0_2
     })
     gen = new UrlGenerator()
     url = gen.getUrl(query, service)

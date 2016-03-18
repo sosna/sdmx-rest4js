@@ -20,7 +20,7 @@ service = class Service
   @ECB:
     id: 'ECB'
     name: 'European Central Bank'
-    api: ApiVersion.SDMX_REST_v1_0_2
+    api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
 
   @from: (opts) ->
