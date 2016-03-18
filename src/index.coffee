@@ -23,7 +23,7 @@ checkStatus = (query, response) ->
 # This library offers a few predefined services, which you can access using the
 # service identifier.
 #
-# @example Get a predefined services
+# @example Get a predefined service
 #   sdmxrest.getService('ECB')
 #
 # In case the service to be accessed is not yet predefined, an object with the
@@ -33,12 +33,12 @@ checkStatus = (query, response) ->
 #   sdmxrest.getService({url: 'http://ws-entry-point'})
 #
 # The expected properties for the object are:
-# - *url*: **Mandatory** - the entry point of the SDMX 2.1 RESTful web service
-# - *api*: **Optional** - the version of the SDMX 2.1 RESTful API supported by
+# - *url* - the entry point of the SDMX 2.1 RESTful web service
+# - *api* (optional) - the version of the SDMX 2.1 RESTful API supported by
 #   the service. If not supplied, it will default to the most recent version of
 #   the SDMX RESTful API (1.1.0 at the moment)
-# - *id*: **Optional** - an identifier for the web service
-# - *name*: **Optional** - a label for the web service
+# - *id* (optional) - an identifier for the web service
+# - *name* (optional) - a label for the web service
 #
 # @param [Object|String] input the ID of a predefined service or an object with
 #   the information about the service to be instantiated
@@ -59,23 +59,22 @@ getService = (input) ->
 #
 # The expected properties (and their default values) are:
 # - *flow*: **Mandatory** - the id of the dataflow of the data to be returned
-# - *key*: **Optional** - the key of the data to be returned. Defaults to *all*.
-# - *provider*: **Optional** - the provider of the data to be returned.
-#   Defaults to *all*.
-# - *start*: **Optional** - the start period for which data should be returned
-# - *end*: **Optional** - the end period for which data should be returned
-# - *updatedAfter*: **Optional** - instructs the service to return what has
+# - *key* (optional) - the key of the data to be returned (default: all)
+# - *provider* (optional) - the provider of the data (default: all)
+# - *start* (optional) - the start period for which data should be returned
+# - *end* (optional) - the end period for which data should be returned
+# - *updatedAfter* (optional) - instructs the service to return what has
 #   changed since the supplied time stamp.
-# - *firstNObs*: **Optional** - the number of observations to be returned,
+# - *firstNObs* (optional) - the number of observations to be returned,
 #   starting from the first observation
-# - *lastNObs*: **Optional** - the number of observations to be returned,
+# - *lastNObs* (optional) - the number of observations to be returned,
 #   starting from the last observation
-# - *obsDimension*: **Optional** - the ID of the dimension to be attached at the
-#   observation level. Default to *TIME_PERIOD*.
-# - *detail*: **Optional** - the desired amount of information to be returned.
-#   Defaults to *full*.
-# - *history*: **Optional** - Whether previous versions of the data should be
-#   returned. Defaults to false.
+# - *obsDimension* (optional) - the ID of the dimension to be attached at the
+#   observation level (default TIME_PERIOD).
+# - *detail* (optional) - the desired amount of information to be returned
+#   (default: full).
+# - *history* (optional) - Whether previous versions of the data should be
+#   returned (default: false).
 #
 # @example Create a query for all data belonging to the EXR dataflow
 #   sdmxrest.getDataQuery({flow: 'EXR'})
@@ -108,18 +107,17 @@ getDataQuery = (input) ->
 #
 # The expected properties (and their default values) are:
 # - *resource*: **Mandatory** - the type of structural metadata to be returned
-# - *agency*: **Optional** - the agency maintaining the metadata to be returned.
-#   Defaults to *all*.
-# - *id*: **Optional** - the id of the metadata to be returned. Defaults to
-#   *all*.
-# - *version*: **Optional** - the version of the metadata to be returned.
-#   Defaults to *latest*.
-# - *item*: **Optional** - for item schemes query, the id of the item to be
-#   returned. Defaults to *all*.
-# - *detail*: **Optional** - the desired amount of information to be returned.
-#  Defaults to *full*.
-# - *references*: **Optional** - whether to return the artefacts referenced by,
-#   or that use, the metadata to be returned. Defaults to *none*.
+# - *agency* (optional) - the agency maintaining the metadata to be returned
+#   (default: all)
+# - *id* (optional) - the id of the metadata to be returned (default: all)
+# - *version* (optional) - the version of the metadata to be returned
+#   (default: latest)
+# - *item* (optional) - for item schemes query, the id of the item to be
+#   returned (default: all)
+# - *detail* (optional) - the desired amount of information to be returned
+#  (default: full)
+# - *references* (optional) - whether to return the artefacts referenced by,
+#   or that use, the metadata to be returned (default: none)
 #
 # @example Create a query for all codelists maintained by the ECB
 #   sdmxrest.getMetadataQuery({resource: 'codelist', agency: 'ECB'})
@@ -127,7 +125,7 @@ getDataQuery = (input) ->
 # @example Create a query for the BOP data structure maintained by the IMF,
 #   along with all the codelists and concepts used in the data structure
 #   sdmxrest.getMetadataQuery({resource: 'datastructure', agency: 'IMF',
-#     references: 'descendants'})
+#     id: 'BOP', references: 'descendants'})
 #
 # @param [Object] input an object with the desired filters for the query
 #
@@ -174,6 +172,8 @@ getUrl = (query, service) ->
 #
 # @example Executes the supplied query against the supplied service
 #   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB')
+ #    .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
 #
 # @example Executes the supplied query against the supplied service, asking the
 #   service to return a compressed SDMX-JSON message.

@@ -5,10 +5,10 @@ should = require('chai').should()
 describe 'Service types', ->
 
   expectedServices = [
-    'sdmx-rest-v1.0.0'
-    'sdmx-rest-v1.0.1'
-    'sdmx-rest-v1.0.2'
-    'sdmx-rest-v1.1.0'
+    'v1.0.0'
+    'v1.0.1'
+    'v1.0.2'
+    'v1.1.0'
   ]
 
   it 'should contain all expected service types and only those', ->
