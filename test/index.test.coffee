@@ -19,14 +19,19 @@ describe 'API', ->
     sdmxrest.should.have.property('metadata').that.is.an 'object'
     sdmxrest.should.have.property('utils').that.is.an 'object'
     sdmxrest.should.have.property('data').that.is.an 'object'
-    sdmxrest.data.should.have.property 'DataFormat'
-    sdmxrest.data.should.have.property 'DataDetail'
-    sdmxrest.metadata.should.have.property 'MetadataDetail'
-    sdmxrest.metadata.should.have.property 'MetadataFormat'
-    sdmxrest.metadata.should.have.property 'MetadataReferences'
-    sdmxrest.metadata.should.have.property 'MetadataType'
-    sdmxrest.utils.should.have.property 'ApiVersion'
-    sdmxrest.utils.should.have.property 'SdmxPatterns'
+    sdmxrest.data.should.have.property('DataFormat').that.is.not.undefined
+    sdmxrest.data.should.have.property('DataDetail').that.is.not.undefined
+    sdmxrest.metadata.should.have.property('MetadataDetail')
+      .that.is.not.undefined
+    sdmxrest.metadata.should.have.property('MetadataFormat')
+      .that.is.not.undefined
+    sdmxrest.metadata.should.have.property('MetadataReferences')
+      .that.is.not.undefined
+    sdmxrest.metadata.should.have.property('MetadataType').that.is.not.undefined
+    sdmxrest.utils.should.have.property('ApiVersion').that.is.not.undefined
+    sdmxrest.utils.should.have.property('SdmxPatterns').that.is.not.undefined
+    sdmxrest.utils.SdmxPatterns.should.have.property('IDType')
+      .that.is.a 'regexp'
 
   it 'should offer to get an existing service', ->
     service = sdmxrest.getService 'ECB'
