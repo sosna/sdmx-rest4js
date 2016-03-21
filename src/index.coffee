@@ -9,7 +9,7 @@
 {Service} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
 {ApiVersion} = require './utils/api-version'
-{SdmxPatterns} = require './utils/sdmx-patterns'
+SdmxPatterns = require './utils/sdmx-patterns'
 fetch = require 'isomorphic-fetch'
 
 checkStatus = (query, response) ->
