@@ -30,7 +30,7 @@ references =
 
 # All the predefined SDMX types are valid references, except for the 'catch all'
 # `structure`
-(() ->
+( ->
   references[key] = val for key, val of MetadataType when val isnt 'structure'
 )()
 
