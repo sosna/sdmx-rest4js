@@ -7,3 +7,6 @@ engines:
     enabled: true
 ratings:
   paths:
+  - src/**
+exclude_paths:
+- test/**
