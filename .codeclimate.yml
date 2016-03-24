@@ -1,7 +1,13 @@
 engines:
   coffeelint:
     enabled: true
+    config: coffeelint.json
   fixme:
+    enabled: true
+  nodesecurity:
     enabled: true
 ratings:
   paths:
+  - src/**
+exclude_paths:
+- test/**
