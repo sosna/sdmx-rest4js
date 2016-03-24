@@ -1,6 +1,7 @@
 engines:
   coffeelint:
     enabled: true
+    config: coffeelint.json
   fixme:
     enabled: true
   nodesecurity:
