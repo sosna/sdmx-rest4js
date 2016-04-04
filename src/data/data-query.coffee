@@ -38,13 +38,18 @@ isValidQuery = (q) ->
     isValidHistory(q.history, errors)
   {isValid: isValid, errors: errors}
 
+toKeyString = (dims) ->
+  ((if Array.isArray d then d.join('+') else d ? '') for d in dims).join('.')
+
 # A query for data, as defined by the SDMX RESTful API.
 query = class DataQuery
 
   @from: (opts) ->
+    key = opts?.key ? defaults.key
+    key = toKeyString key if Array.isArray key
     query =
       flow: opts?.flow
-      key: opts?.key ? defaults.key
+      key: key
       provider: opts?.provider ? defaults.provider
       start: opts?.start
       end: opts?.end
