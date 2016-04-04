@@ -288,3 +288,39 @@ describe 'Data queries', ->
     catch error
       error.message.should.contain 'Not a valid data query'
       error.message.should.contain 'key'
+
+  it 'should be possible to pass an array of array to build the key', ->
+    values = [
+      ['D']
+      ['NOK', 'RUB', 'CHF']
+      ['EUR']
+      []
+      ['A']
+    ]
+    query = DataQuery.from({flow: 'EXR', key: values})
+    query.should.have.property('flow').that.equals 'EXR'
+    query.should.have.property('key').that.equals 'D.NOK+RUB+CHF.EUR..A'
+
+  it 'should be possible to pass an array with dodgy input to build the key', ->
+    values = [
+      ''
+      ['NOK', 'RUB', 'CHF']
+      ['EUR']
+      undefined
+      null
+    ]
+    query = DataQuery.from({flow: 'EXR', key: values})
+    query.should.have.property('flow').that.equals 'EXR'
+    query.should.have.property('key').that.equals '.NOK+RUB+CHF.EUR..'
+
+  it 'should be possible to pass mixed content to build the key', ->
+    values = [
+      'D'
+      ['NOK', 'RUB', 'CHF']
+      ''
+      'SP00'
+      undefined
+    ]
+    query = DataQuery.from({flow: 'EXR', key: values})
+    query.should.have.property('flow').that.equals 'EXR'
+    query.should.have.property('key').that.equals 'D.NOK+RUB+CHF..SP00.'

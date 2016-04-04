@@ -15,6 +15,12 @@ isValidService = (q) ->
     isValidEnum(q.api, ApiVersion, 'versions of the SDMX RESTful API', errors)
   {isValid: isValid, errors: errors}
 
+createSecureInstance = (service) ->
+  secure = {}
+  secure[key] = service[key] for key of service
+  secure.url = secure.url.replace('http', 'https')
+  secure
+
 service = class Service
 
   @ECB:
@@ -40,6 +46,10 @@ service = class Service
     name: 'Organisation for Economic Co-operation and Development'
     api: ApiVersion.v1_0_2
     url: 'http://stats.oecd.org/SDMX-JSON'
+
+  @ECB_S: createSecureInstance @ECB
+  @SDMXGR_S: createSecureInstance @SDMXGR
+  @OECD_S: createSecureInstance @OECD
 
   @from: (opts) ->
     service =
