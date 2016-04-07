@@ -28,12 +28,12 @@ describe 'Metadata types', ->
     'structure'
   ]
 
-  it 'should contain all expected types of metadata and only those', ->
+  it 'contains all the expected types of metadata and only those', ->
     count = 0
     for key, value of MetadataType
       expectedTypes.should.contain value
       count++
     count.should.equal expectedTypes.length
 
-  it 'should be immutable', ->
+  it 'is immutable', ->
     MetadataType.should.be.frozen
