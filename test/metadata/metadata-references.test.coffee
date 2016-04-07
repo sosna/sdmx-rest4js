@@ -32,12 +32,12 @@ describe 'Metadata references', ->
     'all'
   ]
 
-  it 'should contain all expected references and only those', ->
+  it 'contains all the expected references and only those', ->
     count = 0
     for key, value of MetadataReferences
       expectedReferences.should.contain value
       count++
     count.should.equal expectedReferences.length
 
-  it 'should be immutable', ->
+  it 'is immutable', ->
     MetadataReferences.should.be.frozen

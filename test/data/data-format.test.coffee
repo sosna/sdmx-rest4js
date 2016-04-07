@@ -13,12 +13,12 @@ describe 'Data formats', ->
     'application/vnd.sdmx.data+json;version=1.0.0-cts'
   ]
 
-  it 'should contain all expected formats and only those', ->
+  it 'contains all the expected formats and only those', ->
     count = 0
     for key, value of DataFormat
       expected.should.contain value
       count++
     count.should.equal expected.length + 3 # 3 shortcuts to latest versions
 
-  it 'should be immutable', ->
+  it 'is immutable', ->
     DataFormat.should.be.frozen
