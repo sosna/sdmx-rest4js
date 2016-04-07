@@ -6,7 +6,7 @@ assert = require('chai').assert
 
 describe 'Data queries', ->
 
-  it 'should have the expected properties', ->
+  it 'has the expected properties', ->
     q = DataQuery.from {flow: 'ICP'}
     q.should.be.an 'object'
     q.should.have.property 'flow'
@@ -21,7 +21,7 @@ describe 'Data queries', ->
     q.should.have.property 'detail'
     q.should.have.property 'history'
 
-  it 'should have the expected defaults', ->
+  it 'has the expected defaults', ->
     flow = 'EXR'
     q = DataQuery.from {flow: flow}
     q.should.have.property('flow').that.equals flow
@@ -36,291 +36,289 @@ describe 'Data queries', ->
     q.should.have.property('detail').that.equals 'full'
     q.should.have.property('history').that.is.false
 
-  it 'should be possible to pass an object with options to create the query', ->
-    opts =
-      flow: 'EXR'
-      key: 'A.CHF.EUR.SP00.A'
-      provider: 'ECB'
-      start: '2007'
-      detail: 'dataonly'
-    q = DataQuery.from(opts)
-    q.should.have.property('flow').that.equals opts.flow
-    q.should.have.property('key').that.equals opts.key
-    q.should.have.property('provider').that.equals opts.provider
-    q.should.have.property('start').that.equals opts.start
-    q.should.have.property('end').that.is.undefined
-    q.should.have.property('updatedAfter').that.is.undefined
-    q.should.have.property('firstNObs').that.is.undefined
-    q.should.have.property('lastNObs').that.is.undefined
-    q.should.have.property('obsDimension').that.equals 'TIME_PERIOD'
-    q.should.have.property('detail').that.equals opts.detail
-    q.should.have.property('history').that.is.false
+  describe 'when setting the flow', ->
 
-  it 'should be possible to filter by dimension values', ->
-    flow = 'EXR'
-    key = '.CHF+NOK.EUR..2'
-    q = DataQuery.from({flow: flow, key: key})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('key').that.equals key
+    it 'throws an exception when the flow is not set', ->
+      try
+        DataQuery.from({flow: ' '})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'flow'
 
-  it 'should be possible to filter by provider', ->
-    flow = 'EXR'
-    provider = 'ECB'
-    q = DataQuery.from({flow: flow, provider: provider})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('provider').that.equals provider
+      try
+        DataQuery.from({flow: undefined})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'flow'
 
-    provider = 'SDMX,ECB'
-    q = DataQuery.from({flow: flow, provider: provider})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('provider').that.equals provider
+    it 'throws an exception when the flow is invalid', ->
+      try
+        DataQuery.from({flow: '1%'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'flow'
 
-  it 'should be possible to filter by years', ->
-    flow = 'EXR'
-    start = '2000'
-    end = '2004'
-    q = DataQuery.from({flow: flow, start: start, end: end})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('start').that.equals start
-    q.should.have.property('end').that.equals end
+  describe 'when setting the key', ->
 
-  it 'should be possible to filter by months', ->
-    flow = 'EXR'
-    start = '2000-01'
-    end = '2004-12'
-    q = DataQuery.from({flow: flow, start: start, end: end})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('start').that.equals start
-    q.should.have.property('end').that.equals end
+    it 'a string representing the key can be used', ->
+      flow = 'EXR'
+      key = '.CHF+NOK.EUR..2'
+      q = DataQuery.from({flow: flow, key: key})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('key').that.equals key
 
-  it 'should be possible to filter by dates', ->
-    flow = 'EXR'
-    start = '2000-01-01'
-    end = '2004-12-31'
-    q = DataQuery.from({flow: flow, start: start, end: end})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('start').that.equals start
-    q.should.have.property('end').that.equals end
+    it 'an array of arrays can be used to build the key', ->
+      values = [
+        ['D']
+        ['NOK', 'RUB', 'CHF']
+        ['EUR']
+        []
+        ['A']
+      ]
+      query = DataQuery.from({flow: 'EXR', key: values})
+      query.should.have.property('flow').that.equals 'EXR'
+      query.should.have.property('key').that.equals 'D.NOK+RUB+CHF.EUR..A'
 
-  it 'should be possible to filter by quarters', ->
-    flow = 'EXR'
-    start = '2000-Q1'
-    end = '2004-Q4'
-    q = DataQuery.from({flow: flow, start: start, end: end})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('start').that.equals start
-    q.should.have.property('end').that.equals end
+    it 'a mixed array can be used to build the key', ->
+      values = [
+        'D'
+        ['NOK', 'RUB', 'CHF']
+        ''
+        'SP00'
+        undefined
+      ]
+      query = DataQuery.from({flow: 'EXR', key: values})
+      query.should.have.property('flow').that.equals 'EXR'
+      query.should.have.property('key').that.equals 'D.NOK+RUB+CHF..SP00.'
 
-  it 'should be possible to filter by semesters', ->
-    flow = 'EXR'
-    start = '2000-S1'
-    end = '2004-S4'
-    q = DataQuery.from({flow: flow, start: start, end: end})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('start').that.equals start
-    q.should.have.property('end').that.equals end
+    it 'an exotic array can be used to build the key', ->
+      values = [
+        ''
+        ['NOK', 'RUB', 'CHF']
+        ['EUR']
+        undefined
+        null
+      ]
+      query = DataQuery.from({flow: 'EXR', key: values})
+      query.should.have.property('flow').that.equals 'EXR'
+      query.should.have.property('key').that.equals '.NOK+RUB+CHF.EUR..'
 
-  it 'should be possible to filter by weeks', ->
-    flow = 'EXR'
-    start = '2000-W01'
-    end = '2004-W53'
-    q = DataQuery.from({flow: flow, start: start, end: end})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('start').that.equals start
-    q.should.have.property('end').that.equals end
+    it 'throws an exception if the value for the key is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', key: '1%'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'key'
 
-  it 'should be possible to request the deltas', ->
-    flow = 'EXR'
-    last = '2016-03-04T09:57:00Z'
-    q = DataQuery.from({flow: flow, updatedAfter: last})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('updatedAfter').that.equals last
+  describe 'when setting the provider', ->
 
-  it 'should be possible to set the desired number of observations', ->
-    flow = 'EXR'
-    firstN = 1
-    lastN = 3
-    q = DataQuery.from({flow: flow, firstNObs: firstN, lastNObs: lastN})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('firstNObs').that.equals firstN
-    q.should.have.property('lastNObs').that.equals lastN
+    it 'a string representing the provider can be used', ->
+      flow = 'EXR'
+      provider = 'ECB'
+      q = DataQuery.from({flow: flow, provider: provider})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('provider').that.equals provider
 
-  it 'should be possible to set the dimension at the observation level', ->
-    flow = 'ECB,EXR,latest'
-    dim = 'CURRENCY'
-    q = DataQuery.from({flow: flow, obsDimension: dim})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('obsDimension').that.equals dim
+      provider = 'SDMX,ECB'
+      q = DataQuery.from({flow: flow, provider: provider})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('provider').that.equals provider
 
-  it 'should be possible to set the desired level of detail', ->
-    flow = 'ECB,EXR,1.0'
-    detail = DataDetail.NO_DATA
-    q = DataQuery.from({flow: flow, detail: detail})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('detail').that.equals detail
+    it 'throws an exception if the value for provider is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', provider: 'SDMX,ECB,2.0'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'provider'
 
-  it 'should be possible to request historical data', ->
-    flow = 'ECB,EXR'
-    q = DataQuery.from({flow: flow, history: true})
-    q.should.have.property('flow').that.equals flow
-    q.should.have.property('history').that.is.true
+  describe 'when setting the start and end periods', ->
 
-  it 'should not be possible to not set the flow', ->
-    try
-      query = DataQuery.from({flow: ' '})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'flow'
+    it 'a string representing years can be passed', ->
+      flow = 'EXR'
+      start = '2000'
+      end = '2004'
+      q = DataQuery.from({flow: flow, start: start, end: end})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('start').that.equals start
+      q.should.have.property('end').that.equals end
 
-    try
-      query = DataQuery.from({flow: undefined})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'flow'
+    it 'a string representing months can be passed', ->
+      flow = 'EXR'
+      start = '2000-01'
+      end = '2004-12'
+      q = DataQuery.from({flow: flow, start: start, end: end})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('start').that.equals start
+      q.should.have.property('end').that.equals end
 
-  it 'should not be possible to set an invalid flow', ->
-    try
-      query = DataQuery.from({flow: '1%'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'flow'
+    it 'a string representing days can be passed', ->
+      flow = 'EXR'
+      start = '2000-01-01'
+      end = '2004-12-31'
+      q = DataQuery.from({flow: flow, start: start, end: end})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('start').that.equals start
+      q.should.have.property('end').that.equals end
 
-  it 'must have history as boolean', ->
-    try
-      query = DataQuery.from({flow: 'EXR', history: 'test'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'history'
+    it 'a string representing quarters can be passed', ->
+      flow = 'EXR'
+      start = '2000-Q1'
+      end = '2004-Q4'
+      q = DataQuery.from({flow: flow, start: start, end: end})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('start').that.equals start
+      q.should.have.property('end').that.equals end
 
-  it 'should not be possible to set an unknown value for detail', ->
-    try
-      query = DataQuery.from({flow: 'EXR', detail: 'test'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'details'
+    it 'a string representing semesters can be passed', ->
+      flow = 'EXR'
+      start = '2000-S1'
+      end = '2004-S4'
+      q = DataQuery.from({flow: flow, start: start, end: end})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('start').that.equals start
+      q.should.have.property('end').that.equals end
 
-  it 'should not be possible to set a wrong value for obs dimension', ->
-    try
-      query = DataQuery.from({flow: 'EXR', obsDimension: '*&^%$#@!)'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'dimension'
+    it 'a string representing weeks can be passed', ->
+      flow = 'EXR'
+      start = '2000-W01'
+      end = '2004-W53'
+      q = DataQuery.from({flow: flow, start: start, end: end})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('start').that.equals start
+      q.should.have.property('end').that.equals end
 
-  it 'should not be possible to set a wrong value for lastNObs', ->
-    try
-      query = DataQuery.from({flow: 'EXR', lastNObs: -2})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'lastN'
+    it 'throws an exception if the value for start period is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', start: 'SDMX,ECB,2.0'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'start'
 
-    try
-      query = DataQuery.from({flow: 'EXR', lastNObs: 'test'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'lastN'
+    it 'throws an exception if the value for end period is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', end: 'SDMX,ECB,2.0'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'end'
 
-  it 'should not be possible to set a wrong value for firstNObs', ->
-    try
-      query = DataQuery.from({flow: 'EXR', firstNObs: -2})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'firstN'
+  describe 'when setting the updatedAfter timestamp', ->
 
-    try
-      query = DataQuery.from({flow: 'EXR', firstNObs: 'test'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'firstN'
+    it 'a string representing a timestamp can be passed', ->
+      flow = 'EXR'
+      last = '2016-03-04T09:57:00Z'
+      q = DataQuery.from({flow: flow, updatedAfter: last})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('updatedAfter').that.equals last
 
-  it 'should not be possible to set a wrong value for updatedAfter', ->
-    try
-      query = DataQuery.from({flow: 'EXR', updatedAfter: 'now'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'updatedAfter'
+    it 'throws an exception if the value for updatedAfter is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', updatedAfter: 'now'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'updatedAfter'
 
-    try
-      query = DataQuery.from({flow: 'EXR', updatedAfter: '2000-Q1'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'updatedAfter'
+      try
+        DataQuery.from({flow: 'EXR', updatedAfter: '2000-Q1'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'updatedAfter'
 
-  it 'should not be possible to set a wrong value for provider', ->
-    try
-      query = DataQuery.from({flow: 'EXR', provider: 'SDMX,ECB,2.0'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'provider'
+  describe 'when setting the first and last number of observations', ->
 
-  it 'should not be possible to set a wrong value for start period', ->
-    try
-      query = DataQuery.from({flow: 'EXR', start: 'SDMX,ECB,2.0'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'start'
+    it 'integers representing the desired number of obs can be passed', ->
+      flow = 'EXR'
+      firstN = 1
+      lastN = 3
+      q = DataQuery.from({flow: flow, firstNObs: firstN, lastNObs: lastN})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('firstNObs').that.equals firstN
+      q.should.have.property('lastNObs').that.equals lastN
 
-  it 'should not be possible to set a wrong value for end period', ->
-    try
-      query = DataQuery.from({flow: 'EXR', end: 'SDMX,ECB,2.0'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'end'
+    it 'throws an exception if the value for firstObs is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', firstNObs: -2})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'firstN'
 
-  it 'should not be possible to set a wrong value for the key', ->
-    try
-      query = DataQuery.from({flow: 'EXR', key: '1%'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'Not a valid data query'
-      error.message.should.contain 'key'
+      try
+        DataQuery.from({flow: 'EXR', firstNObs: 'test'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'firstN'
 
-  it 'should be possible to pass an array of array to build the key', ->
-    values = [
-      ['D']
-      ['NOK', 'RUB', 'CHF']
-      ['EUR']
-      []
-      ['A']
-    ]
-    query = DataQuery.from({flow: 'EXR', key: values})
-    query.should.have.property('flow').that.equals 'EXR'
-    query.should.have.property('key').that.equals 'D.NOK+RUB+CHF.EUR..A'
+    it 'throws an exception if the value for lastNObs is invalid', ->
+      try
+        DataQuery.from({flow: 'EXR', lastNObs: -2})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'lastN'
 
-  it 'should be possible to pass an array with dodgy input to build the key', ->
-    values = [
-      ''
-      ['NOK', 'RUB', 'CHF']
-      ['EUR']
-      undefined
-      null
-    ]
-    query = DataQuery.from({flow: 'EXR', key: values})
-    query.should.have.property('flow').that.equals 'EXR'
-    query.should.have.property('key').that.equals '.NOK+RUB+CHF.EUR..'
+      try
+        DataQuery.from({flow: 'EXR', lastNObs: 'test'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'lastN'
 
-  it 'should be possible to pass mixed content to build the key', ->
-    values = [
-      'D'
-      ['NOK', 'RUB', 'CHF']
-      ''
-      'SP00'
-      undefined
-    ]
-    query = DataQuery.from({flow: 'EXR', key: values})
-    query.should.have.property('flow').that.equals 'EXR'
-    query.should.have.property('key').that.equals 'D.NOK+RUB+CHF..SP00.'
+  describe 'when setting the dimension at observation level', ->
+
+    it 'a string representing the dimension at the obs level can be passed', ->
+      flow = 'ECB,EXR,latest'
+      dim = 'CURRENCY'
+      q = DataQuery.from({flow: flow, obsDimension: dim})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('obsDimension').that.equals dim
+
+    it 'throws an exception if value for obs dimension is invalid', ->
+      try
+        query = DataQuery.from({flow: 'EXR', obsDimension: '*&^%$#@!)'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'dimension'
+
+  describe 'when setting the desired level of detail', ->
+
+    it 'a string representing the desired level of detail can be passed', ->
+      flow = 'ECB,EXR,1.0'
+      detail = DataDetail.NO_DATA
+      q = DataQuery.from({flow: flow, detail: detail})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('detail').that.equals detail
+
+    it 'throws an exception if the value for the level of detail is unknown', ->
+      try
+        DataQuery.from({flow: 'EXR', detail: 'test'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'details'
+
+  describe 'when setting whether historical data should be returned', ->
+
+    it 'a boolean can be passed', ->
+      flow = 'ECB,EXR'
+      q = DataQuery.from({flow: flow, history: true})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('history').that.is.true
+
+    it 'throws an exception if the value for history is not a boolean', ->
+      try
+        DataQuery.from({flow: 'EXR', history: 'test'})
+        assert.fail 'An error should have been triggered'
+      catch error
+        error.message.should.contain 'Not a valid data query'
+        error.message.should.contain 'history'

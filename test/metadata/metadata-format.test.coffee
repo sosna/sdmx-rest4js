@@ -8,12 +8,12 @@ describe 'Metadata formats', ->
     'application/vnd.sdmx.structure+xml;version=2.1'
   ]
 
-  it 'should contain all expected formats and only those', ->
+  it 'contains all the expected formats and only those', ->
     count = 0
     for key, value of MetadataFormat
       expectedFormats.should.contain value
       count++
     count.should.equal expectedFormats.length
 
-  it 'should be immutable', ->
+  it 'is immutable', ->
     MetadataFormat.should.be.frozen
