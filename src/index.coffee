@@ -182,9 +182,25 @@ getUrl = (query, service) ->
 #     .then(function(data) {console.log(data);})
 #     .catch(function(error) {console.log(error);});
 #
-# @param [Object] query the query to be executed
+# In case you already have an SDMX 2.1 RESTful query string, you can also use it
+# with execute().
+#
+# @example Fetches the supplied URL
+#   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR')
+ #    .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
+#
+# @example Fetches the supplied URL, asking the service to return a compressed
+# SDMX-JSON message
+#   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR',
+#     {headers: {accept: DataFormat.SDMX_JSON, accept-encoding: "gzip"}})
+#     .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
+#
+# @param [Object|String] query the query to be executed
 # @param [Object|String] service the service against which the query should be
-#   executed
+#   executed. This should not be set in case an SDMX 2.1 query string is passed
+#   as 1st parameter
 # @param [Object] opts additional options for the request. See the whatwg fetch
 #   specification for additional information.
 #
@@ -194,8 +210,10 @@ getUrl = (query, service) ->
 # @see #getMetadataQuery
 # @see #getService
 #
-request = (query, service, opts) ->
-  url = getUrl query, service
+request = (params...) ->
+  query = params[0]
+  url = if typeof query is 'string' then query else getUrl query, params[1]
+  opts = if typeof query is 'string' then params[1] else params[2]
   fetch(url, opts)
     .then((response) ->
       checkStatus query, response

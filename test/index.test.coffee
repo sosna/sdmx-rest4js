@@ -180,11 +180,18 @@ describe 'API', ->
 
   describe 'when using execute()', ->
 
-    it 'offers the possibility to execute a request', ->
+    it 'offers to execute a request from a query and service objects', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
       response = sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+    it 'offers to execute a request from an SDMX RESTful query string', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response = sdmxrest.request 'http://sdw-wsrest.ecb.europa.eu/service/EXR'
       response.should.eventually.equal 'OK'
 
     it 'throws an exception in case of issues with a request', ->
