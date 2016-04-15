@@ -56,14 +56,15 @@ describe 'API', ->
 
     it 'fails if the requested service is unknown', ->
       test = -> sdmxrest.getService 'UNKNOWN'
-      should.Throw(test, Error, 'Unknown or invalid service')
+      should.Throw(test, ReferenceError,
+        'is not in the list of predefined services')
 
     it 'fails if the input is not of the expected type', ->
       test = -> sdmxrest.getService 2
-      should.Throw(test, Error, 'Unknown or invalid service')
+      should.Throw(test, TypeError, 'Invalid type of ')
 
       test = -> sdmxrest.getService undefined
-      should.Throw(test, Error, 'Unknown or invalid service')
+      should.Throw(test, TypeError, 'Invalid type of ')
 
   describe 'when using getDataQuery()', ->
 
@@ -141,10 +142,10 @@ describe 'API', ->
 
       query = sdmxrest.getDataQuery {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}
       test = -> sdmxrest.getUrl query, sdmxrest.getService 'TEST'
-      should.Throw(test, Error, 'Unknown or invalid service')
+      should.Throw(test, Error, 'not in the list of predefined services')
 
       test = -> sdmxrest.getUrl query
-      should.Throw(test, Error, 'Unknown or invalid service')
+      should.Throw(test, Error, 'Service is a mandatory parameter')
 
   describe 'when using execute()', ->
 
@@ -167,7 +168,7 @@ describe 'API', ->
         .get((uri) -> uri.indexOf('TEST') > -1)
         .reply 404
       response = sdmxrest.request {flow: 'TEST'}, 'ECB'
-      response.should.be.rejected
+      response.should.be.rejectedWith RangeError
 
     it 'does not throw an exception for a 404 with updatedAfter', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')

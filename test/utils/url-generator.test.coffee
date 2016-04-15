@@ -141,6 +141,10 @@ describe 'URL Generator', ->
     test = -> new UrlGenerator().getUrl()
     should.Throw(test, Error, 'not a valid SDMX data or metadata query')
 
+  it 'throws an exception if the input is not a data or a metadata query', ->
+    test = -> new UrlGenerator().getUrl({test: 'Test'})
+    should.Throw(test, TypeError, 'not a valid SDMX data or metadata query')
+
   it 'throws an exception if no service is supplied', ->
     query = MetadataQuery.from({
       resource: 'codelist'
@@ -151,6 +155,12 @@ describe 'URL Generator', ->
     test = -> new UrlGenerator().getUrl query
     should.Throw(test, Error, 'not a valid service')
 
-  it 'throws an exception if the input is not a data or a metadata query', ->
-    test = -> new UrlGenerator().getUrl({test: 'Test'})
-    should.Throw(test, Error, 'not a valid SDMX data or metadata query')
+  it 'throws an exception if a service without a URL is supplied', ->
+    query = MetadataQuery.from({
+      resource: 'codelist'
+      id: 'CL_FREQ'
+      agency: 'ECB'
+      item: 'A'
+    })
+    test = -> new UrlGenerator().getUrl query, {id: 'test'}
+    should.Throw(test, ReferenceError, 'not a valid service')

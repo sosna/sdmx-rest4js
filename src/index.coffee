@@ -15,7 +15,7 @@ fetch = require 'isomorphic-fetch'
 checkStatus = (query, response) ->
   code  = response?.status
   unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
-    throw Error "Request failed with error code #{code}"
+    throw RangeError "Request failed with error code #{code}"
 
 #
 # Get an SDMX 2.1 RESTful web service against which queries can be executed.
@@ -52,7 +52,10 @@ getService = (input) ->
     return Service.from input
   if typeof input is 'string' and Service[input]
     return Service[input]
-  throw Error "Unknown or invalid service #{input}"
+  if typeof input is 'string'
+    throw ReferenceError "#{input} is not in the list of predefined services"
+  else
+    throw TypeError "Invalid type of #{input}. Expected an object or a string"
 
 #
 # Get an SDMX 2.1 RESTful data query.
@@ -157,6 +160,7 @@ getMetadataQuery = (input) ->
 getUrl = (query, service) ->
   # URL generation requires all fields to be set. The 3 next lines are just
   # in case partial objects are passed to the function.
+  throw ReferenceError 'Service is a mandatory parameter' unless service
   s = getService service
   throw Error 'Not a valid query' unless query?.flow or query?.resource
   q = if query.flow then getDataQuery query else getMetadataQuery query
@@ -219,8 +223,6 @@ request = (params...) ->
       checkStatus query, response
       response.text())
     .then((body) -> body)
-    .catch((error) ->
-      throw Error "Request failed: #{error}")
 
 module.exports =
   getService: getService
