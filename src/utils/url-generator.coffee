@@ -4,7 +4,8 @@
 {MetadataQuery} = require '../metadata/metadata-query'
 
 createEntryPoint = (service) ->
-  throw Error "#{service.url} is not a valid service" unless service.url
+  throw ReferenceError "#{service.url} is not a valid service"\
+    unless service.url
   url = service.url
   url = url + '/' unless service.url.indexOf('/', service.url.length - 1) > -1
   url
@@ -44,7 +45,7 @@ generator = class Generator
     else if @query?.resource?
       url = createMetadataQuery(@query, @service)
     else
-      throw Error "#{@query} is not a valid SDMX data or metadata query"
+      throw TypeError "#{@query} is not a valid SDMX data or metadata query"
     url
 
 exports.UrlGenerator = generator
