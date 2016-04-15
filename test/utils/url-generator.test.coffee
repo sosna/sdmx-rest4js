@@ -1,5 +1,4 @@
 should = require('chai').should()
-assert = require('chai').assert
 
 {Service} = require '../../src/service/service'
 {ApiVersion} = require '../../src/utils/api-version'
@@ -17,8 +16,7 @@ describe 'URL Generator', ->
       query =
         MetadataQuery.from({resource: 'codelist', id: 'CL_FREQ', agency: 'ECB'})
       service = Service.ECB
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'supports item queries but only for API version 1.1.0 and above', ->
@@ -34,8 +32,7 @@ describe 'URL Generator', ->
         url: 'http://test.com'
         api: ApiVersion.v1_1_0
       })
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'defaults to API version 1.1.0', ->
@@ -50,8 +47,7 @@ describe 'URL Generator', ->
       service = Service.from({
         url: 'http://test.com/'
       })
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
   describe 'for data queries', ->
@@ -78,8 +74,7 @@ describe 'URL Generator', ->
         url: 'http://test.com'
         api: ApiVersion.v1_1_0
       })
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'generates a URL for a partial data query', ->
@@ -90,8 +85,7 @@ describe 'URL Generator', ->
         url: 'http://test.com'
         api: ApiVersion.v1_1_0
       })
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'supports history but only for API version 1.1.0 and above', ->
@@ -116,8 +110,7 @@ describe 'URL Generator', ->
         url: 'http://test.com'
         api: ApiVersion.v1_0_2
       })
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'defaults to API version 1.1.0', ->
@@ -141,36 +134,23 @@ describe 'URL Generator', ->
       service = Service.from({
         url: 'http://test.com'
       })
-      gen = new UrlGenerator()
-      url = gen.getUrl(query, service)
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
   it 'throws an exception if no query is supplied', ->
-    try
-      gen = new UrlGenerator()
-      gen.getUrl()
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'not a valid SDMX data or metadata query'
+    test = -> new UrlGenerator().getUrl()
+    should.Throw(test, Error, 'not a valid SDMX data or metadata query')
 
   it 'throws an exception if no service is supplied', ->
-    try
-      query = MetadataQuery.from({
-        resource: 'codelist'
-        id: 'CL_FREQ'
-        agency: 'ECB'
-        item: 'A'
-      })
-      gen = new UrlGenerator()
-      gen.getUrl query
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'not a valid service'
+    query = MetadataQuery.from({
+      resource: 'codelist'
+      id: 'CL_FREQ'
+      agency: 'ECB'
+      item: 'A'
+    })
+    test = -> new UrlGenerator().getUrl query
+    should.Throw(test, Error, 'not a valid service')
 
   it 'throws an exception if the input is not a data or a metadata query', ->
-    try
-      gen = new UrlGenerator()
-      gen.getUrl({test: 'Test'})
-      assert.fail 'An error should have been triggered'
-    catch error
-      error.message.should.contain 'not a valid SDMX data or metadata query'
+    test = -> new UrlGenerator().getUrl({test: 'Test'})
+    should.Throw(test, Error, 'not a valid SDMX data or metadata query')
