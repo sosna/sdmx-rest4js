@@ -58,12 +58,13 @@ addHeaders = (opts) ->
 # valid *url* property.
 #
 getService = (input) ->
-  if typeof input is 'object'
-    return Service.from input
-  if typeof input is 'string' and Service[input]
-    return Service[input]
   if typeof input is 'string'
-    throw ReferenceError "#{input} is not in the list of predefined services"
+    throw ReferenceError "#{input} is not in the list of predefined services" \
+      unless Service[input]
+    Service[input]
+  else if input instanceof Object \
+  and Object.prototype.toString.call(input) is '[object Object]'
+    Service.from input
   else
     throw TypeError "Invalid type of #{input}. Expected an object or a string"
 

@@ -66,6 +66,9 @@ describe 'API', ->
       test = -> sdmxrest.getService undefined
       should.Throw(test, TypeError, 'Invalid type of ')
 
+      test = -> sdmxrest.getService []
+      should.Throw(test, TypeError, 'Invalid type of ')
+
   describe 'when using getDataQuery()', ->
 
     it 'offers to create a data query from properties', ->
