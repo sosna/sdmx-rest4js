@@ -1,5 +1,4 @@
 should = require('chai').should()
-assert = require('chai').assert
 
 {DataDetail} = require '../../src/data/data-detail'
 {DataQuery} = require '../../src/data/data-query'
@@ -39,27 +38,15 @@ describe 'Data queries', ->
   describe 'when setting the flow', ->
 
     it 'throws an exception when the flow is not set', ->
-      try
-        DataQuery.from({flow: ' '})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'flow'
+      test = -> DataQuery.from({flow: ' '})
+      should.Throw(test, Error, 'Not a valid data query')
 
-      try
-        DataQuery.from({flow: undefined})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'flow'
+      test = -> DataQuery.from({flow: undefined})
+      should.Throw(test, Error, 'Not a valid data query')
 
     it 'throws an exception when the flow is invalid', ->
-      try
-        DataQuery.from({flow: '1%'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'flow'
+      test = -> DataQuery.from({flow: '1%'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the key', ->
 
@@ -107,12 +94,8 @@ describe 'Data queries', ->
       query.should.have.property('key').that.equals '.NOK+RUB+CHF.EUR..'
 
     it 'throws an exception if the value for the key is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', key: '1%'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'key'
+      test = -> DataQuery.from({flow: 'EXR', key: '1%'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the provider', ->
 
@@ -129,12 +112,8 @@ describe 'Data queries', ->
       q.should.have.property('provider').that.equals provider
 
     it 'throws an exception if the value for provider is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', provider: 'SDMX,ECB,2.0'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'provider'
+      test = -> DataQuery.from({flow: 'EXR', provider: 'SDMX,ECB,2.0'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the start and end periods', ->
 
@@ -193,20 +172,12 @@ describe 'Data queries', ->
       q.should.have.property('end').that.equals end
 
     it 'throws an exception if the value for start period is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', start: 'SDMX,ECB,2.0'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'start'
+      test = -> DataQuery.from({flow: 'EXR', start: 'SDMX,ECB,2.0'})
+      should.Throw(test, Error, 'Not a valid data query')
 
     it 'throws an exception if the value for end period is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', end: 'SDMX,ECB,2.0'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'end'
+      test = -> DataQuery.from({flow: 'EXR', end: 'SDMX,ECB,2.0'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the updatedAfter timestamp', ->
 
@@ -218,19 +189,11 @@ describe 'Data queries', ->
       q.should.have.property('updatedAfter').that.equals last
 
     it 'throws an exception if the value for updatedAfter is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', updatedAfter: 'now'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'updatedAfter'
+      test = -> DataQuery.from({flow: 'EXR', updatedAfter: 'now'})
+      should.Throw(test, Error, 'Not a valid data query')
 
-      try
-        DataQuery.from({flow: 'EXR', updatedAfter: '2000-Q1'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'updatedAfter'
+      test = -> DataQuery.from({flow: 'EXR', updatedAfter: '2000-Q1'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the first and last number of observations', ->
 
@@ -244,34 +207,18 @@ describe 'Data queries', ->
       q.should.have.property('lastNObs').that.equals lastN
 
     it 'throws an exception if the value for firstObs is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', firstNObs: -2})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'firstN'
+      test = -> DataQuery.from({flow: 'EXR', firstNObs: -2})
+      should.Throw(test, Error, 'Not a valid data query')
 
-      try
-        DataQuery.from({flow: 'EXR', firstNObs: 'test'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'firstN'
+      test = -> DataQuery.from({flow: 'EXR', firstNObs: 'test'})
+      should.Throw(test, Error, 'Not a valid data query')
 
     it 'throws an exception if the value for lastNObs is invalid', ->
-      try
-        DataQuery.from({flow: 'EXR', lastNObs: -2})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'lastN'
+      test = -> DataQuery.from({flow: 'EXR', lastNObs: -2})
+      should.Throw(test, Error, 'Not a valid data query')
 
-      try
-        DataQuery.from({flow: 'EXR', lastNObs: 'test'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'lastN'
+      test = -> DataQuery.from({flow: 'EXR', lastNObs: 'test'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the dimension at observation level', ->
 
@@ -283,12 +230,8 @@ describe 'Data queries', ->
       q.should.have.property('obsDimension').that.equals dim
 
     it 'throws an exception if value for obs dimension is invalid', ->
-      try
-        query = DataQuery.from({flow: 'EXR', obsDimension: '*&^%$#@!)'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'dimension'
+      test = -> DataQuery.from({flow: 'EXR', obsDimension: '*&^%$#@!)'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the desired level of detail', ->
 
@@ -300,12 +243,8 @@ describe 'Data queries', ->
       q.should.have.property('detail').that.equals detail
 
     it 'throws an exception if the value for the level of detail is unknown', ->
-      try
-        DataQuery.from({flow: 'EXR', detail: 'test'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'details'
+      test = -> DataQuery.from({flow: 'EXR', detail: 'test'})
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting whether historical data should be returned', ->
 
@@ -316,9 +255,5 @@ describe 'Data queries', ->
       q.should.have.property('history').that.is.true
 
     it 'throws an exception if the value for history is not a boolean', ->
-      try
-        DataQuery.from({flow: 'EXR', history: 'test'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
-        error.message.should.contain 'history'
+      test = -> DataQuery.from({flow: 'EXR', history: 'test'})
+      should.Throw(test, Error, 'Not a valid data query')

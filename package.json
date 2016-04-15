@@ -39,10 +39,10 @@
     "coffeelint": "1.15.0",
     "commitizen": "2.7.6",
     "cz-conventional-changelog": "1.1.5",
-    "ghooks": "1.1.1",
-    "istanbul": "0.4.2",
+    "ghooks": "1.2.1",
+    "istanbul": "0.4.3",
     "mocha": "2.4.5",
-    "nock": "7.7.2",
+    "nock": "8.0.0",
     "semantic-release": "4.3.5"
   },
   "config": {

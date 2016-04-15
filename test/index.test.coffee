@@ -4,7 +4,6 @@ chai = require 'chai'
 chaiAsPromised = require 'chai-as-promised'
 chai.use chaiAsPromised
 should = chai.should()
-assert = chai.assert
 nock = require 'nock'
 
 describe 'API', ->
@@ -56,24 +55,15 @@ describe 'API', ->
       service.should.have.property('api').that.equals ApiVersion.LATEST
 
     it 'fails if the requested service is unknown', ->
-      try
-        sdmxrest.getService 'UNKNOWN'
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getService 'UNKNOWN'
+      should.Throw(test, Error, 'Unknown or invalid service')
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getService 2
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getService 2
+      should.Throw(test, Error, 'Unknown or invalid service')
 
-      try
-        sdmxrest.getService undefined
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getService undefined
+      should.Throw(test, Error, 'Unknown or invalid service')
 
   describe 'when using getDataQuery()', ->
 
@@ -97,17 +87,11 @@ describe 'API', ->
       query.should.have.property('history').that.is.false
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getDataQuery undefined
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
+      test = -> sdmxrest.getDataQuery undefined
+      should.Throw(test, Error, 'Not a valid data query')
 
-      try
-        sdmxrest.getDataQuery {test: 'TEST'}
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
+      test = -> sdmxrest.getDataQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when using getMetadataQuery()', ->
 
@@ -127,17 +111,11 @@ describe 'API', ->
       query.should.have.property('references').that.equals 'none'
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getMetadataQuery undefined
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
+      test = -> sdmxrest.getMetadataQuery undefined
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        sdmxrest.getMetadataQuery {test: 'TEST'}
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
+      test = -> sdmxrest.getMetadataQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when using getUrl()', ->
 
@@ -158,25 +136,15 @@ describe 'API', ->
       url.should.contain 'CL_FREQ'
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid query'
+      test = -> sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'
+      should.Throw(test, Error, 'Not a valid query')
 
       query = sdmxrest.getDataQuery {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}
+      test = -> sdmxrest.getUrl query, sdmxrest.getService 'TEST'
+      should.Throw(test, Error, 'Unknown or invalid service')
 
-      try
-        sdmxrest.getUrl query, sdmxrest.getService 'TEST'
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
-
-      try
-        sdmxrest.getUrl query
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getUrl query
+      should.Throw(test, Error, 'Unknown or invalid service')
 
   describe 'when using execute()', ->
 
