@@ -12,10 +12,20 @@
 SdmxPatterns = require './utils/sdmx-patterns'
 fetch = require 'isomorphic-fetch'
 
+defaultHeaders =
+  'user-agent': 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
+
 checkStatus = (query, response) ->
   code  = response?.status
   unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
+
+addHeaders = (opts) ->
+  opts = opts ? {}
+  lHeaders = {}
+  lHeaders[key.toLowerCase()] = opts.headers[key] for key of opts.headers
+  opts.headers = Object.assign {}, defaultHeaders, lHeaders
+  opts
 
 #
 # Get an SDMX 2.1 RESTful web service against which queries can be executed.
@@ -218,7 +228,8 @@ request = (params...) ->
   query = params[0]
   url = if typeof query is 'string' then query else getUrl query, params[1]
   opts = if typeof query is 'string' then params[1] else params[2]
-  fetch(url, opts)
+  requestOptions = addHeaders opts
+  fetch(url, requestOptions)
     .then((response) ->
       checkStatus query, response
       response.text())

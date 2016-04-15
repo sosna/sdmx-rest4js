@@ -153,7 +153,9 @@ describe 'API', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
-      response = sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      opts = {headers: {'user-agent': 'test'}}
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
       response.should.eventually.equal 'OK'
 
     it 'offers to execute a request from an SDMX RESTful query string', ->
