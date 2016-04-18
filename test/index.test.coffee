@@ -156,9 +156,8 @@ describe 'API', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
-      opts = {headers: {'user-agent': 'test'}}
       response =
-        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
       response.should.eventually.equal 'OK'
 
     it 'offers to execute a request from an SDMX RESTful query string', ->
@@ -176,16 +175,100 @@ describe 'API', ->
       response.should.be.rejectedWith RangeError
 
     it 'does not throw an exception for a 404 with updatedAfter', ->
-      query = nock('http://stats.oecd.org')
-        .get((uri) -> uri.indexOf('EO') > -1)
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('ICP') > -1)
         .reply 404
       response = sdmxrest.request \
-        {flow: 'EO', updatedAfter: '2016-01-01T14:54:27Z'}, 'OECD'
+        {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, 'ECB'
       response.should.be.fulfilled
       response.should.not.be.rejected
 
     it 'throws an exception when the Service URL is invalid', ->
-      response = sdmxrest.request \
-        {flow: 'ICP'}, {url: 'ws.test'}
+      response = sdmxrest.request {flow: 'ICP'}, {url: 'ws.test'}
       response.should.not.be.fulfilled
       response.should.be.rejected
+
+    it 'adds an accept header to data queries if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].includes 'application/vnd.sdmx.data+json')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+    it 'adds an accept header to data URLs if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].includes 'application/vnd.sdmx.data+json')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      url = 'http://sdw-wsrest.ecb.europa.eu/service/data/EXR/A..EUR.SP00.A'
+      response = sdmxrest.request url
+      response.should.eventually.equal 'OK'
+
+    it 'does not overwrite the accept header passed by the client', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].includes 'application/xml')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      opts =
+        headers:
+          accept: 'application/xml'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+      response.should.eventually.equal 'OK'
+
+    it 'does not add an accept header to metadata URLs even if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) -> h[0] is '*/*')
+        .get((uri) -> uri.indexOf('CL_FREQ') > -1)
+        .reply 200, 'OK'
+      url = 'http://sdw-wsrest.ecb.europa.eu/service/codelist/ECB/CL_FREQ'
+      response = sdmxrest.request url
+      response.should.eventually.equal 'OK'
+
+    it 'adds a default user agent to queries', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('user-agent', (h) ->
+          h[0] is 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+    it 'does not overwrite the user agent passed by the client', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('user-agent', (h) -> h[0] is 'test')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      opts =
+        headers:
+          'user-agent': 'test'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+      response.should.eventually.equal 'OK'
+
+    it 'adds a default accept-encoding header to queries', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept-encoding', (h) -> h[0] is 'gzip,deflate')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+
+    it 'allows disabling content compression', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept-encoding', (h) -> h is undefined)
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      opts =
+        compress: false
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+      response.should.eventually.equal 'OK'

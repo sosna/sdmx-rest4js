@@ -19,13 +19,11 @@ checkStatus = (query, response) ->
   unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
 
-addHeaders = (opts, s) ->
+addHeaders = (opts, s, isDataQuery) ->
   opts = opts ? {}
   headers = {}
   headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
-  headers.accept = s.format unless headers.accept if s.format
-  headers['accept-encoding'] = s.compression unless headers['accept-encoding']\
-    if s.compression
+  headers.accept = s.format unless headers.accept if s.format and isDataQuery
   headers['user-agent'] = userAgent unless headers['user-agent']
   opts.headers = headers
   opts
@@ -237,7 +235,13 @@ request = (params...) ->
   s = if typeof q is 'string' then guessService q else getService params[1]
   u = if typeof q is 'string' then q else getUrl q, s
   o = if typeof q is 'string' then params[1] else params[2]
-  requestOptions = addHeaders o, s
+  isDataQuery = false
+  if typeof q is 'string' and q.includes '/data/'
+    isDataQuery = true
+  else if q.flow
+    isDataQuery = true
+
+  requestOptions = addHeaders o, s, isDataQuery
   fetch(u, requestOptions)
     .then((response) ->
       checkStatus q, response
