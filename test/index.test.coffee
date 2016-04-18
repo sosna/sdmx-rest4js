@@ -176,16 +176,16 @@ describe 'API', ->
       response.should.be.rejectedWith RangeError
 
     it 'does not throw an exception for a 404 with updatedAfter', ->
-      query = nock('http://sdw-wsrest.ecb.europa.eu')
-        .get((uri) -> uri.indexOf('ICP') > -1)
+      query = nock('http://stats.oecd.org')
+        .get((uri) -> uri.indexOf('EO') > -1)
         .reply 404
       response = sdmxrest.request \
-        {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, 'ECB'
+        {flow: 'EO', updatedAfter: '2016-01-01T14:54:27Z'}, 'OECD'
       response.should.be.fulfilled
       response.should.not.be.rejected
 
     it 'throws an exception when the Service URL is invalid', ->
       response = sdmxrest.request \
-        {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, {url: 'ws.test'}
+        {flow: 'ICP'}, {url: 'ws.test'}
       response.should.not.be.fulfilled
       response.should.be.rejected

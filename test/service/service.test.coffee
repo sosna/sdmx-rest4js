@@ -9,7 +9,7 @@ describe 'Service', ->
   it 'has the expected properties', ->
     service = Service.from({url: 'http://test.com'})
     service.should.be.an 'object'
-    service.should.include.keys ['id','name','api','url','compression','format']
+    service.should.include.keys ['id','name','api','url','format']
 
   it 'has the expected defaults', ->
     url = 'http://test.com'
@@ -66,9 +66,6 @@ describe 'Service', ->
       Service[s].should.have.property('url').that.is.not.undefined for s in i
       Service[s].url.should.contain 'http' for s in i when s.indexOf '_S' is -1
       Service[s].url.should.contain 'https' for s in i when s.indexOf('_S') > -1
-
-    it 'offers a default compression option for some predefined services', ->
-      Service['ECB'].should.have.property('compression').that.equals 'gzip'
 
     it 'offers a default format for some predefined services', ->
       format = DataFormat.SDMX_JSON

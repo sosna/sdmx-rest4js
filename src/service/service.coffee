@@ -29,7 +29,6 @@ service = class Service
     name: 'European Central Bank'
     api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
-    compression: 'gzip'
     format: DataFormat.SDMX_JSON
 
   @SDMXGR:
@@ -60,7 +59,6 @@ service = class Service
       name: opts?.name
       url: opts?.url
       api: opts?.api ? defaults.api
-      compression: opts?.compression
       format: opts?.format
     input = isValidService service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
