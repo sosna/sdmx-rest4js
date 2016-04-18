@@ -12,20 +12,25 @@
 SdmxPatterns = require './utils/sdmx-patterns'
 fetch = require 'isomorphic-fetch'
 
-defaultHeaders =
-  'user-agent': 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
+userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
 
 checkStatus = (query, response) ->
   code  = response?.status
   unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
 
-addHeaders = (opts) ->
+addHeaders = (opts, s, isDataQuery) ->
   opts = opts ? {}
-  lHeaders = {}
-  lHeaders[key.toLowerCase()] = opts.headers[key] for key of opts.headers
-  opts.headers = Object.assign {}, defaultHeaders, lHeaders
+  headers = {}
+  headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
+  headers.accept = s.format unless headers.accept if s.format and isDataQuery
+  headers['user-agent'] = userAgent unless headers['user-agent']
+  opts.headers = headers
   opts
+
+guessService = (u) ->
+  s = (Service[k] for own k of Service when u.startsWith Service[k]?.url)
+  return s[0] ? {}
 
 #
 # Get an SDMX 2.1 RESTful web service against which queries can be executed.
@@ -226,13 +231,20 @@ getUrl = (query, service) ->
 # @see #getService
 #
 request = (params...) ->
-  query = params[0]
-  url = if typeof query is 'string' then query else getUrl query, params[1]
-  opts = if typeof query is 'string' then params[1] else params[2]
-  requestOptions = addHeaders opts
-  fetch(url, requestOptions)
+  q = params[0]
+  s = if typeof q is 'string' then guessService q else getService params[1]
+  u = if typeof q is 'string' then q else getUrl q, s
+  o = if typeof q is 'string' then params[1] else params[2]
+  isDataQuery = false
+  if typeof q is 'string' and q.includes '/data/'
+    isDataQuery = true
+  else if q.flow
+    isDataQuery = true
+
+  requestOptions = addHeaders o, s, isDataQuery
+  fetch(u, requestOptions)
     .then((response) ->
-      checkStatus query, response
+      checkStatus q, response
       response.text())
     .then((body) -> body)
 

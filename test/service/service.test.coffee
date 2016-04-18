@@ -2,16 +2,14 @@ should = require('chai').should()
 
 {ApiVersion} = require '../../src/utils/api-version'
 {Service} = require '../../src/service/service'
+{DataFormat} = require '../../src/data/data-format'
 
 describe 'Service', ->
 
   it 'has the expected properties', ->
     service = Service.from({url: 'http://test.com'})
     service.should.be.an 'object'
-    service.should.have.property 'id'
-    service.should.have.property 'name'
-    service.should.have.property 'api'
-    service.should.have.property 'url'
+    service.should.include.keys ['id','name','api','url','format']
 
   it 'has the expected defaults', ->
     url = 'http://test.com'
@@ -21,7 +19,7 @@ describe 'Service', ->
     service.should.have.property('name').that.is.undefined
     service.should.have.property('url').that.equals url
 
-  describe 'when passing an object', ->
+  context 'when passing an object', ->
 
     it 'allows setting a provider', ->
       id = 'TEST'
@@ -48,7 +46,7 @@ describe 'Service', ->
       test = -> Service.from({})
       should.Throw(test, Error, 'url')
 
-  describe 'when passing an string', ->
+  context 'when passing an string', ->
 
     it 'offers access to predefined services', ->
       i = [
@@ -68,6 +66,10 @@ describe 'Service', ->
       Service[s].should.have.property('url').that.is.not.undefined for s in i
       Service[s].url.should.contain 'http' for s in i when s.indexOf '_S' is -1
       Service[s].url.should.contain 'https' for s in i when s.indexOf('_S') > -1
+
+    it 'offers a default format for some predefined services', ->
+      format = DataFormat.SDMX_JSON
+      Service['ECB'].should.have.property('format').that.equals format
 
     it 'offers access to secure instances of predefined services', ->
       s1 = Service.ECB
