@@ -29,7 +29,7 @@ addHeaders = (opts, s, isDataQuery) ->
   opts
 
 guessService = (u) ->
-  s = (Service[k] for own k of Service when u.startsWith Service[k]?.url)
+  s = (Service[k] for own k of Service when u.indexOf(Service[k]?.url) > -1)
   return s[0] ? {}
 
 #
@@ -236,7 +236,7 @@ request = (params...) ->
   u = if typeof q is 'string' then q else getUrl q, s
   o = if typeof q is 'string' then params[1] else params[2]
   isDataQuery = false
-  if typeof q is 'string' and q.includes '/data/'
+  if typeof q is 'string' and q.indexOf('/data/') > -1
     isDataQuery = true
   else if q.flow
     isDataQuery = true

@@ -191,7 +191,7 @@ describe 'API', ->
     it 'adds an accept header to data queries if the service has a default format', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('accept', (h) ->
-          h[0].includes 'application/vnd.sdmx.data+json')
+          h[0].indexOf('application/vnd.sdmx.data+json') > -1)
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
       response =
@@ -201,7 +201,7 @@ describe 'API', ->
     it 'adds an accept header to data URLs if the service has a default format', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('accept', (h) ->
-          h[0].includes 'application/vnd.sdmx.data+json')
+          h[0].indexOf('application/vnd.sdmx.data+json') > -1)
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
       url = 'http://sdw-wsrest.ecb.europa.eu/service/data/EXR/A..EUR.SP00.A'
@@ -211,7 +211,7 @@ describe 'API', ->
     it 'does not overwrite the accept header passed by the client', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('accept', (h) ->
-          h[0].includes 'application/xml')
+          h[0].indexOf('application/xml') > -1)
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
       opts =
