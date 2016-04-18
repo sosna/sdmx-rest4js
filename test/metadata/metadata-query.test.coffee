@@ -1,5 +1,4 @@
 should = require('chai').should()
-assert = require('chai').assert
 
 {MetadataDetail} = require '../../src/metadata/metadata-detail'
 {MetadataReferences} = require '../../src/metadata/metadata-references'
@@ -42,20 +41,12 @@ describe 'Metadata query', ->
       query.should.have.property('resource').that.equals resource
 
     it 'throws an exception if the resource type is not set', ->
-      try
-        MetadataQuery.from({})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'resources'
+      test = -> MetadataQuery.from({})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
     it 'throws an exception if the resource type is unknown', ->
-      try
-        MetadataQuery.from({resource: 'test'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'resources'
+      test = -> MetadataQuery.from({resource: 'test'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when setting an agency', ->
 
@@ -86,40 +77,20 @@ describe 'Metadata query', ->
       query.should.have.property('agency').that.equals agency
 
     it 'throws an exception when the agency id is invalid', ->
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, agency: '1A'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'agencies'
+      test = -> MetadataQuery.from({resource: 'codelist', agency: '1A'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, agency: ' '})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'agencies'
+      test = -> MetadataQuery.from({resource: 'codelist', agency: ' '})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, agency: '1$'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'agencies'
+      test = -> MetadataQuery.from({resource: 'codelist', agency: '$1'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, agency: '_A'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'agencies'
+      test = -> MetadataQuery.from({resource: 'codelist', agency: '_A'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, agency: '-A'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'agencies'
+      test = -> MetadataQuery.from({resource: 'codelist', agency: '-A'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when setting a resource id', ->
 
@@ -133,19 +104,11 @@ describe 'Metadata query', ->
       query.should.have.property('id').that.equals id
 
     it 'throws an exception if the resource id is invalid', ->
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, id: ' '})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'resource'
+      test = -> MetadataQuery.from({resource: 'codelist', id: ' '})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, id: 'A.B'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'resource'
+      test = -> MetadataQuery.from({resource: 'codelist', id: 'A.B'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when setting a version', ->
 
@@ -171,19 +134,11 @@ describe 'Metadata query', ->
       query.should.have.property('version').that.equals version
 
     it 'throws an exception if the version is invalid', ->
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, version: 'semver'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'version'
+      test = -> MetadataQuery.from({resource: 'codelist', version: 'semver'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, version: '1_2_3'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'version'
+      test = -> MetadataQuery.from({resource: 'codelist', version: '1_2_3'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when setting an item id', ->
 
@@ -193,27 +148,15 @@ describe 'Metadata query', ->
       query.should.have.property('item').that.equals item
 
     it 'throws an exception if the item id is invalid', ->
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, item: ' '})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'item'
+      test = -> MetadataQuery.from({resource: 'codelist', item: ' '})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, item: 'A*'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'item'
+      test = -> MetadataQuery.from({resource: 'codelist', item: 'A*'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
     it 'throws an exception when setting an item of a non item scheme query', ->
-      try
-        MetadataQuery.from({resource: MetadataType.DATAFLOW, item: 'A'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'item scheme'
+      test = -> MetadataQuery.from({resource: 'dataflow', item: 'A'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when setting the amount of details', ->
 
@@ -224,12 +167,8 @@ describe 'Metadata query', ->
       query.should.have.property('detail').that.equals detail
 
     it 'throws an exception of the value for detail is unknown', ->
-      try
-        MetadataQuery.from({resource: MetadataType.CODELIST, detail: 'test'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'details'
+      test = -> MetadataQuery.from({resource: 'dataflow', detail: 'test'})
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when setting the references to be resolved', ->
 
@@ -240,10 +179,5 @@ describe 'Metadata query', ->
       query.should.have.property('references').that.equals refs
 
     it 'throws an exception if the value for references is unknown', ->
-      try
-        query = MetadataQuery.from(
-          {resource: MetadataType.CODELIST, references: 'ref'})
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
-        error.message.should.contain 'references'
+      test = -> MetadataQuery.from({resource: 'dataflow', references: 'ref'})
+      should.Throw(test, Error, 'Not a valid metadata query')

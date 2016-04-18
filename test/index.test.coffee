@@ -4,7 +4,6 @@ chai = require 'chai'
 chaiAsPromised = require 'chai-as-promised'
 chai.use chaiAsPromised
 should = chai.should()
-assert = chai.assert
 nock = require 'nock'
 
 describe 'API', ->
@@ -56,24 +55,19 @@ describe 'API', ->
       service.should.have.property('api').that.equals ApiVersion.LATEST
 
     it 'fails if the requested service is unknown', ->
-      try
-        sdmxrest.getService 'UNKNOWN'
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getService 'UNKNOWN'
+      should.Throw(test, ReferenceError,
+        'is not in the list of predefined services')
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getService 2
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getService 2
+      should.Throw(test, TypeError, 'Invalid type of ')
 
-      try
-        sdmxrest.getService undefined
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getService undefined
+      should.Throw(test, TypeError, 'Invalid type of ')
+
+      test = -> sdmxrest.getService []
+      should.Throw(test, TypeError, 'Invalid type of ')
 
   describe 'when using getDataQuery()', ->
 
@@ -97,17 +91,11 @@ describe 'API', ->
       query.should.have.property('history').that.is.false
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getDataQuery undefined
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
+      test = -> sdmxrest.getDataQuery undefined
+      should.Throw(test, Error, 'Not a valid data query')
 
-      try
-        sdmxrest.getDataQuery {test: 'TEST'}
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid data query'
+      test = -> sdmxrest.getDataQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when using getMetadataQuery()', ->
 
@@ -127,17 +115,11 @@ describe 'API', ->
       query.should.have.property('references').that.equals 'none'
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getMetadataQuery undefined
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
+      test = -> sdmxrest.getMetadataQuery undefined
+      should.Throw(test, Error, 'Not a valid metadata query')
 
-      try
-        sdmxrest.getMetadataQuery {test: 'TEST'}
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid metadata query'
+      test = -> sdmxrest.getMetadataQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid metadata query')
 
   describe 'when using getUrl()', ->
 
@@ -158,25 +140,15 @@ describe 'API', ->
       url.should.contain 'CL_FREQ'
 
     it 'fails if the input is not of the expected type', ->
-      try
-        sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Not a valid query'
+      test = -> sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'
+      should.Throw(test, Error, 'Not a valid query')
 
       query = sdmxrest.getDataQuery {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}
+      test = -> sdmxrest.getUrl query, sdmxrest.getService 'TEST'
+      should.Throw(test, Error, 'not in the list of predefined services')
 
-      try
-        sdmxrest.getUrl query, sdmxrest.getService 'TEST'
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
-
-      try
-        sdmxrest.getUrl query
-        assert.fail 'An error should have been triggered'
-      catch error
-        error.message.should.contain 'Unknown or invalid service'
+      test = -> sdmxrest.getUrl query
+      should.Throw(test, Error, 'Service is a mandatory parameter')
 
   describe 'when using execute()', ->
 
@@ -184,7 +156,8 @@ describe 'API', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
-      response = sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
       response.should.eventually.equal 'OK'
 
     it 'offers to execute a request from an SDMX RESTful query string', ->
@@ -199,7 +172,7 @@ describe 'API', ->
         .get((uri) -> uri.indexOf('TEST') > -1)
         .reply 404
       response = sdmxrest.request {flow: 'TEST'}, 'ECB'
-      response.should.be.rejected
+      response.should.be.rejectedWith RangeError
 
     it 'does not throw an exception for a 404 with updatedAfter', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
@@ -211,7 +184,100 @@ describe 'API', ->
       response.should.not.be.rejected
 
     it 'throws an exception when the Service URL is invalid', ->
-      response = sdmxrest.request \
-        {flow: 'ICP', updatedAfter: '2016-01-01T14:54:27Z'}, {url: 'ws.test'}
+      response = sdmxrest.request {flow: 'ICP'}, {url: 'ws.test'}
       response.should.not.be.fulfilled
       response.should.be.rejected
+
+    it 'adds an accept header to data queries if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/vnd.sdmx.data+json') > -1)
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+    it 'adds an accept header to data URLs if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/vnd.sdmx.data+json') > -1)
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      url = 'http://sdw-wsrest.ecb.europa.eu/service/data/EXR/A..EUR.SP00.A'
+      response = sdmxrest.request url
+      response.should.eventually.equal 'OK'
+
+    it 'does not overwrite the accept header passed by the client', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/xml') > -1)
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      opts =
+        headers:
+          accept: 'application/xml'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+      response.should.eventually.equal 'OK'
+
+    it 'does not add an accept header to metadata URLs even if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) -> h[0] is '*/*')
+        .get((uri) -> uri.indexOf('CL_FREQ') > -1)
+        .reply 200, 'OK'
+      url = 'http://sdw-wsrest.ecb.europa.eu/service/codelist/ECB/CL_FREQ'
+      response = sdmxrest.request url
+      response.should.eventually.equal 'OK'
+
+    it 'does not add an accept header to data queries if the service does not have a default format', ->
+      query = nock('http://stats.oecd.org')
+        .matchHeader('accept', (h) -> h[0] is '*/*')
+        .get((uri) -> uri.indexOf('EO') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EO'}, 'OECD'
+      response.should.eventually.equal 'OK'
+
+    it 'adds a default user agent to queries', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('user-agent', (h) ->
+          h[0] is 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+    it 'does not overwrite the user agent passed by the client', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('user-agent', (h) -> h[0] is 'test')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      opts =
+        headers:
+          'user-agent': 'test'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+      response.should.eventually.equal 'OK'
+
+    it 'adds a default accept-encoding header to queries', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept-encoding', (h) -> h[0] is 'gzip,deflate')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+
+    it 'allows disabling content compression', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept-encoding', (h) -> h is undefined)
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      opts =
+        compress: false
+      response =
+        sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
+      response.should.eventually.equal 'OK'

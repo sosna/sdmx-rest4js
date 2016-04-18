@@ -9,7 +9,8 @@
     "commit": "git-cz",
     "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
-    "test": "mocha --recursive --compilers coffee:coffee-script/register",
+    "test": "mocha -t 500 --recursive --compilers coffee:coffee-script/register",
+    "test:watch": "mocha -t 500 -w --recursive --compilers coffee:coffee-script/register",
     "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffee-script/register --require coffee-coverage/register-istanbul",
     "prepublish": "npm build",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
@@ -39,10 +40,10 @@
     "coffeelint": "1.15.0",
     "commitizen": "2.7.6",
     "cz-conventional-changelog": "1.1.5",
-    "ghooks": "1.1.1",
-    "istanbul": "0.4.2",
+    "ghooks": "1.2.1",
+    "istanbul": "0.4.3",
     "mocha": "2.4.5",
-    "nock": "7.7.2",
+    "nock": "8.0.0",
     "semantic-release": "4.3.5"
   },
   "config": {

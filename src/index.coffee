@@ -12,10 +12,25 @@
 SdmxPatterns = require './utils/sdmx-patterns'
 fetch = require 'isomorphic-fetch'
 
+userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
+
 checkStatus = (query, response) ->
   code  = response?.status
   unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
-    throw Error "Request failed with error code #{code}"
+    throw RangeError "Request failed with error code #{code}"
+
+addHeaders = (opts, s, isDataQuery) ->
+  opts = opts ? {}
+  headers = {}
+  headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
+  headers.accept = s.format unless headers.accept if s.format and isDataQuery
+  headers['user-agent'] = userAgent unless headers['user-agent']
+  opts.headers = headers
+  opts
+
+guessService = (u) ->
+  s = (Service[k] for own k of Service when u.indexOf(Service[k]?.url) > -1)
+  return s[0] ? {}
 
 #
 # Get an SDMX 2.1 RESTful web service against which queries can be executed.
@@ -48,11 +63,15 @@ checkStatus = (query, response) ->
 # valid *url* property.
 #
 getService = (input) ->
-  if typeof input is 'object'
-    return Service.from input
-  if typeof input is 'string' and Service[input]
-    return Service[input]
-  throw Error "Unknown or invalid service #{input}"
+  if typeof input is 'string'
+    throw ReferenceError "#{input} is not in the list of predefined services" \
+      unless Service[input]
+    Service[input]
+  else if input instanceof Object \
+  and Object.prototype.toString.call(input) is '[object Object]'
+    Service.from input
+  else
+    throw TypeError "Invalid type of #{input}. Expected an object or a string"
 
 #
 # Get an SDMX 2.1 RESTful data query.
@@ -157,6 +176,7 @@ getMetadataQuery = (input) ->
 getUrl = (query, service) ->
   # URL generation requires all fields to be set. The 3 next lines are just
   # in case partial objects are passed to the function.
+  throw ReferenceError 'Service is a mandatory parameter' unless service
   s = getService service
   throw Error 'Not a valid query' unless query?.flow or query?.resource
   q = if query.flow then getDataQuery query else getMetadataQuery query
@@ -211,16 +231,22 @@ getUrl = (query, service) ->
 # @see #getService
 #
 request = (params...) ->
-  query = params[0]
-  url = if typeof query is 'string' then query else getUrl query, params[1]
-  opts = if typeof query is 'string' then params[1] else params[2]
-  fetch(url, opts)
+  q = params[0]
+  s = if typeof q is 'string' then guessService q else getService params[1]
+  u = if typeof q is 'string' then q else getUrl q, s
+  o = if typeof q is 'string' then params[1] else params[2]
+  isDataQuery = false
+  if typeof q is 'string' and q.indexOf('/data/') > -1
+    isDataQuery = true
+  else if q.flow
+    isDataQuery = true
+
+  requestOptions = addHeaders o, s, isDataQuery
+  fetch(u, requestOptions)
     .then((response) ->
-      checkStatus query, response
+      checkStatus q, response
       response.text())
     .then((body) -> body)
-    .catch((error) ->
-      throw Error "Request failed: #{error}")
 
 module.exports =
   getService: getService

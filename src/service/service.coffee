@@ -1,5 +1,6 @@
 {ApiVersion} = require '../utils/api-version'
 {isValidEnum, createErrorMessage} = require '../utils/validators'
+{DataFormat} = require '../data/data-format'
 
 defaults =
   api: ApiVersion.LATEST
@@ -28,6 +29,7 @@ service = class Service
     name: 'European Central Bank'
     api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
+    format: DataFormat.SDMX_JSON
 
   @SDMXGR:
     id: 'SDMXGR'
@@ -57,6 +59,7 @@ service = class Service
       name: opts?.name
       url: opts?.url
       api: opts?.api ? defaults.api
+      format: opts?.format
     input = isValidService service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
     service
