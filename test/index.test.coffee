@@ -230,6 +230,15 @@ describe 'API', ->
       response = sdmxrest.request url
       response.should.eventually.equal 'OK'
 
+    it 'does not add an accept header to data queries if the service does not have a default format', ->
+      query = nock('http://stats.oecd.org')
+        .matchHeader('accept', (h) -> h[0] is '*/*')
+        .get((uri) -> uri.indexOf('EO') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {flow: 'EO'}, 'OECD'
+      response.should.eventually.equal 'OK'
+
     it 'adds a default user agent to queries', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('user-agent', (h) ->
