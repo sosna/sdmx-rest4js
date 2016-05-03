@@ -37,14 +37,14 @@
     "coffee-coverage": "1.0.1",
     "coffee-script": "1.10.0",
     "coffeeify": "2.0.1",
-    "coffeelint": "1.15.0",
-    "commitizen": "2.7.6",
-    "cz-conventional-changelog": "1.1.5",
+    "coffeelint": "1.15.7",
+    "commitizen": "2.8.1",
+    "cz-conventional-changelog": "1.1.6",
     "ghooks": "1.2.1",
     "istanbul": "0.4.3",
     "mocha": "2.4.5",
     "nock": "8.0.0",
-    "semantic-release": "4.3.5"
+    "semantic-release": "6.2.1"
   },
   "config": {
     "commitizen": {
