@@ -10,10 +10,9 @@
 {UrlGenerator} = require './utils/url-generator'
 {ApiVersion} = require './utils/api-version'
 SdmxPatterns = require './utils/sdmx-patterns'
-fetch = require 'isomorphic-fetch'
 promise = require 'es6-promise'
-
 promise.polyfill()
+fetch = require 'isomorphic-fetch'
 
 userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
 
