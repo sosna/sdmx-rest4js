@@ -49,6 +49,12 @@ service = class Service
     api: ApiVersion.v1_0_2
     url: 'http://stats.oecd.org/SDMX-JSON'
 
+  @WB:
+    id: 'WB'
+    name: 'World Bank'
+    api: ApiVersion.v1_0_2
+    url: 'http://wits.worldbank.org/API/V1/SDMX/V21/rest'
+
   @ECB_S: createSecureInstance @ECB
   @SDMXGR_S: createSecureInstance @SDMXGR
   @OECD_S: createSecureInstance @OECD
