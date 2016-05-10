@@ -57,6 +57,7 @@ describe 'Service', ->
         'EUROSTAT'
         'OECD'
         'OECD_S'
+        'WB'
       ]
       Service[s].should.be.an 'object' for s in i
       Service[s].should.have.property('id').that.is.not.undefined for s in i
