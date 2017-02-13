@@ -2,6 +2,7 @@
 {ApiVersion} = require '../utils/api-version'
 {DataQuery} = require '../data/data-query'
 {MetadataQuery} = require '../metadata/metadata-query'
+{isItemScheme} = require '../metadata/metadata-type'
 
 createEntryPoint = (service) ->
   throw ReferenceError "#{service.url} is not a valid service"\
@@ -31,7 +32,8 @@ createMetadataQuery = (query, service) ->
   url = url + "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
   if (service.api isnt ApiVersion.v1_0_0 and
   service.api isnt ApiVersion.v1_0_1 and
-  service.api isnt ApiVersion.v1_0_2)
+  service.api isnt ApiVersion.v1_0_2 and
+  isItemScheme(query.resource))
     url = url + "/#{query.item}"
   url = url + "?detail=#{query.detail}&references=#{query.references}"
   url
