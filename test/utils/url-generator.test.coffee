@@ -19,6 +19,24 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'generates a URL for a metadata ItemScheme query', ->
+      expected = "http://test.com/service/codelist/all/all/\
+      latest/all?detail=full&references=none"
+      query =
+        MetadataQuery.from({resource: 'codelist'})
+      service = Service.from({url: "http://test.com/service/"})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'generates a URL for a metadata non-ItemScheme query', ->
+      expected = "http://test.com/service/dataflow/all/all/\
+      latest?detail=full&references=none"
+      query =
+        MetadataQuery.from({resource: 'dataflow'})
+      service = Service.from({url: "http://test.com/service/"})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
     it 'supports item queries but only for API version 1.1.0 and above', ->
       expected = "http://test.com/codelist/ECB/CL_FREQ/latest/A\
       ?detail=full&references=none"
