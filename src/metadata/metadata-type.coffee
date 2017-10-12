@@ -8,6 +8,7 @@ itemSchemes = [
   'dataproviderscheme'
   'dataconsumerscheme'
   'organisationunitscheme'
+  'hierarchicalcodelist'
 ]
 
 types =
