@@ -9,16 +9,11 @@ branches:
 notifications:
   email: false
 node_js:
-  - '5'
-  - '4'
-  - '4.4'
-  - '4.3'
-  - '4.2'
-  - '4.1'
-  - '4.0'
-  - '0.12'
-  - 'iojs'
   - 'node'
+  - 'lts/*'
+  - '8'
+  - '7'
+  - '6'
 before_install:
   - npm i -g npm@^2.0.0
 before_script:

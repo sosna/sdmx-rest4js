@@ -158,6 +158,12 @@ describe 'Metadata query', ->
       test = -> MetadataQuery.from({resource: 'dataflow', item: 'A'})
       should.Throw(test, Error, 'Not a valid metadata query')
 
+    it 'handles hierarchical codelists as item schemes', ->
+      item = 'hierarchy'
+      query = MetadataQuery.from(
+        {resource: MetadataType.HIERARCHICAL_CODELIST, item: item})
+      query.should.have.property('item').that.equals item
+
   describe 'when setting the amount of details', ->
 
     it 'a string representing the amount of details can be passed', ->

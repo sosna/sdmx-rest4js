@@ -1,5 +1,6 @@
 should = require('chai').should()
 {MetadataType} = require('../../src/metadata/metadata-type')
+{isItemScheme} = require('../../src/metadata/metadata-type')
 
 describe 'Metadata types', ->
 
@@ -36,3 +37,6 @@ describe 'Metadata types', ->
 
   it 'is immutable', ->
     MetadataType.should.be.frozen
+
+  it 'considers hierarchicalcodelist as item scheme', ->
+    isItemScheme('hierarchicalcodelist').should.be.true
