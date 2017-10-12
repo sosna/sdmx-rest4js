@@ -1,5 +1,8 @@
 {
   "name": "sdmx-rest",
+  "engines": {
+    "node": ">=6"
+  },
   "description": "The SDMX RESTful API for JavaScript",
   "version": "1.0.0",
   "main": "./lib/index.js",
