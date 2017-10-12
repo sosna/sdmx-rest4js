@@ -15,7 +15,11 @@ versions =
   # query for items within item schemes.
   v1_1_0: 'v1.1.0'
 
+  # The version of the SDMX RESTFul API released in May 2017. It adds supports
+  # for retrieving specific hierarchies in a hierarchical codelist.
+  v1_2_0: 'v1.2.0'
+
   # A shortcut to the most recent version of the SDMX RESTful API
-  LATEST: 'v1.1.0'
+  LATEST: 'v1.2.0'
 
 exports.ApiVersion = Object.freeze versions
