@@ -22,3 +22,6 @@ describe 'API versions', ->
 
   it 'is immutable', ->
     ApiVersion.should.be.frozen
+
+  it 'considers v1.2.0 as the latest version', ->
+    ApiVersion.LATEST.should.equal 'v1.2.0'

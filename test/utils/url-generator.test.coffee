@@ -37,7 +37,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-    it 'supports item queries but only for API version 1.1.0 and above', ->
+    it 'supports item queries for API version 1.1.0 and above', ->
       expected = "http://test.com/codelist/ECB/CL_FREQ/latest/A\
       ?detail=full&references=none"
       query = MetadataQuery.from({
@@ -48,19 +48,65 @@ describe 'URL Generator', ->
       })
       service = Service.from({
         url: 'http://test.com'
-        api: ApiVersion.v1_1_0
       })
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-    it 'defaults to API version 1.1.0', ->
-      expected = "http://test.com/codelist/ECB/CL_FREQ/latest/A\
+    it 'does not support item queries before API version 1.1.0', ->
+      expected = "http://test.com/codelist/ECB/CL_FREQ/latest\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
         id: 'CL_FREQ'
         agency: 'ECB'
         item: 'A'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_0_2
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'treats hierarchical codelists as item schemes for API version 1.2.0', ->
+      expected = "http://test.com/hierarchicalcodelist/BIS/HCL/latest/HIERARCHY\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'hierarchicalcodelist'
+        id: 'HCL'
+        agency: 'BIS'
+        item: 'HIERARCHY'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'does not support hiearchy queries before API version 1.2.0', ->
+      expected = "http://test.com/hierarchicalcodelist/BIS/HCL/latest\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'hierarchicalcodelist'
+        id: 'HCL'
+        agency: 'BIS'
+        item: 'HIERARCHY'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_1_0
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'defaults to latest API version', ->
+      expected = "http://test.com/hierarchicalcodelist/ECB/HCL/latest/HIERARCHY\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'hierarchicalcodelist'
+        id: 'HCL'
+        agency: 'ECB'
+        item: 'HIERARCHY'
       })
       service = Service.from({
         url: 'http://test.com/'
@@ -131,7 +177,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-    it 'defaults to API version 1.1.0', ->
+    it 'defaults to latest API', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/ECB?\
       dimensionAtObservation=CURRENCY&detail=nodata&includeHistory=true\
       &startPeriod=2010&endPeriod=2015&updatedAfter=2016-03-01T00:00:00Z\

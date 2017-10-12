@@ -33,7 +33,9 @@ createMetadataQuery = (query, service) ->
   if (service.api isnt ApiVersion.v1_0_0 and
   service.api isnt ApiVersion.v1_0_1 and
   service.api isnt ApiVersion.v1_0_2 and
-  isItemScheme(query.resource))
+  ((query.resource isnt 'hierarchicalcodelist' and
+  isItemScheme(query.resource)) or (service.api isnt ApiVersion.v1_1_0 and
+  query.resource is 'hierarchicalcodelist')))
     url = url + "/#{query.item}"
   url = url + "?detail=#{query.detail}&references=#{query.references}"
   url
