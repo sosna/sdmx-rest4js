@@ -161,7 +161,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'offers to skip defaults but adds them params when needed (detail)', ->
+    it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/codelist?detail=allstubs"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -173,7 +173,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'offers to skip defaults but adds them when needed (references)', ->
+    it 'offers to skip defaults but adds params when needed (references)', ->
       expected = "http://test.com/codelist?references=datastructure"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -185,7 +185,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'offers to skip defaults but adds them when needed (detail & refs)', ->
+    it 'offers to skip defaults but adds params when needed (detail & refs)', ->
       expected = "http://test.com/codelist?detail=allstubs&references=datastructure"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -283,6 +283,142 @@ describe 'URL Generator', ->
         url: 'http://test.com'
       })
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'offers to skip default values for data', ->
+      expected = "http://test.com/data/EXR"
+      query = DataQuery.from({
+        flow: 'EXR'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (provider)', ->
+      expected = "http://test.com/data/EXR/all/ECB"
+      query = DataQuery.from({
+        flow: 'EXR'
+        provider: 'ECB'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (start)', ->
+      expected = "http://test.com/data/EXR?startPeriod=2010"
+      query = DataQuery.from({
+        flow: 'EXR'
+        start: '2010'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (end)', ->
+      expected = "http://test.com/data/EXR?endPeriod=2010"
+      query = DataQuery.from({
+        flow: 'EXR'
+        end: '2010'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (updatedAfter)', ->
+      expected = "http://test.com/data/EXR?updatedAfter=2016-03-01T00:00:00Z"
+      query = DataQuery.from({
+        flow: 'EXR'
+        updatedAfter: '2016-03-01T00:00:00Z'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (firstNObs)', ->
+      expected = "http://test.com/data/EXR?firstNObservations=1"
+      query = DataQuery.from({
+        flow: 'EXR'
+        firstNObs: 1
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (lastNObs)', ->
+      expected = "http://test.com/data/EXR?lastNObservations=2"
+      query = DataQuery.from({
+        flow: 'EXR'
+        lastNObs: 2
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (detail)', ->
+      expected = "http://test.com/data/EXR?detail=dataonly"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'dataonly'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (history)', ->
+      expected = "http://test.com/data/EXR?includeHistory=true"
+      query = DataQuery.from({
+        flow: 'EXR'
+        history: true
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (obsDim)', ->
+      expected = "http://test.com/data/EXR?dimensionAtObservation=CURR"
+      query = DataQuery.from({
+        flow: 'EXR'
+        obsDimension: 'CURR'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (various)', ->
+      expected = "http://test.com/data/EXR/A..EUR.SP00.A?\
+      updatedAfter=2016-03-01T00:00:00Z\
+      &startPeriod=2010&dimensionAtObservation=CURRENCY"
+      query = DataQuery.from({
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        obsDimension: 'CURRENCY'
+        start: '2010'
+        updatedAfter: '2016-03-01T00:00:00Z'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
   it 'throws an exception if no query is supplied', ->

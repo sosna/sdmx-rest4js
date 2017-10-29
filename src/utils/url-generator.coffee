@@ -29,6 +29,32 @@ createDataQuery = (query, service) ->
   url = url + "&lastNObservations=#{query.lastNObs}" if query.lastNObs
   url
 
+createShortDataQuery = (query, service) ->
+  url = createEntryPoint service
+  url = url + "data/#{query.flow}"
+  if query.key isnt 'all' or query.provider isnt 'all'
+    url = url + '/' + query.key
+  if query.provider isnt 'all'
+    url = url + '/' + query.provider
+  params = []
+  if query.obsDimension isnt 'TIME_PERIOD'
+    params.push "dimensionAtObservation=#{query.obsDimension}"
+  params.push "detail=#{query.detail}" if query.detail isnt 'full'
+  if (service.api isnt ApiVersion.v1_0_0 and
+  service.api isnt ApiVersion.v1_0_1 and
+  service.api isnt ApiVersion.v1_0_2 and
+  query.history)
+    params.push "includeHistory=#{query.history}"
+  params.push "startPeriod=#{query.start}" if query.start
+  params.push "endPeriod=#{query.end}" if query.end
+  params.push "updatedAfter=#{query.updatedAfter}" if query.updatedAfter
+  params.push "firstNObservations=#{query.firstNObs}" if query.firstNObs
+  params.push "lastNObservations=#{query.lastNObs}" if query.lastNObs
+  if params.length > 0
+    url = url + "?"
+    url = url + params.reduceRight (x, y) -> x + "&" + y
+  url
+
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
   url = url + "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
@@ -77,7 +103,10 @@ generator = class Generator
   getUrl: (@query, service, skipDefaults) ->
     @service = service ? ApiVersion.LATEST
     if @query?.flow?
-      url = createDataQuery(@query, @service)
+      if skipDefaults
+        url = createShortDataQuery(@query, @service)
+      else
+        url = createDataQuery(@query, @service)
     else if @query?.resource?
       if skipDefaults
         url = createShortMetadataQuery(@query, @service)
