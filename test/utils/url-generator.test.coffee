@@ -161,6 +161,19 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
+    it 'offers to skip defaults but adds them when needed (item, old API)', ->
+      expected = "http://test.com/codelist"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        item: '1'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_0_2
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/codelist?detail=allstubs"
       query = MetadataQuery.from({
