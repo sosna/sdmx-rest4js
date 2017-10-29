@@ -114,6 +114,90 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'offers to skip default values for metadata', ->
+      expected = "http://test.com/codelist"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (id)', ->
+      expected = "http://test.com/codelist/all/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (version)', ->
+      expected = "http://test.com/codelist/all/all/42"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        version: '42'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (item)', ->
+      expected = "http://test.com/codelist/all/all/latest/1"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        item: '1'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them params when needed (detail)', ->
+      expected = "http://test.com/codelist?detail=allstubs"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        detail: 'allstubs'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (references)', ->
+      expected = "http://test.com/codelist?references=datastructure"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        references: 'datastructure'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (detail & refs)', ->
+      expected = "http://test.com/codelist?detail=allstubs&references=datastructure"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        detail: 'allstubs'
+        references: 'datastructure'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
   describe 'for data queries', ->
 
     it 'generates a URL for a full data query', ->
