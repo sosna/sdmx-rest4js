@@ -95,7 +95,7 @@ createShortMetadataQuery = (q, s) ->
   q.references isnt MetadataReferences.NONE)
     u = u + "&"
   if q.references isnt MetadataReferences.NONE
-   u = u + "references=#{q.references}"
+    u = u + "references=#{q.references}"
   u
 
 generator = class Generator
