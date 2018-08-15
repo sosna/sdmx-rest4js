@@ -4,7 +4,7 @@
     "node": ">=6"
   },
   "description": "The SDMX RESTful API for JavaScript",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
