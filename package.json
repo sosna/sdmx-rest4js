@@ -37,17 +37,17 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "codecov.io": "0.1.6",
-    "coffee-coverage": "2.0.1",
+    "coffee-coverage": "3.0.0",
     "coffee-script": "1.12.7",
-    "coffeeify": "3.0.0",
-    "coffeelint": "2.0.7",
-    "commitizen": "2.9.6",
+    "coffeeify": "3.0.1",
+    "coffeelint": "2.1.0",
+    "commitizen": "2.10.1",
     "cz-conventional-changelog": "2.1.0",
     "husky": "0.14.3",
     "istanbul": "0.4.5",
-    "mocha": "4.0.1",
-    "nock": "9.0.27",
-    "semantic-release": "8.2.0"
+    "mocha": "5.2.0",
+    "nock": "9.6.1",
+    "semantic-release": "15.9.8"
   },
   "config": {
     "commitizen": {
@@ -56,7 +56,7 @@
     "pre-commit": "npm run test:single && npm run check-coverage && npm run lint"
   },
   "dependencies": {
-    "es6-promise": "4.1.1",
+    "es6-promise": "4.2.4",
     "isomorphic-fetch": "2.2.1"
   }
 }
