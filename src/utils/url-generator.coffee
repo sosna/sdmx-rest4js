@@ -73,29 +73,27 @@ createMetadataQuery = (query, service) ->
   url = url + "?detail=#{query.detail}&references=#{query.references}"
   url
 
+handleQueryStringParams = (q, u, hd, hr) ->
+  if hd or hr then u = u + "?"
+  if hd then u = u + "detail=#{q.detail}"
+  if hd and hr then u = u + "&"
+  if hr then u = u + "references=#{q.references}"
+  u
+
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
   u = u + "#{q.resource}"
-  if (q.agency isnt "all" or q.id isnt "all" or q.version isnt "latest" or
-  itemNeeded(q.item, q.resource, s.api))
+  itn = itemNeeded(q.item, q.resource, s.api)
+  if (q.agency isnt "all" or q.id isnt "all" or q.version isnt "latest" or itn)
     u = u + "/#{q.agency}"
-  if q.id isnt "all" or q.version isnt "latest" or
-  itemNeeded(q.item, q.resource, s.api)
+  if q.id isnt "all" or q.version isnt "latest" or itn
     u = u + "/#{q.id}"
-  if q.version isnt "latest" or itemNeeded(q.item, q.resource, s.api)
+  if q.version isnt "latest" or itn
     u = u + "/#{q.version}"
   if itemAllowed(q.resource, s.api) and q.item isnt "all"
     u = u + "/#{q.item}"
-  if (q.detail isnt MetadataDetail.FULL or
-  q.references isnt MetadataReferences.NONE)
-    u = u + "?"
-  if q.detail isnt MetadataDetail.FULL
-    u = u + "detail=#{q.detail}"
-  if (q.detail isnt MetadataDetail.FULL and
-  q.references isnt MetadataReferences.NONE)
-    u = u + "&"
-  if q.references isnt MetadataReferences.NONE
-    u = u + "references=#{q.references}"
+  u = handleQueryStringParams(q, u, q.detail isnt MetadataDetail.FULL,
+    q.references isnt MetadataReferences.NONE)
   u
 
 generator = class Generator
