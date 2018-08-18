@@ -70,4 +70,13 @@ service = class Service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
     service
 
+services = [
+  service.ECB_S
+  service.SDMXGR_S
+  service.EUROSTAT
+  service.OECD_S
+  service.WB
+]
+
 exports.Service = service
+exports.services = services

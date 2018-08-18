@@ -7,6 +7,7 @@
 {MetadataReferences} = require './metadata/metadata-references'
 {MetadataType} = require './metadata/metadata-type'
 {Service} = require './service/service'
+{services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
 {ApiVersion} = require './utils/api-version'
 SdmxPatterns = require './utils/sdmx-patterns'
@@ -252,6 +253,7 @@ request = (params...) ->
 
 module.exports =
   getService: getService
+  services: services
   getDataQuery: getDataQuery
   getMetadataQuery: getMetadataQuery
   getUrl: getUrl

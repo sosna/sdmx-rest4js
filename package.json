@@ -4,17 +4,17 @@
     "node": ">=6"
   },
   "description": "The SDMX RESTful API for JavaScript",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
-    "build": "./node_modules/.bin/coffee -co lib src/",
+    "build": "coffee -co lib src/",
     "commit": "git-cz",
     "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
-    "test": "mocha -t 500 --recursive --compilers coffee:coffee-script/register",
-    "test:watch": "mocha -t 500 -w --recursive --compilers coffee:coffee-script/register",
-    "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffee-script/register --require coffee-coverage/register-istanbul",
+    "test": "mocha -t 500 --recursive --compilers coffee:coffeescript/register",
+    "test:watch": "mocha -t 500 -w --recursive --compilers coffee:coffeescript/register",
+    "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffeescript/register --require coffee-coverage/register-istanbul",
     "prepublish": "npm build",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "lint": "coffeelint src"
@@ -37,17 +37,17 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "codecov.io": "0.1.6",
-    "coffee-coverage": "2.0.1",
-    "coffee-script": "1.12.7",
-    "coffeeify": "3.0.0",
-    "coffeelint": "2.0.7",
-    "commitizen": "2.9.6",
+    "coffee-coverage": "3.0.0",
+    "coffeeify": "3.0.1",
+    "coffeelint": "2.1.0",
+    "coffeescript": "2.1.1",
+    "commitizen": "2.10.1",
     "cz-conventional-changelog": "2.1.0",
     "husky": "0.14.3",
     "istanbul": "0.4.5",
-    "mocha": "4.0.1",
-    "nock": "9.0.27",
-    "semantic-release": "8.2.0"
+    "mocha": "5.2.0",
+    "nock": "9.6.1",
+    "semantic-release": "15.9.8"
   },
   "config": {
     "commitizen": {
@@ -56,7 +56,7 @@
     "pre-commit": "npm run test:single && npm run check-coverage && npm run lint"
   },
   "dependencies": {
-    "es6-promise": "4.1.1",
+    "es6-promise": "4.2.4",
     "isomorphic-fetch": "2.2.1"
   }
 }

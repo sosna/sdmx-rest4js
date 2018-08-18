@@ -10,6 +10,7 @@ describe 'API', ->
 
   it 'offers the expected functions and objects', ->
     sdmxrest.should.have.property 'getService'
+    sdmxrest.should.have.property('services').that.is.an 'array'
     sdmxrest.should.have.property 'getDataQuery'
     sdmxrest.should.have.property 'getMetadataQuery'
     sdmxrest.should.have.property 'getUrl'
@@ -68,6 +69,15 @@ describe 'API', ->
 
       test = -> sdmxrest.getService []
       should.Throw(test, TypeError, 'Invalid type of ')
+
+  describe 'when using services', ->
+
+    it 'list some services', ->
+      sdmxrest.services.should.be.an 'array'
+      sdmxrest.services.should.have.property('length').that.is.gte 5
+
+    it 'should contain known services', ->
+      sdmxrest.services.should.include.members([sdmxrest.getService 'ECB_S'])
 
   describe 'when using getDataQuery()', ->
 

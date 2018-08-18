@@ -3,6 +3,7 @@ should = require('chai').should()
 {ApiVersion} = require '../../src/utils/api-version'
 {Service} = require '../../src/service/service'
 {DataFormat} = require '../../src/data/data-format'
+{services} = require '../../src/service/service'
 
 describe 'Service', ->
 
@@ -83,3 +84,12 @@ describe 'Service', ->
       s1.should.have.property('api').that.equals s2.api
       s1.should.have.property('url').that.contains 'http://'
       s2.should.have.property('url').that.contains 'https://'
+
+describe 'Services', ->
+
+  it 'list some services', ->
+    services.should.be.an 'array'
+    services.should.have.property('length').that.is.gte 5
+
+  it 'should contain a few known services', ->
+    services.should.include.members([Service.ECB_S, Service.SDMXGR_S])
