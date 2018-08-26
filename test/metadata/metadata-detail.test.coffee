@@ -8,6 +8,7 @@ describe 'Metadata detail', ->
     'full'
     'referencestubs'
     'allstubs'
+    'referencepartial'
   ]
 
   it 'contains all the expected details and only those', ->
