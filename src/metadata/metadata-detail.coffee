@@ -13,4 +13,10 @@ details =
   # Referenced schemes only include items used by the artefact to be returned.
   REFERENCE_PARTIAL: 'referencepartial'
 
+  # All artefacts are returned as complete stubs.
+  ALL_COMPLETE_STUBS: 'allcompletestubs'
+
+  # Referenced artefacts are returned as complete stubs.
+  REFERENCE_COMPLETE_STUBS: 'referencecompletestubs'
+
 exports.MetadataDetail = Object.freeze details
