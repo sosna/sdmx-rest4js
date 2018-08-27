@@ -25,6 +25,8 @@ describe 'Metadata types', ->
     'categorisation'
     'contentconstraint'
     'attachmentconstraint'
+    'actualconstraint'
+    'allowedconstraint'
     'structure'
   ]
 
