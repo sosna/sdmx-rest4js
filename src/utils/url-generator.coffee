@@ -13,9 +13,6 @@ itemAllowed = (resource, api) ->
   ((resource isnt 'hierarchicalcodelist' and isItemScheme(resource)) or
   (api isnt ApiVersion.v1_1_0 and resource is 'hierarchicalcodelist'))
 
-itemNeeded = (item, resource, api) ->
-  item isnt 'all' and itemAllowed(resource, api)
-
 createEntryPoint = (service) ->
   throw ReferenceError "#{service.url} is not a valid service"\
     unless service.url
@@ -73,7 +70,16 @@ createMetadataQuery = (query, service) ->
   url = url + "?detail=#{query.detail}&references=#{query.references}"
   url
 
-handleQueryStringParams = (q, u, hd, hr) ->
+handleMetaPathParams = (q, s, u) ->
+  path = []
+  if q.item isnt 'all' and itemAllowed(q.resource, s.api) then path.push q.item
+  if q.version isnt "latest" or path.length then path.push q.version
+  if q.id isnt "all" or path.length then path.push q.id
+  if q.agency isnt "all" or path.length then path.push q.agency
+  if path.length then u = u + "/" + path.reverse().join('/')
+  u
+
+handleMetaQueryParams = (q, u, hd, hr) ->
   if hd or hr then u = u + "?"
   if hd then u = u + "detail=#{q.detail}"
   if hd and hr then u = u + "&"
@@ -83,16 +89,8 @@ handleQueryStringParams = (q, u, hd, hr) ->
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
   u = u + "#{q.resource}"
-  itn = itemNeeded(q.item, q.resource, s.api)
-  if (q.agency isnt "all" or q.id isnt "all" or q.version isnt "latest" or itn)
-    u = u + "/#{q.agency}"
-  if q.id isnt "all" or q.version isnt "latest" or itn
-    u = u + "/#{q.id}"
-  if q.version isnt "latest" or itn
-    u = u + "/#{q.version}"
-  if itemAllowed(q.resource, s.api) and q.item isnt "all"
-    u = u + "/#{q.item}"
-  u = handleQueryStringParams(q, u, q.detail isnt MetadataDetail.FULL,
+  u = handleMetaPathParams(q, s, u)
+  u = handleMetaQueryParams(q, u, q.detail isnt MetadataDetail.FULL,
     q.references isnt MetadataReferences.NONE)
   u
 
