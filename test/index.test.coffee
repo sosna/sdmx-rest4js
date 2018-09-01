@@ -13,10 +13,12 @@ describe 'API', ->
     sdmxrest.should.have.property('services').that.is.an 'array'
     sdmxrest.should.have.property 'getDataQuery'
     sdmxrest.should.have.property 'getMetadataQuery'
+    sdmxrest.should.have.property 'getAvailabilityQuery'
     sdmxrest.should.have.property 'getUrl'
     sdmxrest.should.have.property 'request'
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.should.have.property('metadata').that.is.an 'object'
+    sdmxrest.should.have.property('availability').that.is.an 'object'
     sdmxrest.should.have.property('utils').that.is.an 'object'
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.data.should.have.property('DataFormat').that.is.not.undefined
@@ -26,6 +28,10 @@ describe 'API', ->
     sdmxrest.metadata.should.have.property('MetadataFormat')
       .that.is.not.undefined
     sdmxrest.metadata.should.have.property('MetadataReferences')
+      .that.is.not.undefined
+    sdmxrest.availability.should.have.property('AvailabilityMode')
+      .that.is.not.undefined
+    sdmxrest.availability.should.have.property('AvailabilityReferences')
       .that.is.not.undefined
     sdmxrest.metadata.should.have.property('MetadataType').that.is.not.undefined
     sdmxrest.utils.should.have.property('ApiVersion').that.is.not.undefined
@@ -130,6 +136,32 @@ describe 'API', ->
 
       test = -> sdmxrest.getMetadataQuery {test: 'TEST'}
       should.Throw(test, Error, 'Not a valid metadata query')
+
+  describe 'when using getAvailabilityQuery()', ->
+
+    it 'offers to create an availability query from properties', ->
+      input = {
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+      }
+      query = sdmxrest.getAvailabilityQuery input
+      query.should.be.an 'object'
+      query.should.have.property('flow').that.equals input.flow
+      query.should.have.property('key').that.equals input.key
+      query.should.have.property('provider').that.equals 'all'
+      query.should.have.property('component').that.equals 'all'
+      query.should.have.property('start').that.is.undefined
+      query.should.have.property('end').that.is.undefined
+      query.should.have.property('updatedAfter').that.is.undefined
+      query.should.have.property('mode').that.equals 'exact'
+      query.should.have.property('references').that.equals 'none'
+
+    it 'fails if the input is not of the expected type', ->
+      test = -> sdmxrest.getAvailabilityQuery undefined
+      should.Throw(test, Error, 'Not a valid availability query')
+
+      test = -> sdmxrest.getAvailabilityQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid availability query')
 
   describe 'when using getUrl()', ->
 

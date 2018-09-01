@@ -6,6 +6,9 @@
 {MetadataDetail} = require './metadata/metadata-detail'
 {MetadataReferences} = require './metadata/metadata-references'
 {MetadataType} = require './metadata/metadata-type'
+{AvailabilityQuery} = require './avail/availability-query'
+{AvailabilityMode} = require './avail/availability-mode'
+{AvailabilityReferences} = require './avail/availability-references'
 {Service} = require './service/service'
 {services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
@@ -158,6 +161,9 @@ getDataQuery = (input) ->
 getMetadataQuery = (input) ->
   return MetadataQuery.from input
 
+getAvailabilityQuery = (input) ->
+  return AvailabilityQuery.from input
+
 #
 # Get the SDMX 2.1 RESTful URL representing the query to be executed against the
 # supplied service.
@@ -256,6 +262,7 @@ module.exports =
   services: services
   getDataQuery: getDataQuery
   getMetadataQuery: getMetadataQuery
+  getAvailabilityQuery: getAvailabilityQuery
   getUrl: getUrl
   request: request
   data:
@@ -266,6 +273,9 @@ module.exports =
     MetadataDetail: MetadataDetail
     MetadataReferences: MetadataReferences
     MetadataType: MetadataType
+  availability:
+    AvailabilityMode: AvailabilityMode
+    AvailabilityReferences: AvailabilityReferences
   utils:
     ApiVersion: ApiVersion
     SdmxPatterns: SdmxPatterns
