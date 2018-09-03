@@ -11,6 +11,8 @@ describe 'Data formats', ->
     'application/vnd.sdmx.structurespecifictimeseriesdata+xml;version=2.1'
     'application/vnd.sdmx.data+json;version=1.0.0-wd'
     'application/vnd.sdmx.data+json;version=1.0.0-cts'
+    'application/vnd.sdmx.data+json;version=1.0.0'
+    'application/vnd.sdmx.data+csv;version=1.0.0'
   ]
 
   it 'contains all the expected formats and only those', ->
@@ -18,7 +20,7 @@ describe 'Data formats', ->
     for key, value of DataFormat
       expected.should.contain value
       count++
-    count.should.equal expected.length + 3 # 3 shortcuts to latest versions
+    count.should.equal expected.length + 4 # 4 shortcuts to latest versions
 
   it 'is immutable', ->
     DataFormat.should.be.frozen
