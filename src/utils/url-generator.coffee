@@ -36,31 +36,34 @@ createDataQuery = (query, service) ->
   url = url + "&lastNObservations=#{query.lastNObs}" if query.lastNObs
   url
 
-createShortDataQuery = (query, service) ->
-  url = createEntryPoint service
-  url = url + "data/#{query.flow}"
-  if query.key isnt 'all' or query.provider isnt 'all'
-    url = url + '/' + query.key
-  if query.provider isnt 'all'
-    url = url + '/' + query.provider
-  params = []
-  if query.obsDimension isnt 'TIME_PERIOD'
-    params.push "dimensionAtObservation=#{query.obsDimension}"
-  params.push "detail=#{query.detail}" if query.detail isnt 'full'
-  if (service.api isnt ApiVersion.v1_0_0 and
-  service.api isnt ApiVersion.v1_0_1 and
-  service.api isnt ApiVersion.v1_0_2 and
-  query.history)
-    params.push "includeHistory=#{query.history}"
-  params.push "startPeriod=#{query.start}" if query.start
-  params.push "endPeriod=#{query.end}" if query.end
-  params.push "updatedAfter=#{query.updatedAfter}" if query.updatedAfter
-  params.push "firstNObservations=#{query.firstNObs}" if query.firstNObs
-  params.push "lastNObservations=#{query.lastNObs}" if query.lastNObs
-  if params.length > 0
-    url = url + "?"
-    url = url + params.reduceRight (x, y) -> x + "&" + y
-  url
+handleDataPathParams = (q, s) ->
+  path = []
+  path.push q.provider if q.provider isnt 'all'
+  path.push q.key if q.key isnt 'all' or path.length
+  if path.length then "/" + path.reverse().join('/') else ""
+
+handleDataQueryParams = (q, s) ->
+  p = []
+  if q.obsDimension isnt 'TIME_PERIOD'
+    p.push "dimensionAtObservation=#{q.obsDimension}"
+  p.push "detail=#{q.detail}" if q.detail isnt 'full'
+  if (s.api isnt ApiVersion.v1_0_0 and
+  s.api isnt ApiVersion.v1_0_1 and
+  s.api isnt ApiVersion.v1_0_2 and
+  q.history)
+    p.push "includeHistory=#{q.history}"
+  p.push "startPeriod=#{q.start}" if q.start
+  p.push "endPeriod=#{q.end}" if q.end
+  p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  p.push "firstNObservations=#{q.firstNObs}" if q.firstNObs
+  p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
+  if p.length > 0 then u = "?" + p.reduceRight (x, y) -> x + "&" + y else ""
+
+createShortDataQuery = (q, s) ->
+  u = createEntryPoint s
+  u = u + "data/#{q.flow}"
+  u = u + handleDataPathParams(q, s)
+  u = u + handleDataQueryParams(q, s)
 
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
