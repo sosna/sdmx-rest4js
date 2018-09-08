@@ -42,16 +42,18 @@ handleDataPathParams = (q, s) ->
   path.push q.key if q.key isnt 'all' or path.length
   if path.length then "/" + path.reverse().join('/') else ""
 
-handleDataQueryParams = (q, s) ->
-  p = []
-  if q.obsDimension isnt 'TIME_PERIOD'
-    p.push "dimensionAtObservation=#{q.obsDimension}"
-  p.push "detail=#{q.detail}" if q.detail isnt 'full'
+hasHistory = (q, s) ->
   if (s.api isnt ApiVersion.v1_0_0 and
   s.api isnt ApiVersion.v1_0_1 and
   s.api isnt ApiVersion.v1_0_2 and
-  q.history)
-    p.push "includeHistory=#{q.history}"
+  q.history) then true else false
+
+handleDataQueryParams = (q, s) ->
+  p = []
+  p.push "dimensionAtObservation=#{q.obsDimension}" unless \
+    q.obsDimension is 'TIME_PERIOD'
+  p.push "detail=#{q.detail}" unless q.detail is 'full'
+  p.push "includeHistory=#{q.history}" if hasHistory(q, s)
   p.push "startPeriod=#{q.start}" if q.start
   p.push "endPeriod=#{q.end}" if q.end
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
