@@ -115,6 +115,16 @@ describe 'Metadata query', ->
       query = MetadataQuery.from({resource: MetadataType.CODELIST, id: id})
       query.should.have.property('id').that.equals id
 
+    it 'a string representing multiple resource ids can be used', ->
+      id = 'CL_FREQ+CL_DECIMALS'
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, id: id})
+      query.should.have.property('id').that.equals id
+
+    it 'an array representing multiple resource ids can be used', ->
+      ids = ['CL_FREQ', 'CL_DECIMALS']
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, id: ids})
+      query.should.have.property('id').that.equals 'CL_FREQ+CL_DECIMALS'
+
     it 'throws an exception if the resource id is invalid', ->
       test = -> MetadataQuery.from({resource: 'codelist', id: ' '})
       should.Throw(test, Error, 'Not a valid metadata query')

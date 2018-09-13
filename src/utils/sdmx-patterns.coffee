@@ -79,11 +79,15 @@ ProviderRefType = ///
 
 MultipleProviderRefType = /// ^
   (#{ProviderRefType.source}([+]#{ProviderRefType.source})*)
-$///
+  $///
 
 MultipleAgenciesRefType = /// ^
   (#{NestedNCNameIDType.source}([+]#{NestedNCNameIDType.source})*)
-$///
+  $///
+
+MultipleIDType = /// ^
+  #{IDType.source}([+]#{IDType.source})*
+  $///
 
 ReportingPeriodType = /// ^
   \d{4}\-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
@@ -100,3 +104,4 @@ exports.MultipleProviderRefType = MultipleProviderRefType
 exports.AgenciesRefType = MultipleAgenciesRefType
 exports.ReportingPeriodType = ReportingPeriodType
 exports.SeriesKeyType = SeriesKeyType
+exports.MultipleIDType = MultipleIDType

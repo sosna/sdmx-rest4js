@@ -1,7 +1,7 @@
 {MetadataDetail} = require './metadata-detail'
 {MetadataReferences} = require './metadata-references'
 {MetadataType, isItemScheme} = require './metadata-type'
-{AgenciesRefType, IDType, VersionType, NestedIDType} =
+{AgenciesRefType, MultipleIDType, VersionType, NestedIDType} =
   require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators'
@@ -24,7 +24,7 @@ validQuery = (query) ->
   errors = []
   isValid = isValidEnum(query.resource, MetadataType, 'resources', errors) and
     isValidPattern(query.agency, AgenciesRefType, 'agencies', errors) and
-    isValidPattern(query.id, IDType, 'resource ids', errors) and
+    isValidPattern(query.id, MultipleIDType, 'resource ids', errors) and
     isValidPattern(query.version, VersionType, 'versions', errors) and
     isValidPattern(query.item, NestedIDType, 'items', errors) and
     canHaveItem(query, errors) and
@@ -32,18 +32,20 @@ validQuery = (query) ->
     isValidEnum(query.references, MetadataReferences, 'references', errors)
   {isValid: isValid, errors: errors}
 
-toAgencyString = (p) -> p.join('+')
+toQueryParam = (p) -> p.join('+')
 
 # A query for structural metadata, as defined by the SDMX RESTful API.
 query = class MetadataQuery
 
   @from: (opts) ->
     a = opts?.agency ? defaults.agency
-    a = toAgencyString a if Array.isArray a
+    a = toQueryParam a if Array.isArray a
+    id = opts?.id ? defaults.id
+    id = toQueryParam id if Array.isArray id
     query =
       resource: opts?.resource
       agency: a
-      id: opts?.id ? defaults.id
+      id: id
       version: opts?.version ? defaults.version
       detail: opts?.detail ? defaults.detail
       references: opts?.references ? defaults.references
