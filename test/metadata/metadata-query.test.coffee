@@ -76,6 +76,18 @@ describe 'Metadata query', ->
         {resource: MetadataType.CODELIST, agency: agency})
       query.should.have.property('agency').that.equals agency
 
+    it 'a string representing multiple agencies can be used', ->
+      agency = 'ECB+BIS'
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, agency: agency})
+      query.should.have.property('agency').that.equals agency
+
+    it 'an array representing multiple agencies can be used', ->
+      agencies = ['ECB.DISS', 'BIS']
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, agency: agencies})
+      query.should.have.property('agency').that.equals 'ECB.DISS+BIS'
+
     it 'throws an exception when the agency id is invalid', ->
       test = -> MetadataQuery.from({resource: 'codelist', agency: '1A'})
       should.Throw(test, Error, 'Not a valid metadata query')

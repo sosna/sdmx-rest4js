@@ -1,7 +1,7 @@
 {MetadataDetail} = require './metadata-detail'
 {MetadataReferences} = require './metadata-references'
 {MetadataType, isItemScheme} = require './metadata-type'
-{NestedNCNameIDType, IDType, VersionType, NestedIDType} =
+{AgenciesRefType, IDType, VersionType, NestedIDType} =
   require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators'
@@ -23,7 +23,7 @@ canHaveItem = (query, errors) ->
 validQuery = (query) ->
   errors = []
   isValid = isValidEnum(query.resource, MetadataType, 'resources', errors) and
-    isValidPattern(query.agency, NestedNCNameIDType, 'agencies', errors) and
+    isValidPattern(query.agency, AgenciesRefType, 'agencies', errors) and
     isValidPattern(query.id, IDType, 'resource ids', errors) and
     isValidPattern(query.version, VersionType, 'versions', errors) and
     isValidPattern(query.item, NestedIDType, 'items', errors) and
@@ -32,13 +32,17 @@ validQuery = (query) ->
     isValidEnum(query.references, MetadataReferences, 'references', errors)
   {isValid: isValid, errors: errors}
 
+toAgencyString = (p) -> p.join('+')
+
 # A query for structural metadata, as defined by the SDMX RESTful API.
 query = class MetadataQuery
 
   @from: (opts) ->
+    a = opts?.agency ? defaults.agency
+    a = toAgencyString a if Array.isArray a
     query =
       resource: opts?.resource
-      agency: opts?.agency ? defaults.agency
+      agency: a
       id: opts?.id ? defaults.id
       version: opts?.version ? defaults.version
       detail: opts?.detail ? defaults.detail
