@@ -112,6 +112,20 @@ describe 'Availability queries', ->
       test = -> AvailabilityQuery.from({flow: 'EXR', provider: 'SDMX,ECB,2.0'})
       should.Throw(test, Error, 'Not a valid availability query')
 
+    it 'a string representing multiple providers can be used', ->
+      flow = 'EXR'
+      provider = 'ECB+BIS'
+      q = AvailabilityQuery.from({flow: flow, provider: provider})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('provider').that.equals provider
+
+    it 'an array representing multiple providers can be used', ->
+      flow = 'EXR'
+      providers = ['SDMX,ECB', 'BIS']
+      q = AvailabilityQuery.from({flow: flow, provider: providers})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('provider').that.equals 'SDMX,ECB+BIS'
+
   describe 'when setting the start and end periods', ->
 
     it 'a string representing years can be passed', ->

@@ -1,6 +1,6 @@
 {AvailabilityMode} = require './availability-mode'
 {AvailabilityReferences} = require './availability-references'
-{FlowRefType, SeriesKeyType, ProviderRefType, NestedNCNameIDType} =
+{FlowRefType, SeriesKeyType, MultipleProviderRefType, NestedNCNameIDType} =
   require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, isValidPeriod, isValidDate, createErrorMessage} =
   require '../utils/validators'
@@ -16,7 +16,7 @@ isValidQuery = (q) ->
   errors = []
   isValid = isValidPattern(q.flow, FlowRefType, 'flows', errors) and
     isValidPattern(q.key, SeriesKeyType, 'series key', errors) and
-    isValidPattern(q.provider, ProviderRefType, 'provider', errors) and
+    isValidPattern(q.provider, MultipleProviderRefType, 'provider', errors) and
     isValidPattern(q.component, NestedNCNameIDType, 'component', errors) and
     (!q.start or isValidPeriod(q.start, 'start period', errors)) and
     (!q.end or isValidPeriod(q.end, 'end period', errors)) and
@@ -28,16 +28,20 @@ isValidQuery = (q) ->
 toKeyString = (dims) ->
   ((if Array.isArray d then d.join('+') else d ? '') for d in dims).join('.')
 
+toProviderString = (p) -> p.join('+')
+
 # A query for data availability, as defined by the SDMX RESTful API.
 query = class AvailabilityQuery
 
   @from: (opts) ->
     key = opts?.key ? defaults.key
     key = toKeyString key if Array.isArray key
+    pro = opts?.provider ? defaults.provider
+    pro = toProviderString pro if Array.isArray pro
     query =
       flow: opts?.flow
       key: key
-      provider: opts?.provider ? defaults.provider
+      provider: pro
       component: opts?.component ? defaults.component
       start: opts?.start
       end: opts?.end

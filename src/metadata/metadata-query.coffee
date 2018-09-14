@@ -1,7 +1,7 @@
 {MetadataDetail} = require './metadata-detail'
 {MetadataReferences} = require './metadata-references'
 {MetadataType, isItemScheme} = require './metadata-type'
-{NestedNCNameIDType, IDType, VersionType, NestedIDType} =
+{AgenciesRefType, MultipleIDType, MultipleVersionsType, NestedIDType} =
   require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators'
@@ -23,24 +23,32 @@ canHaveItem = (query, errors) ->
 validQuery = (query) ->
   errors = []
   isValid = isValidEnum(query.resource, MetadataType, 'resources', errors) and
-    isValidPattern(query.agency, NestedNCNameIDType, 'agencies', errors) and
-    isValidPattern(query.id, IDType, 'resource ids', errors) and
-    isValidPattern(query.version, VersionType, 'versions', errors) and
+    isValidPattern(query.agency, AgenciesRefType, 'agencies', errors) and
+    isValidPattern(query.id, MultipleIDType, 'resource ids', errors) and
+    isValidPattern(query.version, MultipleVersionsType, 'versions', errors) and
     isValidPattern(query.item, NestedIDType, 'items', errors) and
     canHaveItem(query, errors) and
     isValidEnum(query.detail, MetadataDetail, 'details', errors) and
     isValidEnum(query.references, MetadataReferences, 'references', errors)
   {isValid: isValid, errors: errors}
 
+toQueryParam = (p) -> p.join('+')
+
 # A query for structural metadata, as defined by the SDMX RESTful API.
 query = class MetadataQuery
 
   @from: (opts) ->
+    a = opts?.agency ? defaults.agency
+    a = toQueryParam a if Array.isArray a
+    id = opts?.id ? defaults.id
+    id = toQueryParam id if Array.isArray id
+    vs = opts?.version ? defaults.version
+    vs = toQueryParam vs if Array.isArray vs
     query =
       resource: opts?.resource
-      agency: opts?.agency ? defaults.agency
-      id: opts?.id ? defaults.id
-      version: opts?.version ? defaults.version
+      agency: a
+      id: id
+      version: vs
       detail: opts?.detail ? defaults.detail
       references: opts?.references ? defaults.references
       item: opts?.item ? defaults.item
