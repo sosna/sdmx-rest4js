@@ -155,6 +155,18 @@ describe 'Metadata query', ->
         {resource: MetadataType.CODELIST, version: version})
       query.should.have.property('version').that.equals version
 
+    it 'a string representing multiple versions can be used', ->
+      version = '1.0+2.1.1'
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, version: version})
+      query.should.have.property('version').that.equals version
+
+    it 'an array representing multiple agencies can be used', ->
+      versions = ['1.0', '2.1.1']
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, version: versions})
+      query.should.have.property('version').that.equals '1.0+2.1.1'
+
     it 'throws an exception if the version is invalid', ->
       test = -> MetadataQuery.from({resource: 'codelist', version: 'semver'})
       should.Throw(test, Error, 'Not a valid metadata query')

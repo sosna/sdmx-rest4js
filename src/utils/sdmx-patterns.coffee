@@ -89,6 +89,10 @@ MultipleIDType = /// ^
   #{IDType.source}([+]#{IDType.source})*
   $///
 
+MultipleVersionsType = /// ^
+  #{VersionType.source}([+]#{VersionType.source})*
+  $///
+
 ReportingPeriodType = /// ^
   \d{4}\-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
   $ ///
@@ -105,3 +109,4 @@ exports.AgenciesRefType = MultipleAgenciesRefType
 exports.ReportingPeriodType = ReportingPeriodType
 exports.SeriesKeyType = SeriesKeyType
 exports.MultipleIDType = MultipleIDType
+exports.MultipleVersionsType = MultipleVersionsType
