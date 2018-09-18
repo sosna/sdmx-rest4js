@@ -32,6 +32,9 @@ describe 'Availability queries', ->
     q.should.have.property('mode').that.equals 'exact'
     q.should.have.property('references').that.equals 'none'
 
+  it 'throws an exception when using an unknown property', ->
+    test = -> AvailabilityQuery.from({flow: 'EXR', type: 'blah'})
+
   describe 'when setting the flow', ->
 
     it 'throws an exception when the flow is not set', ->

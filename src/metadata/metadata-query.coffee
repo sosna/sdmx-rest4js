@@ -34,7 +34,7 @@ isValidQuery = (query) ->
   errors = []
   isValid = false
   for k, v of query
-    isValid = ValidQuery[k](query, v, errors) if k of ValidQuery
+    isValid = ValidQuery[k](query, v, errors)
     break unless isValid
   {isValid: isValid, errors: errors}
 
