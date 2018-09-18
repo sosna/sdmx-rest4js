@@ -12,17 +12,23 @@ defaults =
   mode: AvailabilityMode.EXACT
   references: AvailabilityReferences.NONE
 
+ValidQuery =
+  flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
+  key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
+  provider: (i, e) -> isValidPattern(i, MultipleProviderRefType, 'provider', e)
+  component: (i, e) -> isValidPattern(i, NestedNCNameIDType, 'component', e)
+  start: (i, e) -> !i or isValidPeriod(i, 'start period', e)
+  end: (i, e) -> !i or isValidPeriod(i, 'end period', e)
+  updatedAfter: (i, e) -> !i or isValidDate(i, 'updatedAfter', e)
+  mode: (i, e) -> isValidEnum(i, AvailabilityMode, 'mode', e)
+  references: (i, e) -> isValidEnum(i, AvailabilityReferences, 'references', e)
+
 isValidQuery = (q) ->
   errors = []
-  isValid = isValidPattern(q.flow, FlowRefType, 'flows', errors) and
-    isValidPattern(q.key, SeriesKeyType, 'series key', errors) and
-    isValidPattern(q.provider, MultipleProviderRefType, 'provider', errors) and
-    isValidPattern(q.component, NestedNCNameIDType, 'component', errors) and
-    (!q.start or isValidPeriod(q.start, 'start period', errors)) and
-    (!q.end or isValidPeriod(q.end, 'end period', errors)) and
-    (!q.updatedAfter or isValidDate(q.updatedAfter, 'updatedAfter', errors)) and
-    isValidEnum(q.mode, AvailabilityMode, 'mode', errors) and
-    isValidEnum(q.references, AvailabilityReferences, 'references', errors)
+  isValid = false
+  for k, v of q
+    isValid = ValidQuery[k](v, errors)
+    break unless isValid
   {isValid: isValid, errors: errors}
 
 toKeyString = (dims) ->

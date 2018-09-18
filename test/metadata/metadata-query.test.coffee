@@ -30,6 +30,9 @@ describe 'Metadata query', ->
     query.should.be.an('object').with.property('references')
       .that.equals MetadataReferences.NONE
 
+  it 'throws an exception when using an unknown property', ->
+    test = -> MetadataQuery.from({resource: MetadataType.CODELIST, type: "bla"})
+
   describe 'when setting a resource type', ->
     it 'a string representing the resource type can be passed', ->
       resource = 'codelist'

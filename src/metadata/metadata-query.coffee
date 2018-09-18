@@ -14,22 +14,28 @@ defaults =
   references: MetadataReferences.NONE
   item: 'all'
 
+ValidQuery =
+  resource: (q, i, e) -> isValidEnum(i, MetadataType, 'resources', e)
+  agency: (q, i, e) -> isValidPattern(i, AgenciesRefType, 'agencies', e)
+  id: (q, i, e) -> isValidPattern(i, MultipleIDType, 'resource ids', e)
+  version: (q, i, e) -> isValidPattern(i, MultipleVersionsType, 'versions', e)
+  detail: (q, i, e) -> isValidEnum(i, MetadataDetail, 'details', e)
+  references: (q, i, e) -> isValidEnum(i, MetadataReferences, 'references', e)
+  item: (q, i, e) ->
+    isValidPattern(i, NestedIDType, 'items', e) and canHaveItem(q, e)
+
 canHaveItem = (query, errors) ->
   allowed = query.item is 'all' or isItemScheme query.resource
   errors.push "#{query.resource} is not an item scheme and therefore it is \
   not possible to query by item" unless allowed
   allowed
 
-validQuery = (query) ->
+isValidQuery = (query) ->
   errors = []
-  isValid = isValidEnum(query.resource, MetadataType, 'resources', errors) and
-    isValidPattern(query.agency, AgenciesRefType, 'agencies', errors) and
-    isValidPattern(query.id, MultipleIDType, 'resource ids', errors) and
-    isValidPattern(query.version, MultipleVersionsType, 'versions', errors) and
-    isValidPattern(query.item, NestedIDType, 'items', errors) and
-    canHaveItem(query, errors) and
-    isValidEnum(query.detail, MetadataDetail, 'details', errors) and
-    isValidEnum(query.references, MetadataReferences, 'references', errors)
+  isValid = false
+  for k, v of query
+    isValid = ValidQuery[k](query, v, errors)
+    break unless isValid
   {isValid: isValid, errors: errors}
 
 toQueryParam = (p) -> p.join('+')
@@ -52,7 +58,7 @@ query = class MetadataQuery
       detail: opts?.detail ? defaults.detail
       references: opts?.references ? defaults.references
       item: opts?.item ? defaults.item
-    input = validQuery query
+    input = isValidQuery query
     throw Error createErrorMessage(input.errors, 'metadata query') \
       unless input.isValid
     query
