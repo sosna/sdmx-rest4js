@@ -17,11 +17,12 @@ defaults =
 ValidQuery =
   resource: (q, i, e) -> isValidEnum(i, MetadataType, 'resources', e)
   agency: (q, i, e) -> isValidPattern(i, AgenciesRefType, 'agencies', e)
-  id:  (q, i, e) -> isValidPattern(i, MultipleIDType, 'resource ids', e)
+  id: (q, i, e) -> isValidPattern(i, MultipleIDType, 'resource ids', e)
   version: (q, i, e) -> isValidPattern(i, MultipleVersionsType, 'versions', e)
   detail: (q, i, e) -> isValidEnum(i, MetadataDetail, 'details', e)
   references: (q, i, e) -> isValidEnum(i, MetadataReferences, 'references', e)
-  item: (q, i, e) -> isValidPattern(i, NestedIDType, 'items', e) and canHaveItem(q, e)
+  item: (q, i, e) ->
+    isValidPattern(i, NestedIDType, 'items', e) and canHaveItem(q, e)
 
 canHaveItem = (query, errors) ->
   allowed = query.item is 'all' or isItemScheme query.resource
