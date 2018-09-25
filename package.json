@@ -28,6 +28,26 @@
     "sdmx restful web services"
   ],
   "author": "Xavier Sosnovsky <xso@sosna.ws>",
+  "contributors": [
+    {
+      "name": "Xavier Sosnovsky",
+      "email": null,
+      "url": "https://github.com/sosna",
+      "contributions": 116,
+      "additions": 5727,
+      "deletions": 3071,
+      "hireable": null
+    },
+    {
+      "name": "Leroy S.",
+      "email": null,
+      "url": "https://github.com/Tzaphkiel",
+      "contributions": 2,
+      "additions": 21,
+      "deletions": 1,
+      "hireable": null
+    }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/sosna/sdmx-rest4js/issues"
@@ -56,7 +76,7 @@
     "pre-commit": "npm run test:single && npm run check-coverage && npm run lint"
   },
   "dependencies": {
-    "es6-promise": "4.2.4",
+    "es6-promise": "4.2.5",
     "isomorphic-fetch": "2.2.1"
   }
 }
