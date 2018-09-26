@@ -99,16 +99,36 @@ createShortMetadataQuery = (q, s) ->
     q.references isnt MetadataReferences.NONE)
   u
 
+ex = [
+  ApiVersion.v1_0_0
+  ApiVersion.v1_0_1
+  ApiVersion.v1_0_2
+  ApiVersion.v1_1_0
+  ApiVersion.v1_2_0
+]
+
+checkMultipleItems = (i, s, r) ->
+  if s.api in ex and /\+/.test i
+    throw Error "Multiple #{r} not allowed in #{s.api}"
+
+checkApiVersion = (q, s) ->
+  checkMultipleItems(q.agency, s, "agencies")
+  checkMultipleItems(q.id, s, "IDs")
+  checkMultipleItems(q.version, s, "versions")
+  checkMultipleItems(q.item, s, "items")
+
 generator = class Generator
 
   getUrl: (@query, service, skipDefaults) ->
     @service = service ? ApiVersion.LATEST
     if @query?.flow?
+      checkMultipleItems(@query.provider, @service, "providers")
       if skipDefaults
         url = createShortDataQuery(@query, @service)
       else
         url = createDataQuery(@query, @service)
     else if @query?.resource?
+      checkApiVersion(@query, @service)
       if skipDefaults
         url = createShortMetadataQuery(@query, @service)
       else

@@ -99,6 +99,120 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'supports multiple agencies for API version 1.3.0 and above', ->
+      expected = "http://test.com/codelist/ECB+BIS/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB+BIS'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'does not support multiple agencies before API version 1.3.0', ->
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB+BIS'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_2_0
+      })
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Multiple agencies not allowed in v1.2.0')
+
+    it 'supports multiple IDs for API version 1.3.0 and above', ->
+      expected = "http://test.com/codelist/ECB/CL_FREQ+CL_DECIMALS/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ+CL_DECIMALS'
+        agency: 'ECB'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'does not support multiple agencies before API version 1.3.0', ->
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ+CL_DECIMALS'
+        agency: 'ECB'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_2_0
+      })
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Multiple IDs not allowed in v1.2.0')
+
+    it 'supports multiple versions for API version 1.3.0 and above', ->
+      expected = "http://test.com/codelist/ECB/CL_FREQ/1.0+1.1/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        version: '1.0+1.1'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'does not support multiple versions before API version 1.3.0', ->
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        version: '1.0+1.1'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_1_0
+      })
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Multiple versions not allowed in v1.1.0')
+
+    it 'supports multiple items for API version 1.3.0 and above', ->
+      expected = "http://test.com/codelist/ECB/CL_FREQ/1.0/A+M\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        version: '1.0'
+        item: 'A+M'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'does not support multiple items before API version 1.3.0', ->
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        version: '1.0'
+        item: 'A+M'
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v1_2_0
+      })
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Multiple items not allowed in v1.2.0')
+
     it 'defaults to latest API version', ->
       expected = "http://test.com/hierarchicalcodelist/ECB/HCL/latest/HIERARCHY\
       ?detail=full&references=none"
@@ -433,6 +547,30 @@ describe 'URL Generator', ->
       })
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
+
+    it 'supports multiple providers for API version 1.3.0 and above', ->
+      expected = "http://test.com/data/EXR/A..EUR.SP00.A/SDMX,ECB+BIS?\
+      updatedAfter=2016-03-01T00:00:00Z\
+      &startPeriod=2010&dimensionAtObservation=CURRENCY"
+      query = DataQuery.from({
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        obsDimension: 'CURRENCY'
+        start: '2010'
+        updatedAfter: '2016-03-01T00:00:00Z'
+        provider: ['SDMX,ECB', 'BIS']
+      })
+      service = Service.from({
+        url: 'http://test.com'
+      })
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support providers before API version 1.3.0', ->
+      query = DataQuery.from({flow: 'EXR', provider: 'SDMX,ECB+BIS'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Multiple providers not allowed in v1.2.0')
 
   it 'throws an exception if no query is supplied', ->
     test = -> new UrlGenerator().getUrl()
