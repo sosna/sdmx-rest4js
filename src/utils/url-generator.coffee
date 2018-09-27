@@ -117,6 +117,11 @@ checkApiVersion = (q, s) ->
   checkMultipleItems(q.version, s, "versions")
   checkMultipleItems(q.item, s, "items")
 
+checkDetail = (q, s) ->
+  if (s.api in ex and (q.detail is 'referencepartial' or
+  q.detail is 'allcompletestubs' or q.detail is 'referencecompletestubs'))
+    throw Error "#{q.detail} not allowed in #{s.api}"
+
 generator = class Generator
 
   getUrl: (@query, service, skipDefaults) ->
@@ -129,6 +134,7 @@ generator = class Generator
         url = createDataQuery(@query, @service)
     else if @query?.resource?
       checkApiVersion(@query, @service)
+      checkDetail(@query, @service)
       if skipDefaults
         url = createShortMetadataQuery(@query, @service)
       else
