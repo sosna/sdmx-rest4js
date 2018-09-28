@@ -397,6 +397,32 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'referencecompletestubs not allowed in v1.0.2')
 
+    it 'supports actualconstraint since v1.3.0', ->
+      expected = 'http://test.com/actualconstraint'
+      query = MetadataQuery.from({resource: 'actualconstraint'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'supports allowedconstraint since v1.3.0', ->
+      expected = 'http://test.com/allowedconstraint'
+      query = MetadataQuery.from({resource: 'allowedconstraint'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support actualconstraint before v1.3.0', ->
+      query = MetadataQuery.from({resource: 'actualconstraint'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'actualconstraint not allowed in v1.2.0')
+
+    it 'does not support allowedconstraint before v1.3.0', ->
+      query = MetadataQuery.from({resource: 'allowedconstraint'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_2})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'allowedconstraint not allowed in v1.0.2')
+
   describe 'for data queries', ->
 
     it 'generates a URL for a full data query', ->

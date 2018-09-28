@@ -122,6 +122,11 @@ checkDetail = (q, s) ->
   q.detail is 'allcompletestubs' or q.detail is 'referencecompletestubs'))
     throw Error "#{q.detail} not allowed in #{s.api}"
 
+checkResource = (q, s) ->
+  if (s.api in ex and (q.resource is 'actualconstraint' or
+  q.resource is 'allowedconstraint'))
+    throw Error "#{q.resource} not allowed in #{s.api}"
+
 generator = class Generator
 
   getUrl: (@query, service, skipDefaults) ->
@@ -135,6 +140,7 @@ generator = class Generator
     else if @query?.resource?
       checkApiVersion(@query, @service)
       checkDetail(@query, @service)
+      checkResource(@query, @service)
       if skipDefaults
         url = createShortMetadataQuery(@query, @service)
       else
