@@ -71,8 +71,7 @@ createShortDataQuery = (q, s) ->
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
   url = url + "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
-  if itemAllowed(query.resource, service.api)
-    url = url + "/#{query.item}"
+  url = url + "/#{query.item}" if itemAllowed(query.resource, service.api)
   url = url + "?detail=#{query.detail}&references=#{query.references}"
   url
 
@@ -188,7 +187,8 @@ generator = class Generator
       else
         url = createMetadataQuery(@query, @service)
     else
-      throw TypeError "#{@query} is not a valid SDMX data, metadata or availability query"
+      throw TypeError "#{@query} is not a valid SDMX data, metadata or \
+      availability query"
     url
 
 exports.UrlGenerator = generator
