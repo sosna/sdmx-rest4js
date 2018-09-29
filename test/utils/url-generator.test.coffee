@@ -4,6 +4,7 @@ should = require('chai').should()
 {ApiVersion} = require '../../src/utils/api-version'
 {DataQuery} = require '../../src/data/data-query'
 {MetadataQuery} = require '../../src/metadata/metadata-query'
+{AvailabilityQuery} = require '../../src/avail/availability-query'
 {UrlGenerator} = require '../../src/utils/url-generator'
 
 describe 'URL Generator', ->
@@ -22,8 +23,7 @@ describe 'URL Generator', ->
     it 'generates a URL for a metadata ItemScheme query', ->
       expected = "http://test.com/service/codelist/all/all/\
       latest/all?detail=full&references=none"
-      query =
-        MetadataQuery.from({resource: 'codelist'})
+      query = MetadataQuery.from({resource: 'codelist'})
       service = Service.from({url: "http://test.com/service/"})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
@@ -31,8 +31,7 @@ describe 'URL Generator', ->
     it 'generates a URL for a metadata non-ItemScheme query', ->
       expected = "http://test.com/service/dataflow/all/all/\
       latest?detail=full&references=none"
-      query =
-        MetadataQuery.from({resource: 'dataflow'})
+      query = MetadataQuery.from({resource: 'dataflow'})
       service = Service.from({url: "http://test.com/service/"})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
@@ -46,9 +45,7 @@ describe 'URL Generator', ->
         agency: 'ECB'
         item: 'A'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -61,10 +58,7 @@ describe 'URL Generator', ->
         agency: 'ECB'
         item: 'A'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_0_2
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_2})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -77,9 +71,7 @@ describe 'URL Generator', ->
         agency: 'BIS'
         item: 'HIERARCHY'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -92,10 +84,7 @@ describe 'URL Generator', ->
         agency: 'BIS'
         item: 'HIERARCHY'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_1_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -107,9 +96,7 @@ describe 'URL Generator', ->
         id: 'CL_FREQ'
         agency: 'ECB+BIS'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -119,10 +106,7 @@ describe 'URL Generator', ->
         id: 'CL_FREQ'
         agency: 'ECB+BIS'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_2_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple agencies not allowed in v1.2.0')
 
@@ -134,9 +118,7 @@ describe 'URL Generator', ->
         id: 'CL_FREQ+CL_DECIMALS'
         agency: 'ECB'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -146,10 +128,7 @@ describe 'URL Generator', ->
         id: 'CL_FREQ+CL_DECIMALS'
         agency: 'ECB'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_2_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple IDs not allowed in v1.2.0')
 
@@ -162,9 +141,7 @@ describe 'URL Generator', ->
         agency: 'ECB'
         version: '1.0+1.1'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -175,10 +152,7 @@ describe 'URL Generator', ->
         agency: 'ECB'
         version: '1.0+1.1'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_1_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple versions not allowed in v1.1.0')
 
@@ -192,9 +166,7 @@ describe 'URL Generator', ->
         version: '1.0'
         item: 'A+M'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -206,10 +178,7 @@ describe 'URL Generator', ->
         version: '1.0'
         item: 'A+M'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_2_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple items not allowed in v1.2.0')
 
@@ -222,81 +191,49 @@ describe 'URL Generator', ->
         agency: 'ECB'
         item: 'HIERARCHY'
       })
-      service = Service.from({
-        url: 'http://test.com/'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'offers to skip default values for metadata', ->
       expected = "http://test.com/codelist"
-      query = MetadataQuery.from({
-        resource: 'codelist'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = MetadataQuery.from({resource: 'codelist'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (id)', ->
       expected = "http://test.com/codelist/all/CL_FREQ"
-      query = MetadataQuery.from({
-        resource: 'codelist'
-        id: 'CL_FREQ'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = MetadataQuery.from({resource: 'codelist', id: 'CL_FREQ'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (version)', ->
       expected = "http://test.com/codelist/all/all/42"
-      query = MetadataQuery.from({
-        resource: 'codelist'
-        version: '42'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = MetadataQuery.from({resource: 'codelist', version: '42'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (item)', ->
       expected = "http://test.com/codelist/all/all/latest/1"
-      query = MetadataQuery.from({
-        resource: 'codelist'
-        item: '1'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = MetadataQuery.from({resource: 'codelist', item: '1'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (item, old API)', ->
       expected = "http://test.com/codelist"
-      query = MetadataQuery.from({
-        resource: 'codelist'
-        item: '1'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_0_2
-      })
+      query = MetadataQuery.from({resource: 'codelist', item: '1'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_2})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/codelist?detail=allstubs"
-      query = MetadataQuery.from({
-        resource: 'codelist'
-        detail: 'allstubs'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = MetadataQuery.from({resource: 'codelist', detail: 'allstubs'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -306,9 +243,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         references: 'datastructure'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -319,9 +254,7 @@ describe 'URL Generator', ->
         detail: 'allstubs'
         references: 'datastructure'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -331,9 +264,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencepartial'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -343,9 +274,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'allcompletestubs'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -355,9 +284,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencecompletestubs'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -366,10 +293,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencepartial'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_1_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'referencepartial not allowed in v1.1.0')
 
@@ -378,10 +302,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'allcompletestubs'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_2_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'allcompletestubs not allowed in v1.2.0')
 
@@ -390,10 +311,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencecompletestubs'
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_0_2
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_2})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'referencecompletestubs not allowed in v1.0.2')
 
@@ -454,10 +372,7 @@ describe 'URL Generator', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/all?\
       dimensionAtObservation=TIME_PERIOD&detail=full&includeHistory=false"
       query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_1_0
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -479,10 +394,7 @@ describe 'URL Generator', ->
         firstNObs: 1
         lastNObs: 1
       })
-      service = Service.from({
-        url: 'http://test.com'
-        api: ApiVersion.v1_0_2
-      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_2})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -504,56 +416,35 @@ describe 'URL Generator', ->
         firstNObs: 1
         lastNObs: 1
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
     it 'offers to skip default values for data', ->
       expected = "http://test.com/data/EXR"
-      query = DataQuery.from({
-        flow: 'EXR'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (provider)', ->
       expected = "http://test.com/data/EXR/all/ECB"
-      query = DataQuery.from({
-        flow: 'EXR'
-        provider: 'ECB'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (start)', ->
       expected = "http://test.com/data/EXR?startPeriod=2010"
-      query = DataQuery.from({
-        flow: 'EXR'
-        start: '2010'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', start: '2010'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (end)', ->
       expected = "http://test.com/data/EXR?endPeriod=2010"
-      query = DataQuery.from({
-        flow: 'EXR'
-        end: '2010'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', end: '2010'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -563,69 +454,42 @@ describe 'URL Generator', ->
         flow: 'EXR'
         updatedAfter: '2016-03-01T00:00:00Z'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (firstNObs)', ->
       expected = "http://test.com/data/EXR?firstNObservations=1"
-      query = DataQuery.from({
-        flow: 'EXR'
-        firstNObs: 1
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', firstNObs: 1})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (lastNObs)', ->
       expected = "http://test.com/data/EXR?lastNObservations=2"
-      query = DataQuery.from({
-        flow: 'EXR'
-        lastNObs: 2
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', lastNObs: 2})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/data/EXR?detail=dataonly"
-      query = DataQuery.from({
-        flow: 'EXR'
-        detail: 'dataonly'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', detail: 'dataonly'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (history)', ->
       expected = "http://test.com/data/EXR?includeHistory=true"
-      query = DataQuery.from({
-        flow: 'EXR'
-        history: true
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', history: true})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (obsDim)', ->
       expected = "http://test.com/data/EXR?dimensionAtObservation=CURR"
-      query = DataQuery.from({
-        flow: 'EXR'
-        obsDimension: 'CURR'
-      })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      query = DataQuery.from({flow: 'EXR', obsDimension: 'CURR'})
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -640,9 +504,7 @@ describe 'URL Generator', ->
         start: '2010'
         updatedAfter: '2016-03-01T00:00:00Z'
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -658,9 +520,7 @@ describe 'URL Generator', ->
         updatedAfter: '2016-03-01T00:00:00Z'
         provider: ['SDMX,ECB', 'BIS']
       })
-      service = Service.from({
-        url: 'http://test.com'
-      })
+      service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -672,11 +532,13 @@ describe 'URL Generator', ->
 
   it 'throws an exception if no query is supplied', ->
     test = -> new UrlGenerator().getUrl()
-    should.Throw(test, Error, 'not a valid SDMX data or metadata query')
+    should.Throw(test, Error,
+      'not a valid SDMX data, metadata or availability query')
 
   it 'throws an exception if the input is not a data or a metadata query', ->
     test = -> new UrlGenerator().getUrl({test: 'Test'})
-    should.Throw(test, TypeError, 'not a valid SDMX data or metadata query')
+    should.Throw(test, TypeError,
+      'not a valid SDMX data, metadata or availability query')
 
   it 'throws an exception if no service is supplied', ->
     query = MetadataQuery.from({
@@ -697,3 +559,67 @@ describe 'URL Generator', ->
     })
     test = -> new UrlGenerator().getUrl query, {id: 'test'}
     should.Throw(test, ReferenceError, 'not a valid service')
+
+describe 'for availability queries', ->
+
+  it 'generates a URL for a full availability query', ->
+    expected = 'http://test.com/availableconstraint/EXR/A..EUR.SP00.A/ECB/FREQ?\
+    mode=available&references=none\
+    &startPeriod=2010&endPeriod=2015&updatedAfter=2016-03-01T00:00:00Z'
+    query = AvailabilityQuery.from({
+      flow: 'EXR'
+      key: 'A..EUR.SP00.A'
+      provider: 'ECB'
+      component: 'FREQ'
+      start: '2010'
+      end: '2015'
+      updatedAfter: '2016-03-01T00:00:00Z'
+      mode: 'available'
+      references: 'none'
+    })
+    service = Service.from({url: 'http://test.com'})
+    url = new UrlGenerator().getUrl(query, service)
+    url.should.equal expected
+
+  it 'generates a URL for a partial availability query', ->
+    expected = 'http://test.com/availableconstraint/EXR/A..EUR.SP00.A/all/all?\
+    mode=exact&references=none'
+    query = AvailabilityQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
+    service = Service.from({url: 'http://test.com'})
+    url = new UrlGenerator().getUrl(query, service)
+    url.should.equal expected
+
+  it 'supports minimal query if proper query class is used', ->
+    expected = 'http://test.com/availableconstraint/EXR/all/all/all?\
+    mode=exact&references=none'
+    query = AvailabilityQuery.from({flow: 'EXR'})
+    service = Service.from({url: 'http://test.com'})
+    url = new UrlGenerator().getUrl(query, service)
+    url.should.equal expected
+
+  it 'does not support availability queries before v1.3.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
+    service = Service.from({url: 'http://test.com', api: 'v1.2.0'})
+    test = -> new UrlGenerator().getUrl(query, service)
+    should.Throw(test, Error, 'Availability query not supported in v1.2.0')
+
+  it 'offers to skip default values for availability', ->
+    expected = "http://test.com/availableconstraint/EXR"
+    query = AvailabilityQuery.from({flow: 'EXR'})
+    service = Service.from({url: 'http://test.com'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (provider)', ->
+    expected = "http://test.com/availableconstraint/EXR/all/ECB"
+    query = AvailabilityQuery.from({flow: 'EXR', provider: 'ECB'})
+    service = Service.from({url: 'http://test.com'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (component)', ->
+    expected = "http://test.com/availableconstraint/EXR/all/all/FREQ"
+    query = AvailabilityQuery.from({flow: 'EXR', component: 'FREQ'})
+    service = Service.from({url: 'http://test.com'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected

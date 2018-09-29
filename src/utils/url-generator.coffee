@@ -2,6 +2,7 @@
 {ApiVersion} = require '../utils/api-version'
 {DataQuery} = require '../data/data-query'
 {MetadataQuery} = require '../metadata/metadata-query'
+{AvailabilityQuery} = require '../avail/availability-query'
 {isItemScheme} = require '../metadata/metadata-type'
 {MetadataDetail} = require '../metadata/metadata-detail'
 {MetadataReferences} = require '../metadata/metadata-references'
@@ -99,6 +100,38 @@ createShortMetadataQuery = (q, s) ->
     q.references isnt MetadataReferences.NONE)
   u
 
+createAvailabilityQuery = (q, s) ->
+  url = createEntryPoint s
+  url = url + "availableconstraint"
+  url = url + "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
+  url = url + "?mode=#{q.mode}&references=#{q.references}"
+  url = url + "&startPeriod=#{q.start}" if q.start
+  url = url + "&endPeriod=#{q.end}" if q.end
+  url = url + "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  url
+
+handleAvailabilityPathParams = (q, s) ->
+  path = []
+  path.push q.component if q.component isnt 'all'
+  path.push q.provider if q.provider isnt 'all' or path.length
+  path.push q.key if q.key isnt 'all' or path.length
+  if path.length then "/" + path.reverse().join('/') else ""
+
+handleAvailabilityQueryParams = (q, s) ->
+  p = []
+  p.push "startPeriod=#{q.start}" if q.start
+  p.push "endPeriod=#{q.end}" if q.end
+  p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  p.push "mode=#{q.mode}" if q.mode is not 'exact'
+  p.push "references=#{q.references}" if q.references is not 'none'
+  if p.length > 0 then u = "?" + p.reduceRight (x, y) -> x + "&" + y else ""
+
+createShortAvailabilityQuery = (q, s) ->
+  u = createEntryPoint s
+  u = u + "availableconstraint/#{q.flow}"
+  u = u + handleAvailabilityPathParams(q, s)
+  u = u + handleAvailabilityQueryParams(q, s)
+
 ex = [
   ApiVersion.v1_0_0
   ApiVersion.v1_0_1
@@ -131,7 +164,16 @@ generator = class Generator
 
   getUrl: (@query, service, skipDefaults) ->
     @service = service ? ApiVersion.LATEST
-    if @query?.flow?
+    if (@query?.mode? or
+    (@query?.flow? and @query?.references?) or
+    (@query?.flow? and @query?.component?))
+      if @service.api in ex
+        throw Error "Availability query not supported in #{@service.api}"
+      else if skipDefaults
+        url = createShortAvailabilityQuery(@query, @service)
+      else
+        url = createAvailabilityQuery(@query, @service)
+    else if @query?.flow?
       checkMultipleItems(@query.provider, @service, "providers")
       if skipDefaults
         url = createShortDataQuery(@query, @service)
@@ -146,7 +188,7 @@ generator = class Generator
       else
         url = createMetadataQuery(@query, @service)
     else
-      throw TypeError "#{@query} is not a valid SDMX data or metadata query"
+      throw TypeError "#{@query} is not a valid SDMX data, metadata or availability query"
     url
 
 exports.UrlGenerator = generator
