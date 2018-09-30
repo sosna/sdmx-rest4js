@@ -114,22 +114,23 @@ handleAvailabilityPathParams = (q, s) ->
   path.push q.component if q.component isnt 'all'
   path.push q.provider if q.provider isnt 'all' or path.length
   path.push q.key if q.key isnt 'all' or path.length
-  if path.length then "/" + path.reverse().join('/') else ""
+  if path.length then '/' + path.reverse().join('/') else ''
 
 handleAvailabilityQueryParams = (q, s) ->
   p = []
-  p.push "startPeriod=#{q.start}" if q.start
-  p.push "endPeriod=#{q.end}" if q.end
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
-  p.push "mode=#{q.mode}" if q.mode is not 'exact'
-  p.push "references=#{q.references}" if q.references is not 'none'
-  if p.length > 0 then u = "?" + p.reduceRight (x, y) -> x + "&" + y else ""
+  p.push "endPeriod=#{q.end}" if q.end
+  p.push "startPeriod=#{q.start}" if q.start
+  p.push "mode=#{q.mode}" unless q.mode is 'exact'
+  p.push "references=#{q.references}" unless q.references is 'none'
+  if p.length > 0 then u = '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
 createShortAvailabilityQuery = (q, s) ->
   u = createEntryPoint s
   u = u + "availableconstraint/#{q.flow}"
   u = u + handleAvailabilityPathParams(q, s)
   u = u + handleAvailabilityQueryParams(q, s)
+  u
 
 ex = [
   ApiVersion.v1_0_0
