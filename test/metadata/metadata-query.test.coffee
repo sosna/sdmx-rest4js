@@ -201,6 +201,16 @@ describe 'Metadata query', ->
         {resource: MetadataType.HIERARCHICAL_CODELIST, item: item})
       query.should.have.property('item').that.equals item
 
+    it 'a string representing multiple items can be used', ->
+      items = 'A+B'
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
+      query.should.have.property('item').that.equals items
+
+    it 'an array representing multiple items can be used', ->
+      items = ['A', 'B']
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
+      query.should.have.property('item').that.equals 'A+B'
+
   describe 'when setting the amount of details', ->
 
     it 'a string representing the amount of details can be passed', ->

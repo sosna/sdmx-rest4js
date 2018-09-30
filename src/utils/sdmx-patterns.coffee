@@ -89,6 +89,10 @@ MultipleIDType = /// ^
   #{IDType.source}([+]#{IDType.source})*
   $///
 
+MultipleNestedIDType = /// ^
+  #{NestedIDType.source}([+]#{NestedIDType.source})*
+  $///
+
 MultipleVersionsType = /// ^
   #{VersionType.source}([+]#{VersionType.source})*
   $///
@@ -110,3 +114,4 @@ exports.ReportingPeriodType = ReportingPeriodType
 exports.SeriesKeyType = SeriesKeyType
 exports.MultipleIDType = MultipleIDType
 exports.MultipleVersionsType = MultipleVersionsType
+exports.MultipleNestedIDType = MultipleNestedIDType
