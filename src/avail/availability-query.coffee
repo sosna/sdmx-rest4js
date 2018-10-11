@@ -1,5 +1,6 @@
-{DataDetail} = require './data-detail'
-{FlowRefType, SeriesKeyType, MultipleProviderRefType, NCNameIDType} =
+{AvailabilityMode} = require './availability-mode'
+{AvailabilityReferences} = require './availability-references'
+{FlowRefType, SeriesKeyType, MultipleProviderRefType, NestedNCNameIDType} =
   require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, isValidPeriod, isValidDate, createErrorMessage} =
   require '../utils/validators'
@@ -7,34 +8,20 @@
 defaults =
   key: 'all'
   provider: 'all'
-  obsDimension: 'TIME_PERIOD'
-  detail: DataDetail.FULL
-  history: false
+  component: 'all'
+  mode: AvailabilityMode.EXACT
+  references: AvailabilityReferences.NONE
 
 ValidQuery =
   flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
   key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
   provider: (i, e) -> isValidPattern(i, MultipleProviderRefType, 'provider', e)
+  component: (i, e) -> isValidPattern(i, NestedNCNameIDType, 'component', e)
   start: (i, e) -> !i or isValidPeriod(i, 'start period', e)
   end: (i, e) -> !i or isValidPeriod(i, 'end period', e)
   updatedAfter: (i, e) -> !i or isValidDate(i, 'updatedAfter', e)
-  firstNObs: (i, e) -> !i or isValidNObs(i, 'firstNObs', e)
-  lastNObs: (i, e) -> !i or isValidNObs(i, 'lastNObs', e)
-  obsDimension: (i, e) -> isValidPattern(i, NCNameIDType, 'obs dimension', e)
-  detail: (i, e) -> isValidEnum(i, DataDetail, 'details', e)
-  history: (i, e) -> isValidHistory(i, e)
-
-isValidHistory = (input, errors) ->
-  valid = typeof input is 'boolean'
-  errors.push "#{input} is not a valid value for history. Must be true or \
-  false" unless valid
-  valid
-
-isValidNObs = (input, name, errors) ->
-  valid = typeof input is 'number' and input > 0
-  errors.push "#{input} is not a valid value for #{name}. Must be a positive \
-  integer" unless valid
-  valid
+  mode: (i, e) -> isValidEnum(i, AvailabilityMode, 'mode', e)
+  references: (i, e) -> isValidEnum(i, AvailabilityReferences, 'references', e)
 
 isValidQuery = (q) ->
   errors = []
@@ -49,8 +36,8 @@ toKeyString = (dims) ->
 
 toProviderString = (p) -> p.join('+')
 
-# A query for data, as defined by the SDMX RESTful API.
-query = class DataQuery
+# A query for data availability, as defined by the SDMX RESTful API.
+query = class AvailabilityQuery
 
   @from: (opts) ->
     key = opts?.key ? defaults.key
@@ -61,17 +48,15 @@ query = class DataQuery
       flow: opts?.flow
       key: key
       provider: pro
+      component: opts?.component ? defaults.component
       start: opts?.start
       end: opts?.end
       updatedAfter: opts?.updatedAfter
-      firstNObs: opts?.firstNObs
-      lastNObs: opts?.lastNObs
-      obsDimension: opts?.obsDimension ? defaults.obsDimension
-      detail: opts?.detail ? defaults.detail
-      history: opts?.history ? defaults.history
+      mode: opts?.mode ? defaults.mode
+      references: opts?.references ? defaults.references
     input = isValidQuery query
-    throw Error createErrorMessage(input.errors, 'data query') \
+    throw Error createErrorMessage(input.errors, 'availability query') \
       unless input.isValid
     query
 
-exports.DataQuery = query
+exports.AvailabilityQuery = query

@@ -30,6 +30,9 @@ describe 'Metadata query', ->
     query.should.be.an('object').with.property('references')
       .that.equals MetadataReferences.NONE
 
+  it 'throws an exception when using an unknown property', ->
+    test = -> MetadataQuery.from({resource: MetadataType.CODELIST, type: "bla"})
+
   describe 'when setting a resource type', ->
     it 'a string representing the resource type can be passed', ->
       resource = 'codelist'
@@ -76,6 +79,18 @@ describe 'Metadata query', ->
         {resource: MetadataType.CODELIST, agency: agency})
       query.should.have.property('agency').that.equals agency
 
+    it 'a string representing multiple agencies can be used', ->
+      agency = 'ECB+BIS'
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, agency: agency})
+      query.should.have.property('agency').that.equals agency
+
+    it 'an array representing multiple agencies can be used', ->
+      agencies = ['ECB.DISS', 'BIS']
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, agency: agencies})
+      query.should.have.property('agency').that.equals 'ECB.DISS+BIS'
+
     it 'throws an exception when the agency id is invalid', ->
       test = -> MetadataQuery.from({resource: 'codelist', agency: '1A'})
       should.Throw(test, Error, 'Not a valid metadata query')
@@ -102,6 +117,16 @@ describe 'Metadata query', ->
       id = 'CL-FREQ1'
       query = MetadataQuery.from({resource: MetadataType.CODELIST, id: id})
       query.should.have.property('id').that.equals id
+
+    it 'a string representing multiple resource ids can be used', ->
+      id = 'CL_FREQ+CL_DECIMALS'
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, id: id})
+      query.should.have.property('id').that.equals id
+
+    it 'an array representing multiple resource ids can be used', ->
+      ids = ['CL_FREQ', 'CL_DECIMALS']
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, id: ids})
+      query.should.have.property('id').that.equals 'CL_FREQ+CL_DECIMALS'
 
     it 'throws an exception if the resource id is invalid', ->
       test = -> MetadataQuery.from({resource: 'codelist', id: ' '})
@@ -133,6 +158,18 @@ describe 'Metadata query', ->
         {resource: MetadataType.CODELIST, version: version})
       query.should.have.property('version').that.equals version
 
+    it 'a string representing multiple versions can be used', ->
+      version = '1.0+2.1.1'
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, version: version})
+      query.should.have.property('version').that.equals version
+
+    it 'an array representing multiple agencies can be used', ->
+      versions = ['1.0', '2.1.1']
+      query = MetadataQuery.from(
+        {resource: MetadataType.CODELIST, version: versions})
+      query.should.have.property('version').that.equals '1.0+2.1.1'
+
     it 'throws an exception if the version is invalid', ->
       test = -> MetadataQuery.from({resource: 'codelist', version: 'semver'})
       should.Throw(test, Error, 'Not a valid metadata query')
@@ -163,6 +200,16 @@ describe 'Metadata query', ->
       query = MetadataQuery.from(
         {resource: MetadataType.HIERARCHICAL_CODELIST, item: item})
       query.should.have.property('item').that.equals item
+
+    it 'a string representing multiple items can be used', ->
+      items = 'A+B'
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
+      query.should.have.property('item').that.equals items
+
+    it 'an array representing multiple items can be used', ->
+      items = ['A', 'B']
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
+      query.should.have.property('item').that.equals 'A+B'
 
   describe 'when setting the amount of details', ->
 

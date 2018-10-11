@@ -22,8 +22,17 @@ formats =
   # The SDMX-JSON 1.0.0 data format (Candidate technical specification).
   SDMX_JSON_1_0_0_CTS: 'application/vnd.sdmx.data+json;version=1.0.0-cts'
 
+  # The SDMX-JSON 1.0.0 data format.
+  SDMX_JSON_1_0_0: 'application/vnd.sdmx.data+json;version=1.0.0'
+
+  # The SDMX-CSV 1.0.0 data format.
+  SDMX_CSV_1_0_0: 'application/vnd.sdmx.data+csv;version=1.0.0'
+
   # Shortcut for the latest version of SDMX-JSON
-  SDMX_JSON: 'application/vnd.sdmx.data+json;version=1.0.0-cts'
+  SDMX_JSON: 'application/vnd.sdmx.data+json;version=1.0.0'
+
+  # Shortcut for the latest version of SDMX-CSV
+  SDMX_CSV: 'application/vnd.sdmx.data+csv;version=1.0.0'
 
   # Shortcut for the latest version of SDMX-ML Generic
   SDMX_ML_GENERIC: 'application/vnd.sdmx.genericdata+xml;version=2.1'

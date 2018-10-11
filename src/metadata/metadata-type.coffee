@@ -32,6 +32,8 @@ types =
   CATEGORISATION: 'categorisation'
   CONTENT_CONSTRAINT: 'contentconstraint'
   ATTACHMENT_CONSTRAINT: 'attachmentconstraint'
+  ACTUAL_CONSTRAINT: 'actualconstraint'
+  ALLOWED_CONSTRAINT: 'allowedconstraint'
   STRUCTURE: 'structure'
 
 exports.MetadataType = Object.freeze types

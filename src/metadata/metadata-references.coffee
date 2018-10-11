@@ -28,10 +28,16 @@ references =
   # The combination of parentsandsiblings and descendants.
   ALL: 'all'
 
+excluded = [
+  'structure'
+  'actualconstraint'
+  'allowedconstraint'
+]
+
 # All the predefined SDMX types are valid references, except for the 'catch all'
 # `structure`
 ( ->
-  references[key] = val for key, val of MetadataType when val isnt 'structure'
+  references[key] = val for key, val of MetadataType when val not in excluded
 )()
 
 exports.MetadataReferences = Object.freeze references

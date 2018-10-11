@@ -6,6 +6,9 @@
 {MetadataDetail} = require './metadata/metadata-detail'
 {MetadataReferences} = require './metadata/metadata-references'
 {MetadataType} = require './metadata/metadata-type'
+{AvailabilityQuery} = require './avail/availability-query'
+{AvailabilityMode} = require './avail/availability-mode'
+{AvailabilityReferences} = require './avail/availability-references'
 {Service} = require './service/service'
 {services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
@@ -159,6 +162,34 @@ getMetadataQuery = (input) ->
   return MetadataQuery.from input
 
 #
+# Get an SDMX 2.1 RESTful availability query.
+#
+# The expected properties (and their default values) are:
+# - *flow*: **Mandatory** - the id of the dataflow of the data to be returned
+# - *key* (optional) - the key of the data to be returned (default: all)
+# - *provider* (optional) - the provider of the data (default: all)
+# - *component* (optional) - the id of the dimension for which to obtain
+#   availability information (default: all)
+# - *start* (optional) - the start period for which data should be returned
+# - *end* (optional) - the end period for which data should be returned
+# - *updatedAfter* (optional) - instructs the service to return what has
+#   changed since the supplied time stamp.
+# - *mode* (optional) - the possible processing modes (default: exact)
+# - *references* (optional) - the references to be returned (default: none)
+#
+# @example Create an availability query for the EXR dataflow
+#   sdmxrest.getAvailabilityQuery({flow: 'EXR'})
+#
+# @param [Object] input an object with the desired characteristics of the query
+#
+# @throw an error in case a) the mandatory flow is not supplied or b) a value
+# not compliant with the SDMX 2.1 RESTful specification is supplied for one of
+# the properties.
+#
+getAvailabilityQuery = (input) ->
+  return AvailabilityQuery.from input
+
+#
 # Get the SDMX 2.1 RESTful URL representing the query to be executed against the
 # supplied service.
 #
@@ -256,6 +287,7 @@ module.exports =
   services: services
   getDataQuery: getDataQuery
   getMetadataQuery: getMetadataQuery
+  getAvailabilityQuery: getAvailabilityQuery
   getUrl: getUrl
   request: request
   data:
@@ -266,6 +298,9 @@ module.exports =
     MetadataDetail: MetadataDetail
     MetadataReferences: MetadataReferences
     MetadataType: MetadataType
+  availability:
+    AvailabilityMode: AvailabilityMode
+    AvailabilityReferences: AvailabilityReferences
   utils:
     ApiVersion: ApiVersion
     SdmxPatterns: SdmxPatterns

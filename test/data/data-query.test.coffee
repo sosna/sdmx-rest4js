@@ -35,6 +35,9 @@ describe 'Data queries', ->
     q.should.have.property('detail').that.equals 'full'
     q.should.have.property('history').that.is.false
 
+  it 'throws an exception when using an unknown property', ->
+    test = -> DataQuery.from({flow: 'EXR', type: 'blah'})
+
   describe 'when setting the flow', ->
 
     it 'throws an exception when the flow is not set', ->
@@ -110,6 +113,20 @@ describe 'Data queries', ->
       q = DataQuery.from({flow: flow, provider: provider})
       q.should.have.property('flow').that.equals flow
       q.should.have.property('provider').that.equals provider
+
+    it 'a string representing multiple providers can be used', ->
+      flow = 'EXR'
+      provider = 'ECB+BIS'
+      q = DataQuery.from({flow: flow, provider: provider})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('provider').that.equals provider
+
+    it 'an array representing multiple providers can be used', ->
+      flow = 'EXR'
+      providers = ['SDMX,ECB', 'BIS']
+      q = DataQuery.from({flow: flow, provider: providers})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('provider').that.equals 'SDMX,ECB+BIS'
 
     it 'throws an exception if the value for provider is invalid', ->
       test = -> DataQuery.from({flow: 'EXR', provider: 'SDMX,ECB,2.0'})
