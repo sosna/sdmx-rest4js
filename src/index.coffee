@@ -265,22 +265,30 @@ getUrl = (query, service) ->
 # @see #getService
 #
 request = (params...) ->
+  request2(params...).then((response) ->
+    checkStatus params[0], response
+    response.text()
+  )
+
+#
+# Executes the supplied query against the supplied service and returns a
+# Promise.
+#
+# At the difference with the request() function, request2() will
+# include the response headers and additional information such as the status.
+#
+# @see #request for additional information about the required parameters.
+#
+request2 = (params...) ->
   q = params[0]
   s = if typeof q is 'string' then guessService q else getService params[1]
   u = if typeof q is 'string' then q else getUrl q, s
   o = if typeof q is 'string' then params[1] else params[2]
-  isDataQuery = false
-  if typeof q is 'string' and q.indexOf('/data/') > -1
-    isDataQuery = true
-  else if q.flow
-    isDataQuery = true
+  isDataQuery = if u.indexOf('/data/') > -1 then true else false
 
   requestOptions = addHeaders o, s, isDataQuery
   fetch(u, requestOptions)
-    .then((response) ->
-      checkStatus q, response
-      response.text())
-    .then((body) -> body)
+    .then((response) -> response)
 
 module.exports =
   getService: getService
@@ -290,6 +298,7 @@ module.exports =
   getAvailabilityQuery: getAvailabilityQuery
   getUrl: getUrl
   request: request
+  request2: request2
   data:
     DataFormat: DataFormat
     DataDetail: DataDetail
