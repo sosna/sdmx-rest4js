@@ -192,7 +192,7 @@ describe 'API', ->
       test = -> sdmxrest.getUrl query
       should.Throw(test, Error, 'Service is a mandatory parameter')
 
-  describe 'when using execute()', ->
+  describe 'when using request()', ->
 
     it 'offers to execute a request from a query and service objects', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
@@ -312,7 +312,6 @@ describe 'API', ->
         sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
       response.should.eventually.equal 'OK'
 
-
     it 'allows disabling content compression', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('accept-encoding', (h) -> h is undefined)
@@ -323,3 +322,15 @@ describe 'API', ->
       response =
         sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
       response.should.eventually.equal 'OK'
+
+  describe 'when using request2()', ->
+    it 'offers a way to retrieve response headers', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'X-My-Headers': 'My Header value'}
+      response =
+        sdmxrest.request2 {flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB'
+      response.should.eventually.have.property('status').that.equals 200
+      response.should.eventually.have.property('headers').that.is.an 'object'
+      response.should.eventually.have.property('headers').that.have.property 'X-My-Headers'
+      response.should.eventually.respondTo 'text'
