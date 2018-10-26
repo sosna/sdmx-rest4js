@@ -332,5 +332,4 @@ describe 'API', ->
         sdmxrest.request2 {flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB'
       response.should.eventually.have.property('status').that.equals 200
       response.should.eventually.have.property('headers').that.is.an 'object'
-      response.should.eventually.have.property('headers').that.have.property 'X-My-Headers'
       response.should.eventually.respondTo 'text'
