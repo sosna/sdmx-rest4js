@@ -60,14 +60,14 @@
     "coffee-coverage": "3.0.0",
     "coffeeify": "3.0.1",
     "coffeelint": "2.1.0",
-    "coffeescript": "2.1.1",
-    "commitizen": "2.10.1",
+    "coffeescript": "2.3.2",
+    "commitizen": "3.0.4",
     "cz-conventional-changelog": "2.1.0",
-    "husky": "0.14.3",
+    "husky": "1.1.2",
     "istanbul": "0.4.5",
     "mocha": "5.2.0",
-    "nock": "9.6.1",
-    "semantic-release": "15.9.8"
+    "nock": "10.0.1",
+    "semantic-release": "15.10.5"
   },
   "config": {
     "commitizen": {
