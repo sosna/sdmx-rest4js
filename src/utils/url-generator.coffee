@@ -14,11 +14,10 @@ itemAllowed = (resource, api) ->
   ((resource isnt 'hierarchicalcodelist' and isItemScheme(resource)) or
   (api isnt ApiVersion.v1_1_0 and resource is 'hierarchicalcodelist'))
 
-createEntryPoint = (service) ->
-  throw ReferenceError "#{service.url} is not a valid service"\
-    unless service.url
-  url = service.url
-  url = url + '/' unless service.url.indexOf('/', service.url.length - 1) > -1
+createEntryPoint = (s) ->
+  throw ReferenceError "#{s.url} is not a valid service" unless s.url
+  url = s.url
+  url = s.url + '/' unless s.url.indexOf('/', s.url.length - 1) > -1
   url
 
 createDataQuery = (query, service) ->
@@ -132,7 +131,7 @@ createShortAvailabilityQuery = (q, s) ->
   u = u + handleAvailabilityQueryParams(q, s)
   u
 
-ex = [
+excluded = [
   ApiVersion.v1_0_0
   ApiVersion.v1_0_1
   ApiVersion.v1_0_2
@@ -141,7 +140,7 @@ ex = [
 ]
 
 checkMultipleItems = (i, s, r) ->
-  if s.api in ex and /\+/.test i
+  if s.api in excluded and /\+/.test i
     throw Error "Multiple #{r} not allowed in #{s.api}"
 
 checkApiVersion = (q, s) ->
@@ -151,14 +150,38 @@ checkApiVersion = (q, s) ->
   checkMultipleItems(q.item, s, "items")
 
 checkDetail = (q, s) ->
-  if (s.api in ex and (q.detail is 'referencepartial' or
+  if (s.api in excluded and (q.detail is 'referencepartial' or
   q.detail is 'allcompletestubs' or q.detail is 'referencecompletestubs'))
     throw Error "#{q.detail} not allowed in #{s.api}"
 
 checkResource = (q, s) ->
-  if (s.api in ex and (q.resource is 'actualconstraint' or
+  if (s.api in excluded and (q.resource is 'actualconstraint' or
   q.resource is 'allowedconstraint'))
     throw Error "#{q.resource} not allowed in #{s.api}"
+
+handleAvailabilityQuery = (qry, srv, skip) ->
+  if srv.api in excluded
+    throw Error "Availability query not supported in #{srv.api}"
+  else if skip
+    createShortAvailabilityQuery(qry, srv)
+  else
+    createAvailabilityQuery(qry, srv)
+
+handleDataQuery = (qry, srv, skip) ->
+  checkMultipleItems(qry.provider, srv, "providers")
+  if skip
+    createShortDataQuery(qry, srv)
+  else
+    createDataQuery(qry, srv)
+
+handleMetadataQuery = (qry, srv, skip) ->
+  checkApiVersion(qry, srv)
+  checkDetail(qry, srv)
+  checkResource(qry, srv)
+  if skip
+    createShortMetadataQuery(qry, srv)
+  else
+    createMetadataQuery(qry, srv)
 
 generator = class Generator
 
@@ -167,29 +190,13 @@ generator = class Generator
     if (@query?.mode? or
     (@query?.flow? and @query?.references?) or
     (@query?.flow? and @query?.component?))
-      if @service.api in ex
-        throw Error "Availability query not supported in #{@service.api}"
-      else if skipDefaults
-        url = createShortAvailabilityQuery(@query, @service)
-      else
-        url = createAvailabilityQuery(@query, @service)
+      handleAvailabilityQuery(@query, @service, skipDefaults)
     else if @query?.flow?
-      checkMultipleItems(@query.provider, @service, "providers")
-      if skipDefaults
-        url = createShortDataQuery(@query, @service)
-      else
-        url = createDataQuery(@query, @service)
+      handleDataQuery(@query, @service, skipDefaults)
     else if @query?.resource?
-      checkApiVersion(@query, @service)
-      checkDetail(@query, @service)
-      checkResource(@query, @service)
-      if skipDefaults
-        url = createShortMetadataQuery(@query, @service)
-      else
-        url = createMetadataQuery(@query, @service)
+      handleMetadataQuery(@query, @service, skipDefaults)
     else
       throw TypeError "#{@query} is not a valid SDMX data, metadata or \
       availability query"
-    url
 
 exports.UrlGenerator = generator
