@@ -35,6 +35,7 @@ describe 'API', ->
       .that.is.not.undefined
     sdmxrest.metadata.should.have.property('MetadataType').that.is.not.undefined
     sdmxrest.utils.should.have.property('ApiVersion').that.is.not.undefined
+    sdmxrest.utils.should.have.property('ApiResources').that.is.not.undefined
     sdmxrest.utils.should.have.property('SdmxPatterns').that.is.not.undefined
     sdmxrest.utils.SdmxPatterns.should.have.property('IDType')
       .that.is.a 'regexp'
