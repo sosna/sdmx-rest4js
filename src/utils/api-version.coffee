@@ -27,4 +27,56 @@ versions =
   # A shortcut to the most recent version of the SDMX RESTful API
   LATEST: 'v1.3.0'
 
+resourcesV1 = [
+  'datastructure'
+  'metadatastructure'
+  'categoryscheme'
+  'conceptscheme'
+  'codelist'
+  'hierarchicalcodelist'
+  'organisationscheme'
+  'agencyscheme'
+  'dataproviderscheme'
+  'dataconsumerscheme'
+  'organisationunitscheme'
+  'dataflow'
+  'metadataflow'
+  'reportingtaxonomy'
+  'provisionagreement'
+  'structureset'
+  'process'
+  'categorisation'
+  'contentconstraint'
+  'attachmentconstraint'
+  'structure'
+  'data'
+  'metadata'
+].sort
+
+resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].concat resourcesV1).sort
+
+resources =
+
+  # The set of valid resources for v1.0.0.
+  v1_0_0: resourcesV1
+
+  # The set of valid resources for v1.0.1.
+  v1_0_1: resourcesV1
+
+  # The set of valid resources for v1.0.2.
+  v1_0_2: resourcesV1
+
+  # The set of valid resources for v1.1.0.
+  v1_1_0: resourcesV1
+
+  # The set of valid resources for v1.2.0.
+  v1_2_0: resourcesV1
+
+  # The set of valid resources for v1.3.0.
+  v1_3_0: resourcesV3
+
+  # The set of valid resources for the latest API version.
+  LATEST: resourcesV3
+
 exports.ApiVersion = Object.freeze versions
+exports.ApiResources = resources

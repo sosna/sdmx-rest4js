@@ -1,6 +1,7 @@
 should = require('chai').should()
 
 {ApiVersion} = require '../../src/utils/api-version'
+{ApiResources} = require '../../src/utils/api-version'
 
 describe 'API versions', ->
 
@@ -26,3 +27,80 @@ describe 'API versions', ->
 
   it 'considers v1.3.0 as the latest version', ->
     ApiVersion.LATEST.should.equal 'v1.3.0'
+
+describe 'API resources', ->
+  expectedResourcesV1 = [
+    'datastructure'
+    'metadatastructure'
+    'categoryscheme'
+    'conceptscheme'
+    'codelist'
+    'hierarchicalcodelist'
+    'organisationscheme'
+    'agencyscheme'
+    'dataproviderscheme'
+    'dataconsumerscheme'
+    'organisationunitscheme'
+    'dataflow'
+    'metadataflow'
+    'reportingtaxonomy'
+    'provisionagreement'
+    'structureset'
+    'process'
+    'categorisation'
+    'contentconstraint'
+    'attachmentconstraint'
+    'structure'
+    'data'
+    'metadata'
+  ].sort
+
+  expectedResourcesV3 = [
+    'datastructure'
+    'metadatastructure'
+    'categoryscheme'
+    'conceptscheme'
+    'codelist'
+    'hierarchicalcodelist'
+    'organisationscheme'
+    'agencyscheme'
+    'dataproviderscheme'
+    'dataconsumerscheme'
+    'organisationunitscheme'
+    'dataflow'
+    'metadataflow'
+    'reportingtaxonomy'
+    'provisionagreement'
+    'structureset'
+    'process'
+    'categorisation'
+    'contentconstraint'
+    'attachmentconstraint'
+    'actualconstraint'
+    'allowedconstraint'
+    'structure'
+    'data'
+    'metadata'
+    'availableconstraint'
+  ].sort
+
+  it 'contains all the expected resources for version 1.0.0 and only those', ->
+    ApiResources.v1_0_0.should.eql expectedResourcesV1
+
+  it 'contains all the expected resources for version 1.0.1 and only those', ->
+    ApiResources.v1_0_1.should.eql expectedResourcesV1
+
+  it 'contains all the expected resources for version 1.0.2 and only those', ->
+    ApiResources.v1_0_2.should.eql expectedResourcesV1
+
+  it 'contains all the expected resources for version 1.1.0 and only those', ->
+    ApiResources.v1_1_0.should.eql expectedResourcesV1
+
+  it 'contains all the expected resources for version 1.2.0 and only those', ->
+    ApiResources.v1_2_0.should.eql expectedResourcesV1
+
+  it 'contains all the expected resources for version 1.3.0 and only those', ->
+    ApiResources.v1_3_0.should.eql expectedResourcesV3
+
+  it 'contains all the expected resources for the latest version and only those', ->
+    ApiResources.LATEST.should.eql expectedResourcesV3
