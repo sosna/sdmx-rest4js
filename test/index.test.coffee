@@ -35,6 +35,7 @@ describe 'API', ->
       .that.is.not.undefined
     sdmxrest.metadata.should.have.property('MetadataType').that.is.not.undefined
     sdmxrest.utils.should.have.property('ApiVersion').that.is.not.undefined
+    sdmxrest.utils.should.have.property('ApiResources').that.is.not.undefined
     sdmxrest.utils.should.have.property('SdmxPatterns').that.is.not.undefined
     sdmxrest.utils.SdmxPatterns.should.have.property('IDType')
       .that.is.a 'regexp'
@@ -332,5 +333,4 @@ describe 'API', ->
         sdmxrest.request2 {flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB'
       response.should.eventually.have.property('status').that.equals 200
       response.should.eventually.have.property('headers').that.is.an 'object'
-      response.should.eventually.have.property('headers').that.have.property 'X-My-Headers'
       response.should.eventually.respondTo 'text'

@@ -13,6 +13,7 @@
 {services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
 {ApiVersion} = require './utils/api-version'
+{ApiResources} = require './utils/api-version'
 SdmxPatterns = require './utils/sdmx-patterns'
 promise = require 'es6-promise'
 promise.polyfill()
@@ -312,4 +313,5 @@ module.exports =
     AvailabilityReferences: AvailabilityReferences
   utils:
     ApiVersion: ApiVersion
+    ApiResources: ApiResources
     SdmxPatterns: SdmxPatterns
