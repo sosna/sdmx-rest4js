@@ -51,9 +51,9 @@ resourcesV1 = [
   'structure'
   'data'
   'metadata'
-].sort
+].sort()
 
-resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].concat resourcesV1).sort
+resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].concat resourcesV1).sort()
 
 resources =
 
@@ -79,4 +79,4 @@ resources =
   LATEST: resourcesV3
 
 exports.ApiVersion = Object.freeze versions
-exports.ApiResources = resources
+exports.ApiResources = Object.freeze resources

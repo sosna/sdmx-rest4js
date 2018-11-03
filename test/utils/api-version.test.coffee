@@ -53,7 +53,7 @@ describe 'API resources', ->
     'structure'
     'data'
     'metadata'
-  ].sort
+  ].sort()
 
   expectedResourcesV3 = [
     'datastructure'
@@ -82,7 +82,7 @@ describe 'API resources', ->
     'data'
     'metadata'
     'availableconstraint'
-  ].sort
+  ].sort()
 
   it 'contains all the expected resources for version 1.0.0 and only those', ->
     ApiResources.v1_0_0.should.eql expectedResourcesV1
