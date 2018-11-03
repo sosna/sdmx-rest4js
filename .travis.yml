@@ -12,6 +12,7 @@ notifications:
 node_js:
   - 'node'
   - 'lts/*'
+  - '10'
   - '8'
   - '7'
   - '6'
