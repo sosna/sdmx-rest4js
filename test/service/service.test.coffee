@@ -70,7 +70,7 @@ describe 'Service', ->
       Service[s].url.should.contain 'https' for s in i when s.indexOf('_S') > -1
 
     it 'offers a default format for some predefined services', ->
-      format = DataFormat.SDMX_JSON
+      format = DataFormat.SDMX_JSON_1_0_0_WD
       Service['ECB'].should.have.property('format').that.equals format
 
     it 'offers access to secure instances of predefined services', ->
