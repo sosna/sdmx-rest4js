@@ -4,7 +4,7 @@
     "node": ">=6"
   },
   "description": "SDMX REST API client for JavaScript",
-  "version": "2.11.1",
+  "version": "2.11.2",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",

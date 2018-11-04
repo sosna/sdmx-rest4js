@@ -29,7 +29,7 @@ service = class Service
     name: 'European Central Bank'
     api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
-    format: DataFormat.SDMX_JSON
+    format: DataFormat.SDMX_JSON_1_0_0_WD
 
   @SDMXGR:
     id: 'SDMXGR'
