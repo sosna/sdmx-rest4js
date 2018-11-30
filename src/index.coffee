@@ -300,6 +300,7 @@ module.exports =
   getUrl: getUrl
   request: request
   request2: request2
+  checkStatus: checkStatus
   data:
     DataFormat: DataFormat
     DataDetail: DataDetail

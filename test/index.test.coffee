@@ -16,6 +16,7 @@ describe 'API', ->
     sdmxrest.should.have.property 'getAvailabilityQuery'
     sdmxrest.should.have.property 'getUrl'
     sdmxrest.should.have.property 'request'
+    sdmxrest.should.have.property 'checkStatus'
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.should.have.property('metadata').that.is.an 'object'
     sdmxrest.should.have.property('availability').that.is.an 'object'
@@ -334,3 +335,13 @@ describe 'API', ->
       response.should.eventually.have.property('status').that.equals 200
       response.should.eventually.have.property('headers').that.is.an 'object'
       response.should.eventually.respondTo 'text'
+
+  describe 'when using checkStatus()', ->
+    it 'throws an error in case there is an issue with the response', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('TEST') > -1)
+        .reply 404
+      request = sdmxrest.getDataQuery({flow: 'TEST'})
+      sdmxrest.request2(request, "ECB").then((response) ->
+        test = -> sdmxrest.checkStatus(request, response)
+        should.Throw(test, RangeError, 'Request failed with error code 404'))
