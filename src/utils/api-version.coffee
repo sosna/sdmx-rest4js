@@ -1,30 +1,30 @@
 # Lists the various versions of the SDMX RESTful API.
 versions =
 
-  # The initial version of the SDMX RESTFul API, released in April 2011.
+# The initial version of the SDMX RESTFul API, released in April 2011.
   v1_0_0: 'v1.0.0'
 
-  # The version of the SDMX RESTFul API, released in May 2012.
+# The version of the SDMX RESTFul API, released in May 2012.
   v1_0_1: 'v1.0.1'
 
-  # The initial version of the SDMX RESTFul API, released in April 2013.
+# The initial version of the SDMX RESTFul API, released in April 2013.
   v1_0_2: 'v1.0.2'
 
-  # The version of the SDMX RESTFul API released in September 2015. It adds
-  # the includeHistory query string parameter as well as the possibility to
-  # query for items within item schemes.
+# The version of the SDMX RESTFul API released in September 2015. It adds
+# the includeHistory query string parameter as well as the possibility to
+# query for items within item schemes.
   v1_1_0: 'v1.1.0'
 
-  # The version of the SDMX RESTFul API released in May 2017. It adds supports
-  # for retrieving specific hierarchies in a hierarchical codelist.
+# The version of the SDMX RESTFul API released in May 2017. It adds supports
+# for retrieving specific hierarchies in a hierarchical codelist.
   v1_2_0: 'v1.2.0'
 
-  # The version of the SDMX RESTFul API released in October 2018. It introduces
-  # the new valididty API, adds new resources, generalizes the use of the +
-  # operator, etc.
+# The version of the SDMX RESTFul API released in October 2018. It introduces
+# the new valididty API, adds new resources, generalizes the use of the +
+# operator, etc.
   v1_3_0: 'v1.3.0'
 
-  # A shortcut to the most recent version of the SDMX RESTful API
+# A shortcut to the most recent version of the SDMX RESTful API
   LATEST: 'v1.3.0'
 
 resourcesV1 = [
@@ -53,29 +53,30 @@ resourcesV1 = [
   'metadata'
 ].sort()
 
-resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].concat resourcesV1).sort()
+resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].
+  concat resourcesV1).sort()
 
 resources =
 
-  # The set of valid resources for v1.0.0.
+# The set of valid resources for v1.0.0.
   v1_0_0: resourcesV1
 
-  # The set of valid resources for v1.0.1.
+# The set of valid resources for v1.0.1.
   v1_0_1: resourcesV1
 
-  # The set of valid resources for v1.0.2.
+# The set of valid resources for v1.0.2.
   v1_0_2: resourcesV1
 
-  # The set of valid resources for v1.1.0.
+# The set of valid resources for v1.1.0.
   v1_1_0: resourcesV1
 
-  # The set of valid resources for v1.2.0.
+# The set of valid resources for v1.2.0.
   v1_2_0: resourcesV1
 
-  # The set of valid resources for v1.3.0.
+# The set of valid resources for v1.3.0.
   v1_3_0: resourcesV3
 
-  # The set of valid resources for the latest API version.
+# The set of valid resources for the latest API version.
   LATEST: resourcesV3
 
 exports.ApiVersion = Object.freeze versions
