@@ -345,3 +345,23 @@ describe 'API', ->
       sdmxrest.request2(request, "ECB").then((response) ->
         test = -> sdmxrest.checkStatus(request, response)
         should.Throw(test, RangeError, 'Request failed with error code 404'))
+
+    it 'accept codes in the 300 range', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('TEST') > -1)
+        .reply 306, 'Redirected'
+      request = sdmxrest.getDataQuery({flow: 'TEST'})
+      sdmxrest.request2(request, "ECB").then((response) ->
+        test = -> sdmxrest.checkStatus(request, response)
+        should.not.throw(test, RangeError, 'Request failed with error code 306')
+      )
+
+    it 'accept code 100', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('TEST') > -1)
+        .reply 100, 'Continue'
+      request = sdmxrest.getDataQuery({flow: 'TEST'})
+      sdmxrest.request2(request, "ECB").then((response) ->
+        test = -> sdmxrest.checkStatus(request, response)
+        should.not.throw(test, RangeError, 'Request failed with error code 100')
+      )
