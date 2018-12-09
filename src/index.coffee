@@ -26,6 +26,32 @@ checkStatus = (query, response) ->
   unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
 
+isDataFormat = (format) ->
+  out = false
+  for k, v of DataFormat
+    out = true if v == format
+  out
+
+isMetadataFormat = (format) ->
+  out = false
+  for k, v of MetadataFormat
+    out = true if v == format
+  out
+
+isGenericFormat = (format) ->
+  formats = [
+    'application/xml'
+    'application/json'
+    'text/csv'
+    'text/xml'
+  ]
+  format in formats
+
+checkFormat = (response) ->
+  fmt = response.headers.get('content-type')
+  unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
+    throw RangeError "Not an SDMX format: #{fmt}"
+
 addHeaders = (opts, s, isDataQuery) ->
   opts = opts ? {}
   headers = {}
@@ -301,6 +327,7 @@ module.exports =
   request: request
   request2: request2
   checkStatus: checkStatus
+  checkFormat: checkFormat
   data:
     DataFormat: DataFormat
     DataDetail: DataDetail

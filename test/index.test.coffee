@@ -17,6 +17,7 @@ describe 'API', ->
     sdmxrest.should.have.property 'getUrl'
     sdmxrest.should.have.property 'request'
     sdmxrest.should.have.property 'checkStatus'
+    sdmxrest.should.have.property 'checkFormat'
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.should.have.property('metadata').that.is.an 'object'
     sdmxrest.should.have.property('availability').that.is.an 'object'
@@ -342,7 +343,7 @@ describe 'API', ->
         .get((uri) -> uri.indexOf('TEST') > -1)
         .reply 404
       request = sdmxrest.getDataQuery({flow: 'TEST'})
-      sdmxrest.request2(request, "ECB").then((response) ->
+      sdmxrest.request2(request, 'ECB').then((response) ->
         test = -> sdmxrest.checkStatus(request, response)
         should.Throw(test, RangeError, 'Request failed with error code 404'))
 
@@ -351,17 +352,61 @@ describe 'API', ->
         .get((uri) -> uri.indexOf('TEST') > -1)
         .reply 306, 'Redirected'
       request = sdmxrest.getDataQuery({flow: 'TEST'})
-      sdmxrest.request2(request, "ECB").then((response) ->
+      sdmxrest.request2(request, 'ECB').then((response) ->
         test = -> sdmxrest.checkStatus(request, response)
         should.not.throw(test, RangeError, 'Request failed with error code 306')
       )
 
     it 'accept code 100', ->
-      query = nock('http://sdw-wsrest.ecb.europa.eu')
+      nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('TEST') > -1)
         .reply 100, 'Continue'
       request = sdmxrest.getDataQuery({flow: 'TEST'})
-      sdmxrest.request2(request, "ECB").then((response) ->
+      sdmxrest.request2(request, 'ECB').then((response) ->
         test = -> sdmxrest.checkStatus(request, response)
         should.not.throw(test, RangeError, 'Request failed with error code 100')
       )
+
+  describe 'when using checkFormat()', ->
+    it 'accepts SDMX data formats', ->
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': 'application/vnd.sdmx.data+json;version=1.0.0'}
+      sdmxrest.request2({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB').then((response) ->
+        test = -> sdmxrest.checkFormat(response)
+        should.not.throw(test, RangeError, 'Not an SDMX format')
+      )
+
+    it 'accepts SDMX metadata formats', ->
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('codelist') > -1)
+        .reply 200, 'OK', {'Content-Type': 'application/vnd.sdmx.structure+xml;version=2.1'}
+      sdmxrest.request2({resource: 'codelist'}, 'ECB').then((response) ->
+        test = -> sdmxrest.checkFormat(response)
+        should.not.throw(test, RangeError, 'Not an SDMX format')
+      )
+
+    it 'accepts generic formats', ->
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('codelist') > -1)
+        .reply 200, 'OK', {'Content-Type': 'application/xml'}
+      sdmxrest.request2({resource: 'codelist'}, 'ECB').then((response) ->
+        test = -> sdmxrest.checkFormat(response)
+        should.not.throw(test, RangeError, 'Not an SDMX format')
+      )
+
+    it 'throws an error in case the format is not an SDMX one', ->
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': 'application/vnd.test.data+json'}
+      sdmxrest.request2({flow: 'EXR'}, 'ECB').then((response) ->
+        test = -> sdmxrest.checkFormat(response)
+        should.Throw(test, RangeError, 'Not an SDMX format: application/vnd.test.data+json'))
+
+    it 'throws an error in case no format is specified', ->
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      sdmxrest.request2({flow: 'EXR'}, 'ECB').then((response) ->
+        test = -> sdmxrest.checkFormat(response)
+        should.Throw(test, RangeError, 'Not an SDMX format: null'))
