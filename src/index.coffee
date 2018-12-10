@@ -47,7 +47,7 @@ isGenericFormat = (format) ->
   ]
   format in formats
 
-checkFormat = (response) ->
+checkMediaType = (response) ->
   fmt = response.headers.get('content-type')
   unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
@@ -327,7 +327,7 @@ module.exports =
   request: request
   request2: request2
   checkStatus: checkStatus
-  checkFormat: checkFormat
+  checkMediaType: checkMediaType
   data:
     DataFormat: DataFormat
     DataDetail: DataDetail
