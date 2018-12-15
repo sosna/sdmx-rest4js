@@ -52,6 +52,7 @@ isRequestedFormat = (requested, received) ->
 
 checkMediaType = (requested, response) ->
   fmt = response.headers.get('content-type')
+  fmt = if fmt then fmt.replace /; version=/, ';version=' else fmt
   unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
   unless isRequestedFormat(requested, fmt)
