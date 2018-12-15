@@ -23,8 +23,39 @@ userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
 
 checkStatus = (query, response) ->
   code  = response?.status
-  unless 100 < code < 300 or code is 304 or (code is 404 and query.updatedAfter)
+  unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
+
+isDataFormat = (format) ->
+  out = false
+  for k, v of DataFormat
+    out = true if v == format
+  out
+
+isMetadataFormat = (format) ->
+  out = false
+  for k, v of MetadataFormat
+    out = true if v == format
+  out
+
+isGenericFormat = (format) ->
+  formats = [
+    'application/xml'
+    'application/json'
+    'text/csv'
+    'text/xml'
+  ]
+  format in formats
+
+isRequestedFormat = (requested, received) ->
+  requested.indexOf(received) > -1
+
+checkMediaType = (requested, response) ->
+  fmt = response.headers.get('content-type')
+  unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
+    throw RangeError "Not an SDMX format: #{fmt}"
+  unless isRequestedFormat(requested, fmt)
+    throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
 
 addHeaders = (opts, s, isDataQuery) ->
   opts = opts ? {}
@@ -301,6 +332,7 @@ module.exports =
   request: request
   request2: request2
   checkStatus: checkStatus
+  checkMediaType: checkMediaType
   data:
     DataFormat: DataFormat
     DataDetail: DataDetail

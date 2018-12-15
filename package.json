@@ -25,7 +25,8 @@
   },
   "keywords": [
     "sdmx",
-    "sdmx restful web services"
+    "sdmx restful web services",
+    "api"
   ],
   "author": "Xavier Sosnovsky <xso@sosna.ws>",
   "contributors": [
@@ -56,18 +57,18 @@
   "devDependencies": {
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
-    "codecov.io": "0.1.6",
+    "codecov": "3.1.0",
     "coffee-coverage": "3.0.0",
     "coffeeify": "3.0.1",
     "coffeelint": "2.1.0",
     "coffeescript": "2.1.1",
-    "commitizen": "2.10.1",
+    "commitizen": "3.0.5",
     "cz-conventional-changelog": "2.1.0",
-    "husky": "0.14.3",
+    "husky": "1.2.0",
     "istanbul": "0.4.5",
     "mocha": "5.2.0",
-    "nock": "9.6.1",
-    "semantic-release": "15.9.8"
+    "nock": "10.0.4",
+    "semantic-release": "15.12.4"
   },
   "config": {
     "commitizen": {
