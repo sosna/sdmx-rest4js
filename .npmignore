@@ -1,3 +1,8 @@
 src/
 test/
 coverage/
+.idea/
+.github/
+coffeelint.json
+.travis.yml
+_config.yml
