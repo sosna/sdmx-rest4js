@@ -440,6 +440,19 @@ describe 'API', ->
         test = -> sdmxrest.checkMediaType(fmt, response)
         should.not.Throw(test))
 
+    it 'Does not throw an error in case the only difference is the space character', ->
+      fmt1 = 'application/vnd.sdmx.genericdata+xml;version=2.1'
+      fmt2 = 'application/vnd.sdmx.genericdata+xml; version=2.1'
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': fmt2}
+      opts =
+        headers:
+          accept: fmt1
+      sdmxrest.request2({flow: 'EXR'}, 'ECB', opts).then((response) ->
+        test = -> sdmxrest.checkMediaType(fmt1, response)
+        should.not.Throw(test))
+
     it 'Does not throw an error in case the received format is one of the requested ones', ->
       fmt = 'application/vnd.sdmx.data+json;version=1.0.0, application/json;q=0.9, text/csv;q=0.5, */*;q=0.4'
       nock('http://sdw-wsrest.ecb.europa.eu')
