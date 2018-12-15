@@ -47,10 +47,15 @@ isGenericFormat = (format) ->
   ]
   format in formats
 
-checkMediaType = (response) ->
+isRequestedFormat = (requested, received) ->
+  requested.indexOf(received) > -1
+
+checkMediaType = (requested, response) ->
   fmt = response.headers.get('content-type')
   unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
+  unless isRequestedFormat(requested, fmt)
+    throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
 
 addHeaders = (opts, s, isDataQuery) ->
   opts = opts ? {}

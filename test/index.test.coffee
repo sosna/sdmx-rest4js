@@ -369,44 +369,97 @@ describe 'API', ->
 
   describe 'when using checkMediaType()', ->
     it 'accepts SDMX data formats', ->
+      fmt = 'application/vnd.sdmx.data+json;version=1.0.0'
       nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
-        .reply 200, 'OK', {'Content-Type': 'application/vnd.sdmx.data+json;version=1.0.0'}
+        .reply 200, 'OK', {'Content-Type': fmt}
       sdmxrest.request2({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB').then((response) ->
-        test = -> sdmxrest.checkMediaType(response)
+        test = -> sdmxrest.checkMediaType(fmt, response)
         should.not.throw(test, RangeError, 'Not an SDMX format')
       )
 
     it 'accepts SDMX metadata formats', ->
+      fmt = 'application/vnd.sdmx.structure+xml;version=2.1'
       nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('codelist') > -1)
-        .reply 200, 'OK', {'Content-Type': 'application/vnd.sdmx.structure+xml;version=2.1'}
+        .reply 200, 'OK', {'Content-Type': fmt}
       sdmxrest.request2({resource: 'codelist'}, 'ECB').then((response) ->
-        test = -> sdmxrest.checkMediaType(response)
+        test = -> sdmxrest.checkMediaType(fmt, response)
         should.not.throw(test, RangeError, 'Not an SDMX format')
       )
 
     it 'accepts generic formats', ->
+      fmt = 'application/xml'
       nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('codelist') > -1)
-        .reply 200, 'OK', {'Content-Type': 'application/xml'}
+        .reply 200, 'OK', {'Content-Type': fmt}
       sdmxrest.request2({resource: 'codelist'}, 'ECB').then((response) ->
-        test = -> sdmxrest.checkMediaType(response)
+        test = -> sdmxrest.checkMediaType(fmt, response)
         should.not.throw(test, RangeError, 'Not an SDMX format')
       )
 
     it 'throws an error in case the format is not an SDMX one', ->
+      fmt = 'application/vnd.test.data+json'
       nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
-        .reply 200, 'OK', {'Content-Type': 'application/vnd.test.data+json'}
+        .reply 200, 'OK', {'Content-Type': fmt}
       sdmxrest.request2({flow: 'EXR'}, 'ECB').then((response) ->
-        test = -> sdmxrest.checkMediaType(response)
-        should.Throw(test, RangeError, 'Not an SDMX format: application/vnd.test.data+json'))
+        test = -> sdmxrest.checkMediaType(fmt, response)
+        should.Throw(test, RangeError, 'Not an SDMX format: ' + fmt))
 
     it 'throws an error in case no format is specified', ->
+      fmt = 'application/xml'
       nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
       sdmxrest.request2({flow: 'EXR'}, 'ECB').then((response) ->
-        test = -> sdmxrest.checkMediaType(response)
+        test = -> sdmxrest.checkMediaType(fmt, response)
         should.Throw(test, RangeError, 'Not an SDMX format: null'))
+
+    it 'throws an error in case the format is not the requested one', ->
+      fmt = 'application/vnd.sdmx.data+json;version=1.0.0'
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': 'application/xml'}
+      opts =
+        headers:
+          accept: fmt
+      sdmxrest.request2({flow: 'EXR'}, 'ECB', opts).then((response) ->
+        test = -> sdmxrest.checkMediaType(fmt, response)
+        should.Throw(test, RangeError, 'Wrong format: requested ' + fmt + ' but got application/xml'))
+
+    it 'Does not throw an error in case the received format is the requested one', ->
+      fmt = 'application/vnd.sdmx.data+json;version=1.0.0'
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': fmt}
+      opts =
+        headers:
+          accept: fmt
+      sdmxrest.request2({flow: 'EXR'}, 'ECB', opts).then((response) ->
+        test = -> sdmxrest.checkMediaType(fmt, response)
+        should.not.Throw(test))
+
+    it 'Does not throw an error in case the received format is one of the requested ones', ->
+      fmt = 'application/vnd.sdmx.data+json;version=1.0.0, application/json;q=0.9, text/csv;q=0.5, */*;q=0.4'
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': 'text/csv'}
+      opts =
+        headers:
+          accept: fmt
+      sdmxrest.request2({flow: 'EXR'}, 'ECB', opts).then((response) ->
+        test = -> sdmxrest.checkMediaType(fmt, response)
+        should.not.Throw(test))
+
+    it 'Throws an error in case the received format is not one of the requested ones', ->
+      fmt = 'application/vnd.sdmx.data+json;version=1.0.0, application/json;q=0.9, text/csv;q=0.5, */*;q=0.4'
+      nock('http://sdw-wsrest.ecb.europa.eu')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK', {'Content-Type': 'application/xml'}
+      opts =
+        headers:
+          accept: fmt
+      sdmxrest.request2({flow: 'EXR'}, 'ECB', opts).then((response) ->
+        test = -> sdmxrest.checkMediaType(fmt, response)
+        should.Throw(test, RangeError))
