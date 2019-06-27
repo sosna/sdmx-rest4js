@@ -90,7 +90,7 @@ guessService = (u) ->
 # - *url* - the entry point of the SDMX 2.1 RESTful web service
 # - *api* (optional) - the version of the SDMX 2.1 RESTful API supported by
 #   the service. If not supplied, it will default to the most recent version of
-#   the SDMX RESTful API (1.1.0 at the moment)
+#   the SDMX RESTful API
 # - *id* (optional) - an identifier for the web service
 # - *name* (optional) - a label for the web service
 #
