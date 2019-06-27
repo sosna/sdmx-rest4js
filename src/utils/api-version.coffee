@@ -24,8 +24,13 @@ versions =
 # operator, etc.
   v1_3_0: 'v1.3.0'
 
+# The version of the SDMX RESTFul API released in June 2019. The release is
+# a minor one, merely adding a dedicated media type for SDMX-JSON structure 
+# messages.
+  v1_4_0: 'v1.4.0'
+
 # A shortcut to the most recent version of the SDMX RESTful API
-  LATEST: 'v1.3.0'
+  LATEST: 'v1.4.0'
 
 resourcesV1 = [
   'datastructure'
@@ -75,6 +80,9 @@ resources =
 
 # The set of valid resources for v1.3.0.
   v1_3_0: resourcesV3
+
+# The set of valid resources for v1.4.0.
+  v1_4_0: resourcesV3
 
 # The set of valid resources for the latest API version.
   LATEST: resourcesV3
