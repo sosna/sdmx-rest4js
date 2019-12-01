@@ -42,3 +42,6 @@ describe 'Metadata types', ->
 
   it 'considers hierarchicalcodelist as item scheme', ->
     isItemScheme('hierarchicalcodelist').should.be.true
+
+  it 'considers reportingtaxonomy as item scheme', ->
+    isItemScheme('reportingtaxonomy').should.be.true
