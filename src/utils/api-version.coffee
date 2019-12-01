@@ -25,7 +25,7 @@ versions =
   v1_3_0: 'v1.3.0'
 
 # The version of the SDMX RESTFul API released in June 2019. The release is
-# a minor one, merely adding a dedicated media type for SDMX-JSON structure 
+# a minor one, merely adding a dedicated media type for SDMX-JSON structure
 # messages.
   v1_4_0: 'v1.4.0'
 
