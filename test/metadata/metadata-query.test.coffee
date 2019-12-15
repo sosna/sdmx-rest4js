@@ -29,7 +29,7 @@ describe 'Metadata query', ->
     query.should.have.property('detail').that.equals MetadataDetail.FULL
     query.should.be.an('object').with.property('references')
       .that.equals MetadataReferences.NONE
-      
+
   describe 'when setting a resource type', ->
     it 'a string representing the resource type can be passed', ->
       resource = 'codelist'
@@ -161,7 +161,7 @@ describe 'Metadata query', ->
         {resource: MetadataType.CODELIST, version: version})
       query.should.have.property('version').that.equals version
 
-    it 'an array representing multiple agencies can be used', ->
+    it 'an array representing multiple versions can be used', ->
       versions = ['1.0', '2.1.1']
       query = MetadataQuery.from(
         {resource: MetadataType.CODELIST, version: versions})
