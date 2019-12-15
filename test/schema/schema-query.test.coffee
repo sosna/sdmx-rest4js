@@ -157,3 +157,65 @@ describe 'Schema query', ->
         id: 'A.B'
       test = -> SchemaQuery.from(q)
       should.Throw(test, Error, 'Not a valid schema query')
+
+  describe 'when setting a version', ->
+
+    it 'a string representing the version can be passed', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0'
+      test = SchemaQuery.from(q)
+      test.should.have.property('version').that.equals q.version
+
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: 'latest'
+      test = SchemaQuery.from(q)
+      test.should.have.property('version').that.equals q.version
+
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0.0'
+      test = SchemaQuery.from(q)
+      test.should.have.property('version').that.equals q.version
+
+    it 'a string representing multiple versions cannot be used', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0+2.1.1'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
+
+    it 'throws an exception when requesting all versions', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: 'all'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
+
+    it 'throws an exception if the version is invalid', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: 'semver'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
+
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1_2_3'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
