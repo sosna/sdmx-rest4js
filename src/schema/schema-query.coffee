@@ -1,5 +1,5 @@
 {SchemaContext} = require './schema-context'
-{NestedNCNameIDType} = require '../utils/sdmx-patterns'
+{NestedNCNameIDType, IDType} = require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators'
 
@@ -10,7 +10,7 @@ defaults =
 ValidQuery =
   context: (q, i, e) -> isValidEnum(i, SchemaContext, 'context', e)
   agency: (q, i, e) -> isValidPattern(i, NestedNCNameIDType, 'agency', e)
-  id: (q, i, e) -> true
+  id: (q, i, e) -> isValidPattern(i, IDType, 'resource ids', e)
   version: (q, i, e) -> true
   explicit: (q, i, e) -> true
   obsDimension: (q, i, e) -> true

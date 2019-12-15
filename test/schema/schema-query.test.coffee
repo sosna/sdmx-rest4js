@@ -117,3 +117,43 @@ describe 'Schema query', ->
         id: 'BIS_CBS'
       test = -> SchemaQuery.from(q)
       should.Throw(test, Error, 'Not a valid schema query')
+
+  describe 'when setting a resource id', ->
+
+    it 'a string representing the resource id can be passed', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+      test = SchemaQuery.from(q)
+      test.should.have.property('id').that.equals q.id
+
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS-CBS01'
+      test = SchemaQuery.from(q)
+      test.should.have.property('id').that.equals q.id
+
+    it 'a string representing multiple resource ids cannot be used', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS+BIS_LBS'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
+
+    it 'throws an exception if the resource id is invalid', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: ' '
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
+
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'A.B'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
