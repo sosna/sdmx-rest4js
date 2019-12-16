@@ -1,5 +1,6 @@
 {SchemaContext} = require './schema-context'
-{NestedNCNameIDType, IDType, SingleVersionType} = require '../utils/sdmx-patterns'
+{NestedNCNameIDType, IDType, SingleVersionType, NCNameIDType} =
+  require '../utils/sdmx-patterns'
 {isValidEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators'
 
@@ -13,7 +14,8 @@ ValidQuery =
   id: (q, i, e) -> isValidPattern(i, IDType, 'resource ids', e)
   version: (q, i, e) -> isValidPattern(i, SingleVersionType, 'versions', e)
   explicit: (q, i, e) -> isValidExplicit(i, e)
-  obsDimension: (q, i, e) -> true
+  obsDimension: (q, i, e) ->
+    !i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
 
 isValidExplicit = (input, errors) ->
   valid = typeof input is 'boolean'

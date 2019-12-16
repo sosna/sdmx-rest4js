@@ -241,3 +241,27 @@ describe 'Schema query', ->
         explicit: 'test'
       test = -> SchemaQuery.from(q)
       should.Throw(test, Error, 'Not a valid schema query')
+  
+  describe 'when setting the dimension at observation level', ->
+
+    it 'a string representing the dimension at the obs level can be passed', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0'
+        explicit: true
+        obsDimension: 'CURRENCY'
+      test = SchemaQuery.from(q)
+      test.should.have.property('obsDimension').that.equals q.obsDimension
+
+    it 'throws an exception if value for obs dimension is invalid', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0'
+        explicit: true
+        obsDimension: '*&^%$#@!)'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
