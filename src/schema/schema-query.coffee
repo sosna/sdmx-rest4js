@@ -12,8 +12,14 @@ ValidQuery =
   agency: (q, i, e) -> isValidPattern(i, NestedNCNameIDType, 'agency', e)
   id: (q, i, e) -> isValidPattern(i, IDType, 'resource ids', e)
   version: (q, i, e) -> isValidPattern(i, SingleVersionType, 'versions', e)
-  explicit: (q, i, e) -> true
+  explicit: (q, i, e) -> isValidExplicit(i, e)
   obsDimension: (q, i, e) -> true
+
+isValidExplicit = (input, errors) ->
+  valid = typeof input is 'boolean'
+  errors.push "#{input} is not a valid value for explicit. Must be true or \
+  false" unless valid
+  valid
 
 isValidQuery = (query) ->
   errors = []

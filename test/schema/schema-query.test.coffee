@@ -219,3 +219,25 @@ describe 'Schema query', ->
         version: '1_2_3'
       test = -> SchemaQuery.from(q)
       should.Throw(test, Error, 'Not a valid schema query')
+
+  describe 'when setting whether measure is explicit', ->
+
+    it 'a boolean can be passed', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0'
+        explicit: true
+      test = SchemaQuery.from(q)
+      test.should.have.property('explicit').that.is.true
+
+    it 'throws an exception if explicit is not a boolean', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.0'
+        explicit: 'test'
+      test = -> SchemaQuery.from(q)
+      should.Throw(test, Error, 'Not a valid schema query')
