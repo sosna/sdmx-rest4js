@@ -235,7 +235,7 @@ getAvailabilityQuery = (input) ->
 # - *version* (optional) - the artefact version (default: latest)
 # - *obsDimension* (optional) - the ID of the dimension to be attached at the
 #   observation level.
-# - *explicit* (optional) - For cross-sectional data validation, indicates 
+# - *explicit* (optional) - For cross-sectional data validation, indicates
 #   whether observations are strongly typed (default: false)
 #
 # @example Create a schema query for the CBS schema
@@ -243,8 +243,8 @@ getAvailabilityQuery = (input) ->
 #
 # @param [Object] input an object with the desired characteristics of the query
 #
-# @throw an error in case a) the mandatory properties are not supplied or 
-# b) a value not compliant with the SDMX 2.1 RESTful specification is supplied 
+# @throw an error in case a) the mandatory properties are not supplied or
+# b) a value not compliant with the SDMX 2.1 RESTful specification is supplied
 # for one of the properties.
 #
 getSchemaQuery = (input) ->
