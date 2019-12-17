@@ -9,6 +9,8 @@
 {AvailabilityQuery} = require './avail/availability-query'
 {AvailabilityMode} = require './avail/availability-mode'
 {AvailabilityReferences} = require './avail/availability-references'
+{SchemaQuery} = require './schema/schema-query'
+{SchemaContext} = require './schema/schema-context'
 {Service} = require './service/service'
 {services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
@@ -223,6 +225,32 @@ getAvailabilityQuery = (input) ->
   return AvailabilityQuery.from input
 
 #
+# Get an SDMX 2.1 RESTful schema query.
+#
+# The expected properties (and their default values) are:
+# - *context*: **Mandatory** - the constraints that need to be taken into
+#   account, when generating the schema
+# - *agency*: **Mandatory** - the maintenance agency
+# - *id*: **Mandatory** - the artefact id
+# - *version* (optional) - the artefact version (default: latest)
+# - *obsDimension* (optional) - the ID of the dimension to be attached at the
+#   observation level.
+# - *explicit* (optional) - For cross-sectional data validation, indicates 
+#   whether observations are strongly typed (default: false)
+#
+# @example Create a schema query for the CBS schema
+#   sdmxrest.getSchemaQuery({context: 'dataflow', 'id': 'CBS', 'agency': 'BIS'})
+#
+# @param [Object] input an object with the desired characteristics of the query
+#
+# @throw an error in case a) the mandatory properties are not supplied or 
+# b) a value not compliant with the SDMX 2.1 RESTful specification is supplied 
+# for one of the properties.
+#
+getSchemaQuery = (input) ->
+  return SchemaQuery.from input
+
+#
 # Get the SDMX 2.1 RESTful URL representing the query to be executed against the
 # supplied service.
 #
@@ -329,6 +357,7 @@ module.exports =
   getDataQuery: getDataQuery
   getMetadataQuery: getMetadataQuery
   getAvailabilityQuery: getAvailabilityQuery
+  getSchemaQuery: getSchemaQuery
   getUrl: getUrl
   request: request
   request2: request2
@@ -349,3 +378,5 @@ module.exports =
     ApiVersion: ApiVersion
     ApiResources: ApiResources
     SdmxPatterns: SdmxPatterns
+  schema:
+    SchemaContext: SchemaContext
