@@ -131,6 +131,26 @@ createShortAvailabilityQuery = (q, s) ->
   u = u + handleAvailabilityQueryParams(q)
   u
 
+createSchemaQuery = (q, s) ->
+  u = createEntryPoint s
+  u = u + "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
+  u = u + "?explicitMeasure=#{q.explicit}"
+  u = u + "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  u
+
+handleSchemaQueryParams = (q) ->
+  p = []
+  p.push "explicitMeasure=#{q.explicit}" if q.explicit
+  p.push "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
+
+createShortSchemaQuery = (q, s) ->
+  u = createEntryPoint s
+  u = u + "schema/#{q.context}/#{q.agency}/#{q.id}"
+  u = u + "/#{q.version}" if q.version isnt 'latest'
+  u = u + handleSchemaQueryParams(q)
+  u
+
 excluded = [
   ApiVersion.v1_0_0
   ApiVersion.v1_0_1
@@ -183,6 +203,12 @@ handleMetadataQuery = (qry, srv, skip) ->
   else
     createMetadataQuery(qry, srv)
 
+handleSchemaQuery = (qry, srv, skip) ->
+  if skip
+    createShortSchemaQuery(qry, srv)
+  else
+    createSchemaQuery(qry, srv)
+
 generator = class Generator
 
   getUrl: (@query, service, skipDefaults) ->
@@ -195,6 +221,8 @@ generator = class Generator
       handleDataQuery(@query, @service, skipDefaults)
     else if @query?.resource?
       handleMetadataQuery(@query, @service, skipDefaults)
+    else if @query?.context?
+      handleSchemaQuery(@query, @service, skipDefaults)
     else
       throw TypeError "#{@query} is not a valid SDMX data, metadata or \
       availability query"

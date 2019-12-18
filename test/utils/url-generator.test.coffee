@@ -5,6 +5,7 @@ should = require('chai').should()
 {DataQuery} = require '../../src/data/data-query'
 {MetadataQuery} = require '../../src/metadata/metadata-query'
 {AvailabilityQuery} = require '../../src/avail/availability-query'
+{SchemaQuery} = require '../../src/schema/schema-query'
 {UrlGenerator} = require '../../src/utils/url-generator'
 
 describe 'URL Generator', ->
@@ -680,3 +681,45 @@ describe 'for availability queries', ->
     service = Service.from({url: 'http://test.com'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
+
+describe 'for schema queries', ->
+
+    it 'generates a URL for a schema query', ->
+      expected = "http://sdw-wsrest.ecb.europa.eu/service/schema/dataflow\
+      /ECB/EXR/latest?explicitMeasure=false"
+      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB'})
+      service = Service.ECB
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'offers to skip default values for schema', ->
+      expected = "http://test.com/schema/dataflow/ECB/EXR"
+      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (version)', ->
+      expected = "http://test.com/schema/dataflow/ECB/EXR/1.1"
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.1'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (explicit)', ->
+      expected = "http://test.com/schema/dataflow/ECB/EXR?explicitMeasure=true"
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', explicit: true})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds them when needed (obsDimension)', ->
+      expected = 
+        "http://test.com/schema/dataflow/ECB/EXR?dimensionAtObservation=TEST"
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', obsDimension: 'TEST'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
