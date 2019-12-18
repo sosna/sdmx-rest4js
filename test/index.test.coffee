@@ -14,6 +14,7 @@ describe 'API', ->
     sdmxrest.should.have.property 'getDataQuery'
     sdmxrest.should.have.property 'getMetadataQuery'
     sdmxrest.should.have.property 'getAvailabilityQuery'
+    sdmxrest.should.have.property 'getSchemaQuery'
     sdmxrest.should.have.property 'getUrl'
     sdmxrest.should.have.property 'request'
     sdmxrest.should.have.property 'checkStatus'
@@ -21,6 +22,7 @@ describe 'API', ->
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.should.have.property('metadata').that.is.an 'object'
     sdmxrest.should.have.property('availability').that.is.an 'object'
+    sdmxrest.should.have.property('schema').that.is.an 'object'
     sdmxrest.should.have.property('utils').that.is.an 'object'
     sdmxrest.should.have.property('data').that.is.an 'object'
     sdmxrest.data.should.have.property('DataFormat').that.is.not.undefined
@@ -36,6 +38,7 @@ describe 'API', ->
     sdmxrest.availability.should.have.property('AvailabilityReferences')
       .that.is.not.undefined
     sdmxrest.metadata.should.have.property('MetadataType').that.is.not.undefined
+    sdmxrest.schema.should.have.property('SchemaContext').that.is.not.undefined
     sdmxrest.utils.should.have.property('ApiVersion').that.is.not.undefined
     sdmxrest.utils.should.have.property('ApiResources').that.is.not.undefined
     sdmxrest.utils.should.have.property('SdmxPatterns').that.is.not.undefined
@@ -165,6 +168,30 @@ describe 'API', ->
 
       test = -> sdmxrest.getAvailabilityQuery {test: 'TEST'}
       should.Throw(test, Error, 'Not a valid availability query')
+
+  describe 'when using getSchemaQuery()', ->
+
+    it 'offers to create a schema query from properties', ->
+      input = {
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+      }
+      query = sdmxrest.getSchemaQuery input
+      query.should.be.an 'object'
+      query.should.have.property('context').that.equals input.context
+      query.should.have.property('id').that.equals input.id
+      query.should.have.property('agency').that.equals input.agency
+      query.should.have.property('version').that.equals 'latest'
+      query.should.have.property('explicit').that.is.false
+      query.should.have.property('obsDimension').that.is.undefined
+
+    it 'fails if the input is not of the expected type', ->
+      test = -> sdmxrest.getSchemaQuery undefined
+      should.Throw(test, Error, 'Not a valid schema query')
+
+      test = -> sdmxrest.getSchemaQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid schema query')
 
   describe 'when using getUrl()', ->
 

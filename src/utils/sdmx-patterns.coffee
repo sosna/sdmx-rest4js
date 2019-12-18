@@ -39,6 +39,17 @@ VersionType = ///
   )                           # Ends the OR clause
   ///
 
+SingleVersionType = ///
+  (                           # Starts the OR clause
+  latest                      # the string latest
+  | #{VersionNumber.source}   # Or a version number
+  )                           # Ends the OR clause
+  ///
+
+SingleVersionTypeAlone = /// ^
+  #{SingleVersionType.source}
+  $ ///
+
 VersionTypeAlone = /// ^
   #{VersionType.source}
   $ ///
@@ -105,6 +116,7 @@ exports.NCNameIDType = NCNameIDTypeAlone
 exports.NestedNCNameIDType = NestedNCNameIDTypeAlone
 exports.IDType = IDTypeAlone
 exports.VersionType = VersionTypeAlone
+exports.SingleVersionType = SingleVersionTypeAlone
 exports.NestedIDType = NestedIDTypeAlone
 exports.FlowRefType = FlowRefType
 exports.ProviderRefType = ProviderRefType

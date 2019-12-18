@@ -35,9 +35,6 @@ describe 'Data queries', ->
     q.should.have.property('detail').that.equals 'full'
     q.should.have.property('history').that.is.false
 
-  it 'throws an exception when using an unknown property', ->
-    test = -> DataQuery.from({flow: 'EXR', type: 'blah'})
-
   describe 'when setting the flow', ->
 
     it 'throws an exception when the flow is not set', ->
