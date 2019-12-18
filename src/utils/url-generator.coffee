@@ -135,13 +135,13 @@ createSchemaQuery = (q, s) ->
   u = createEntryPoint s
   u = u + "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
   u = u + "?explicitMeasure=#{q.explicit}"
-  u = u + "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  u = u + "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   u
 
 handleSchemaQueryParams = (q) ->
   p = []
-  p.push "explicitMeasure=#{q.explicit}" if q.explicit
   p.push "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  p.push "explicitMeasure=#{q.explicit}" if q.explicit
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
 createShortSchemaQuery = (q, s) ->
