@@ -1,10 +1,10 @@
 {
   "name": "sdmx-rest",
   "engines": {
-    "node": ">=6"
+    "node": ">=10"
   },
   "description": "SDMX REST API client for JavaScript",
-  "version": "2.15.0",
+  "version": "2.15.1",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",

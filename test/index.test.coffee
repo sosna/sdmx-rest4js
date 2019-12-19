@@ -195,7 +195,7 @@ describe 'API', ->
 
   describe 'when using getUrl()', ->
 
-    it 'offers to create a URL from a data query and a service objects', ->
+    it 'creates a URL from a data query and a service objects', ->
       query = sdmxrest.getDataQuery {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}
       service = sdmxrest.getService 'ECB'
       url = sdmxrest.getUrl query, service
@@ -204,12 +204,33 @@ describe 'API', ->
       url.should.contain query.flow
       url.should.contain query.key
 
-    it 'offers to create a URL from a metadata query and a service objects', ->
+    it 'creates a URL from a metadata query and a service objects', ->
       url = sdmxrest.getUrl {resource: 'codelist', id: 'CL_FREQ'}, 'ECB'
       url.should.be.a 'string'
       url.should.contain 'sdw-wsrest.ecb.europa.eu'
       url.should.contain 'codelist'
       url.should.contain 'CL_FREQ'
+
+    it 'creates a URL from a schema query and a service objects', ->
+      q = {'context': 'dataflow', 'agency': 'BIS', 'id': 'CBS'}
+      url = sdmxrest.getUrl q, 'ECB'
+      url.should.be.a 'string'
+      url.should.contain 'sdw-wsrest.ecb.europa.eu'
+      url.should.contain 'schema'
+      url.should.contain 'dataflow/BIS/CBS'
+
+    it 'creates a URL from an availability query and a service objects', ->
+      input = {
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+      }
+      q = sdmxrest.getAvailabilityQuery input
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availableconstraint'
+      url.should.contain 'EXR/A..EUR.SP00.A'
 
     it 'fails if the input is not of the expected type', ->
       test = -> sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'

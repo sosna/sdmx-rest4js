@@ -6,3 +6,4 @@ coverage/
 coffeelint.json
 .travis.yml
 _config.yml
+*.code-workspace
