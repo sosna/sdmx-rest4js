@@ -269,15 +269,25 @@ getSchemaQuery = (input) ->
 # @see #getService
 #
 getUrl = (query, service) ->
-  # URL generation requires all fields to be set. The 3 next lines are just
-  # in case partial objects are passed to the function.
   throw ReferenceError 'Service is a mandatory parameter' unless service
   s = getService service
-  throw Error 'Not a valid query' unless query?.flow or query?.resource
-  q = if query.flow then getDataQuery query else getMetadataQuery query
-
-  return new UrlGenerator().getUrl q, s
-
+  if (query?.mode? \
+  or (query?.flow? and query?.references?) \
+  or (query?.flow? and query?.component?))
+    q = getAvailabilityQuery query
+    return new UrlGenerator().getUrl q, s
+  else if query?.flow?
+    q = getDataQuery query
+    return new UrlGenerator().getUrl q, s
+  else if query?.resource?
+    q = getMetadataQuery query
+    return new UrlGenerator().getUrl q, s
+  else if query?.context?
+    q = getSchemaQuery query
+    return new UrlGenerator().getUrl q, s
+  else
+    throw Error 'Not a valid query'
+  
 #
 # Executes the supplied query against the supplied service and returns a
 # Promise.
