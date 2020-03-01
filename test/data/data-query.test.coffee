@@ -31,7 +31,7 @@ describe 'Data queries', ->
     q.should.have.property('updatedAfter').that.is.undefined
     q.should.have.property('firstNObs').that.is.undefined
     q.should.have.property('lastNObs').that.is.undefined
-    q.should.have.property('obsDimension').that.equals 'TIME_PERIOD'
+    q.should.have.property('obsDimension').that.is.undefined
     q.should.have.property('detail').that.equals 'full'
     q.should.have.property('history').that.is.false
 
