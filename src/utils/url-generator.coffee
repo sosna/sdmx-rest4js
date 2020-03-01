@@ -22,9 +22,10 @@ createEntryPoint = (s) ->
 
 createDataQuery = (query, service) ->
   url = createEntryPoint service
-  url = url + "data/#{query.flow}/#{query.key}/#{query.provider}"
-  url = url + "?dimensionAtObservation=#{query.obsDimension}"
-  url = url + "&detail=#{query.detail}"
+  url = url + "data/#{query.flow}/#{query.key}/#{query.provider}?"
+  url = url + "dimensionAtObservation=#{query.obsDimension}&" \
+    if query.obsDimension
+  url = url + "detail=#{query.detail}"
   if (service.api isnt ApiVersion.v1_0_0 and
   service.api isnt ApiVersion.v1_0_1 and
   service.api isnt ApiVersion.v1_0_2)
@@ -50,8 +51,7 @@ hasHistory = (q, s) ->
 
 handleDataQueryParams = (q, s) ->
   p = []
-  p.push "dimensionAtObservation=#{q.obsDimension}" unless \
-    q.obsDimension is 'TIME_PERIOD'
+  p.push "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   p.push "detail=#{q.detail}" unless q.detail is 'full'
   p.push "includeHistory=#{q.history}" if hasHistory(q, s)
   p.push "startPeriod=#{q.start}" if q.start

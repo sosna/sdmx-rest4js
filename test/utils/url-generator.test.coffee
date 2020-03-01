@@ -371,7 +371,7 @@ describe 'URL Generator', ->
 
     it 'generates a URL for a partial data query', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/all?\
-      dimensionAtObservation=TIME_PERIOD&detail=full&includeHistory=false"
+      detail=full&includeHistory=false"
       query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       url = new UrlGenerator().getUrl(query, service)
