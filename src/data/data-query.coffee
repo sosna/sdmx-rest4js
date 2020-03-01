@@ -7,7 +7,6 @@
 defaults =
   key: 'all'
   provider: 'all'
-  obsDimension: 'TIME_PERIOD'
   detail: DataDetail.FULL
   history: false
 
@@ -20,7 +19,8 @@ ValidQuery =
   updatedAfter: (i, e) -> !i or isValidDate(i, 'updatedAfter', e)
   firstNObs: (i, e) -> !i or isValidNObs(i, 'firstNObs', e)
   lastNObs: (i, e) -> !i or isValidNObs(i, 'lastNObs', e)
-  obsDimension: (i, e) -> isValidPattern(i, NCNameIDType, 'obs dimension', e)
+  obsDimension: (i, e) ->
+    !i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
   detail: (i, e) -> isValidEnum(i, DataDetail, 'details', e)
   history: (i, e) -> isValidHistory(i, e)
 
@@ -66,7 +66,7 @@ query = class DataQuery
       updatedAfter: opts?.updatedAfter
       firstNObs: opts?.firstNObs
       lastNObs: opts?.lastNObs
-      obsDimension: opts?.obsDimension ? defaults.obsDimension
+      obsDimension: opts?.obsDimension
       detail: opts?.detail ? defaults.detail
       history: opts?.history ? defaults.history
     input = isValidQuery query

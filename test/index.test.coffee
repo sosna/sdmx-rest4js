@@ -108,7 +108,7 @@ describe 'API', ->
       query.should.have.property('updatedAfter').that.is.undefined
       query.should.have.property('firstNObs').that.is.undefined
       query.should.have.property('lastNObs').that.is.undefined
-      query.should.have.property('obsDimension').that.equals 'TIME_PERIOD'
+      query.should.have.property('obsDimension').that.is.undefined
       query.should.have.property('detail').that.equals 'full'
       query.should.have.property('history').that.is.false
 
