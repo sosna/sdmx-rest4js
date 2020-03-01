@@ -4,7 +4,7 @@
     "node": ">=10"
   },
   "description": "SDMX REST API client for JavaScript",
-  "version": "2.15.1",
+  "version": "2.15.2",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
@@ -61,7 +61,7 @@
     "coffee-coverage": "3.0.1",
     "coffeeify": "3.0.1",
     "coffeelint": "2.1.0",
-    "coffeescript": "2.5.1",
+    "coffeescript": "2.4.1",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.1.0",
     "husky": "4.2.3",
@@ -78,7 +78,6 @@
   },
   "dependencies": {
     "es6-promise": "4.2.8",
-    "isomorphic-fetch": "2.2.1",
-    "npm-check-updates": "4.0.3"
+    "isomorphic-fetch": "2.2.1"
   }
 }
