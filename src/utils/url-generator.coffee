@@ -23,8 +23,8 @@ createEntryPoint = (s) ->
 createDataQuery = (query, service) ->
   url = createEntryPoint service
   url = url + "data/#{query.flow}/#{query.key}/#{query.provider}?"
-  url = url + "dimensionAtObservation=#{query.obsDimension}&" \
-    if query.obsDimension
+  if query.obsDimension
+    url = url + "dimensionAtObservation=#{query.obsDimension}&"
   url = url + "detail=#{query.detail}"
   if (service.api isnt ApiVersion.v1_0_0 and
   service.api isnt ApiVersion.v1_0_1 and
