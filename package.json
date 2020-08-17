@@ -15,8 +15,6 @@
     "test": "mocha -t 500 --recursive --compilers coffee:coffeescript/register",
     "test:watch": "mocha -t 500 -w --recursive --compilers coffee:coffeescript/register",
     "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffeescript/register --require coffee-coverage/register-istanbul",
-    "prepublish": "npm build",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "lint": "coffeelint src"
   },
   "repository": {
