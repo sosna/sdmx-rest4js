@@ -13,6 +13,9 @@ describe 'Data formats', ->
     'application/vnd.sdmx.data+json;version=1.0.0-cts'
     'application/vnd.sdmx.data+json;version=1.0.0'
     'application/vnd.sdmx.data+csv;version=1.0.0'
+    'application/vnd.sdmx.data+csv;version=1.0.0;labels=both'
+    'application/vnd.sdmx.data+csv;version=1.0.0;timeFormat=normalized'
+    'application/vnd.sdmx.data+csv;version=1.0.0;labels=both;timeFormat=normalized'
   ]
 
   it 'contains all the expected formats and only those', ->
