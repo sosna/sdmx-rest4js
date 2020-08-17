@@ -1,0 +1,14 @@
+{
+  "parser": "eslint-plugin-coffee",
+  "plugins": ["coffee"],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "extends": [
+    "plugin:coffee/eslint-recommended"
+  ],
+  "rules": {
+    "coffee/id-length": "off"
+  }
+}
