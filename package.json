@@ -54,7 +54,6 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "codecov": "3.7.2",
-    "coffeeify": "3.0.1",
     "coffeescript": "2.5.1",
     "commitizen": "4.1.2",
     "cz-conventional-changelog": "3.2.0",
