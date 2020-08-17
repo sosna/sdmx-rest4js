@@ -10,10 +10,9 @@
     "prebuild": "rm -rf lib && mkdir lib",
     "build": "coffee -co lib src/",
     "commit": "git-cz",
-    "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
-    "report-coverage": "cat ./coverage/lcov.info | codecov",
+    "check-coverage": "nyc --check-coverage --statements 100 --branches 100 --functions 100 --lines 100 --extension .coffee --reporter=text npm test",
+    "report-coverage": "nyc --extension .coffee --reporter=text-lcov npm test | codecov",
     "test": "mocha 'test/**/*.coffee'",
-    "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffeescript/register --require coffee-coverage/register-istanbul",
     "lint": "eslint 'src/**/*.coffee'"
   },
   "repository": {
@@ -55,16 +54,15 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "codecov": "3.7.2",
-    "coffee-coverage": "3.0.1",
     "coffeeify": "3.0.1",
     "coffeescript": "2.5.1",
     "commitizen": "4.1.2",
     "cz-conventional-changelog": "3.2.0",
     "eslint": "7.7.0",
     "eslint-plugin-coffee": "0.1.12",
-    "istanbul": "0.4.5",
     "mocha": "8.1.1",
-    "nock": "13.0.4"
+    "nock": "13.0.4",
+    "nyc": "15.1.0"
   },
   "config": {
     "commitizen": {
