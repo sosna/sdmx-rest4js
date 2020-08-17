@@ -25,7 +25,8 @@ formats =
   # The SDMX-JSON 1.0.0 data format.
   SDMX_JSON_1_0_0: 'application/vnd.sdmx.data+json;version=1.0.0'
 
-  # The SDMX-CSV 1.0.0 data format, with default labels and non-normalized periods
+  # The SDMX-CSV 1.0.0 data format, with default labels and
+  # non-normalized periods
   SDMX_CSV_1_0_0: 'application/vnd.sdmx.data+csv;version=1.0.0'
 
   # Shortcut for the latest version of SDMX-JSON
@@ -35,13 +36,18 @@ formats =
   SDMX_CSV: 'application/vnd.sdmx.data+csv;version=1.0.0'
 
   # The SDMX-CSV 1.0.0 data format, with ID and name as labels
-  SDMX_CSV_WITH_BOTH_LABELS: 'application/vnd.sdmx.data+csv;version=1.0.0;labels=both'
+  SDMX_CSV_WITH_BOTH_LABELS:
+    'application/vnd.sdmx.data+csv;version=1.0.0;labels=both'
 
   # The SDMX-CSV 1.0.0 data format, with normalized periods
-  SDMX_CSV_WITH_NORMALIZED_PERIODS: 'application/vnd.sdmx.data+csv;version=1.0.0;timeFormat=normalized'
+  SDMX_CSV_WITH_NORMALIZED_PERIODS:
+    'application/vnd.sdmx.data+csv;version=1.0.0;timeFormat=normalized'
 
-  # The SDMX-CSV 1.0.0 data format, with default ID and name as labels, as well as normalized periods
-  SDMX_CSV_WITH_BOTH_LABELS_AND_NORMALIZED_PERIODS: 'application/vnd.sdmx.data+csv;version=1.0.0;labels=both;timeFormat=normalized'
+  # The SDMX-CSV 1.0.0 data format, with default ID and name as labels,
+  # as well as normalized periods
+  SDMX_CSV_WITH_BOTH_LABELS_AND_NORMALIZED_PERIODS:
+    'application/vnd.sdmx.data+csv;version=1.0.0;\
+    labels=both;timeFormat=normalized'
 
   # Shortcut for the latest version of SDMX-ML Generic
   SDMX_ML_GENERIC: 'application/vnd.sdmx.genericdata+xml;version=2.1'
