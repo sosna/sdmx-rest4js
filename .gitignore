@@ -4,5 +4,4 @@ npm-debug.log
 coverage
 .idea
 *.swp
-package-lock.json
 sdmx-rest4js.code-workspace
