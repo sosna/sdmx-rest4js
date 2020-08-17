@@ -15,8 +15,6 @@
     "test": "mocha -t 500 --recursive --compilers coffee:coffeescript/register",
     "test:watch": "mocha -t 500 -w --recursive --compilers coffee:coffeescript/register",
     "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffeescript/register --require coffee-coverage/register-istanbul",
-    "prepublish": "npm build",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "lint": "coffeelint src"
   },
   "repository": {
@@ -64,17 +62,14 @@
     "coffeescript": "2.4.1",
     "commitizen": "4.1.2",
     "cz-conventional-changelog": "3.2.0",
-    "husky": "4.2.5",
     "istanbul": "0.4.5",
     "mocha": "5.2.0",
-    "nock": "13.0.4",
-    "semantic-release": "17.1.1"
+    "nock": "13.0.4"
   },
   "config": {
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
-    },
-    "pre-commit": "npm run test:single && npm run check-coverage && npm run lint"
+    }
   },
   "dependencies": {
     "es6-promise": "4.2.8",
