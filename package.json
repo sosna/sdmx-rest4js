@@ -9,7 +9,6 @@
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
     "build": "coffee -co lib src/",
-    "commit": "git-cz",
     "check-coverage": "nyc --check-coverage --statements 100 --branches 100 --functions 100 --lines 100 --extension .coffee --reporter=text npm test",
     "report-coverage": "nyc --extension .coffee --reporter=text-lcov npm test | codecov",
     "test": "mocha 'test/**/*.coffee'",
@@ -55,8 +54,6 @@
     "chai-as-promised": "7.1.1",
     "codecov": "3.7.2",
     "coffeescript": "2.5.1",
-    "commitizen": "4.1.2",
-    "cz-conventional-changelog": "3.2.0",
     "eslint": "7.7.0",
     "eslint-plugin-coffee": "0.1.12",
     "mocha": "8.1.1",
