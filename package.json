@@ -9,7 +9,7 @@
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
     "build": "coffee -co lib src/",
-    "check-coverage": "nyc --check-coverage --statements 100 --branches 100 --functions 100 --lines 100 --extension .coffee --reporter=text npm test",
+    "check-coverage": "nyc --check-coverage --statements 100 --branches 100 --functions 100 --lines 100 --extension .coffee --reporter=lcov npm test",
     "report-coverage": "nyc --extension .coffee --reporter=text-lcov npm test | codecov",
     "test": "mocha 'test/**/*.coffee'",
     "lint": "eslint 'src/**/*.coffee'"

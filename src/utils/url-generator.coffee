@@ -210,9 +210,7 @@ generator = class Generator
 
   getUrl: (@query, service, skipDefaults) ->
     @service = service ? ApiVersion.LATEST
-    if (@query?.mode? or
-    (@query?.flow? and @query?.references?) or
-    (@query?.flow? and @query?.component?))
+    if @query?.mode?
       handleAvailabilityQuery(@query, @service, skipDefaults)
     else if @query?.flow?
       handleDataQuery(@query, @service, skipDefaults)
