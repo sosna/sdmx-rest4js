@@ -1,6 +1,6 @@
 NCNameIDType = ///
   [A-Za-z]                      # Must begin with a letter
-  [A-Za-z0-9_\-]*               # May be followed by letters, numbers, _ or -
+  [A-Za-z0-9_-]*               # May be followed by letters, numbers, _ or -
   ///
 
 NCNameIDTypeAlone = /// ^
@@ -20,7 +20,7 @@ NestedNCNameIDTypeAlone = /// ^
   $ ///
 
 IDType = ///
-  [A-Za-z0-9_@$\-]+    # Letters, numbers, _, @, $ or -
+  [A-Za-z0-9_@$-]+    # Letters, numbers, _, @, $ or -
   ///
 
 IDTypeAlone = /// ^
@@ -55,8 +55,8 @@ VersionTypeAlone = /// ^
   $ ///
 
 NestedIDType = ///
-  [A-Za-z0-9_@$\-]+       # Letters, numbers, _, @, $ or -
-  (\.[A-Za-z0-9_@$\-]+)*  # Potentially hierarchical (e.g. A.B.C)
+  [A-Za-z0-9_@$-]+       # Letters, numbers, _, @, $ or -
+  (\.[A-Za-z0-9_@$-]+)*  # Potentially hierarchical (e.g. A.B.C)
   ///
 
 NestedIDTypeAlone = /// ^
@@ -77,8 +77,8 @@ FlowRefType = /// ^
   #{IDType.source}
   | (
     #{NestedNCNameIDType.source}
-    \,#{IDType.source}
-    (\,(latest | (#{VersionNumber.source})))?
+    ,#{IDType.source}
+    (,(latest | (#{VersionNumber.source})))?
     )
   )
   $ ///
@@ -109,7 +109,7 @@ MultipleVersionsType = /// ^
   $///
 
 ReportingPeriodType = /// ^
-  \d{4}\-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
+  \d{4}-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
   $ ///
 
 exports.NCNameIDType = NCNameIDTypeAlone
