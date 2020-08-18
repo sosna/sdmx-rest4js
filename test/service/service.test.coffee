@@ -47,6 +47,10 @@ describe 'Service', ->
       test = -> Service.from({})
       should.Throw(test, Error, 'url')
 
+    it 'throws an exception if there is no input ', ->
+      test = -> Service.from()
+      should.Throw(test, Error, 'url')
+
   context 'when passing an string', ->
 
     it 'offers access to predefined services', ->

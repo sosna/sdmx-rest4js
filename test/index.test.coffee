@@ -232,8 +232,53 @@ describe 'API', ->
       url.should.contain 'availableconstraint'
       url.should.contain 'EXR/A..EUR.SP00.A'
 
+    it 'creates a URL from an availability and service objects (mode)', ->
+      q = {
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        mode: 'exact'
+      }
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availableconstraint'
+      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'mode=exact'
+
+    it 'creates a URL from an availability and a service objects (component)', ->
+      q = {
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        component: 'FREQ'
+      }
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availableconstraint'
+      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'FREQ'
+
+    it 'creates a URL from an availability and a service objects (references)', ->
+      q = {
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        references: 'all'
+      }
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availableconstraint'
+      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'references=all'
+
     it 'fails if the input is not of the expected type', ->
       test = -> sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'
+      should.Throw(test, Error, 'Not a valid query')
+
+      test = -> sdmxrest.getUrl {}, sdmxrest.getService 'ECB'
       should.Throw(test, Error, 'Not a valid query')
 
       query = sdmxrest.getDataQuery {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}
@@ -241,7 +286,7 @@ describe 'API', ->
       should.Throw(test, Error, 'not in the list of predefined services')
 
       test = -> sdmxrest.getUrl query
-      should.Throw(test, Error, 'Service is a mandatory parameter')
+      should.Throw(test, Error, 'Not a valid service')
 
   describe 'when using request()', ->
 
@@ -253,11 +298,18 @@ describe 'API', ->
         sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
       response.should.eventually.equal 'OK'
 
-    it 'offers to execute a request from an SDMX RESTful query string', ->
+    it 'offers to execute a request from an SDMX RESTful query string (known service)', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK'
-      response = sdmxrest.request 'http://sdw-wsrest.ecb.europa.eu/service/EXR'
+      response = sdmxrest.request 'http://sdw-wsrest.ecb.europa.eu/service/data/EXR'
+      response.should.eventually.equal 'OK'
+
+    it 'offers to execute a request from an SDMX RESTful query string (unknown service)', ->
+      query = nock('http://test.org')
+        .get((uri) -> uri.indexOf('EXR') > -1)
+        .reply 200, 'OK'
+      response = sdmxrest.request 'http://test.org/data/EXR'
       response.should.eventually.equal 'OK'
 
     it 'throws an exception in case of issues with a request', ->
@@ -386,14 +438,12 @@ describe 'API', ->
       response.should.eventually.respondTo 'text'
 
   describe 'when using checkStatus()', ->
+    it 'throws an errir in case there is no response', ->
+
     it 'throws an error in case there is an issue with the response', ->
-      query = nock('http://sdw-wsrest.ecb.europa.eu')
-        .get((uri) -> uri.indexOf('TEST') > -1)
-        .reply 404
       request = sdmxrest.getDataQuery({flow: 'TEST'})
-      sdmxrest.request2(request, 'ECB').then((response) ->
-        test = -> sdmxrest.checkStatus(request, response)
-        should.Throw(test, RangeError, 'Request failed with error code 404'))
+      test = -> sdmxrest.checkStatus(request, undefined)
+      should.Throw(test, ReferenceError, 'Not a valid response')
 
     it 'accept codes in the 300 range', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')

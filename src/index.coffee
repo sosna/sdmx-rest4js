@@ -24,19 +24,20 @@ fetch = require 'isomorphic-fetch'
 userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
 
 checkStatus = (query, response) ->
-  code  = response?.status
+  throw ReferenceError "Not a valid response" unless response
+  code  = response.status
   unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
 
 isDataFormat = (format) ->
   out = false
-  for k, v of DataFormat
+  for v in Object.values DataFormat
     out = true if v == format
   out
 
 isMetadataFormat = (format) ->
   out = false
-  for k, v of MetadataFormat
+  for v in Object.values MetadataFormat
     out = true if v == format
   out
 
@@ -70,7 +71,7 @@ addHeaders = (opts, s, isDataQuery) ->
   opts
 
 guessService = (u) ->
-  s = (Service[k] for own k of Service when u.indexOf(Service[k]?.url) > -1)
+  s = (Service[k] for own k of Service when u.indexOf(Service[k].url) > -1)
   return s[0] ? {}
 
 #
@@ -269,20 +270,21 @@ getSchemaQuery = (input) ->
 # @see #getService
 #
 getUrl = (query, service) ->
-  throw ReferenceError 'Service is a mandatory parameter' unless service
+  throw ReferenceError 'Not a valid service' unless service
+  throw ReferenceError 'Not a valid query' unless query
   s = getService service
-  if (query?.mode? \
-  or (query?.flow? and query?.references?) \
-  or (query?.flow? and query?.component?))
+  if (query.mode? \
+  or (query.flow? and query.references?) \
+  or (query.flow? and query.component?))
     q = getAvailabilityQuery query
     return new UrlGenerator().getUrl q, s
-  else if query?.flow?
+  else if query.flow?
     q = getDataQuery query
     return new UrlGenerator().getUrl q, s
-  else if query?.resource?
+  else if query.resource?
     q = getMetadataQuery query
     return new UrlGenerator().getUrl q, s
-  else if query?.context?
+  else if query.context?
     q = getSchemaQuery query
     return new UrlGenerator().getUrl q, s
   else

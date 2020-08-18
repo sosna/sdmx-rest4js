@@ -9,13 +9,9 @@
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
     "build": "coffee -co lib src/",
-    "commit": "git-cz",
-    "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
-    "report-coverage": "cat ./coverage/lcov.info | codecov",
-    "test": "mocha -t 500 --recursive --compilers coffee:coffeescript/register",
-    "test:watch": "mocha -t 500 -w --recursive --compilers coffee:coffeescript/register",
-    "test:single": "istanbul cover _mocha -- --recursive --compilers coffee:coffeescript/register --require coffee-coverage/register-istanbul",
-    "lint": "coffeelint src"
+    "coverage": "nyc --check-coverage --statements 100 --branches 100 --functions 100 --lines 100 --extension .coffee --reporter=lcov npm test",
+    "test": "mocha 'test/**/*.coffee'",
+    "lint": "eslint 'src/**/*.coffee'"
   },
   "repository": {
     "type": "git",
@@ -55,21 +51,27 @@
   "devDependencies": {
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
-    "codecov": "3.7.2",
-    "coffee-coverage": "3.0.1",
-    "coffeeify": "3.0.1",
-    "coffeelint": "2.1.0",
-    "coffeescript": "2.4.1",
-    "commitizen": "4.1.2",
-    "cz-conventional-changelog": "3.2.0",
-    "istanbul": "0.4.5",
-    "mocha": "5.2.0",
-    "nock": "13.0.4"
+    "coffeescript": "2.5.1",
+    "eslint": "7.7.0",
+    "eslint-plugin-coffee": "0.1.12",
+    "mocha": "8.1.1",
+    "nock": "13.0.4",
+    "nyc": "15.1.0"
   },
   "config": {
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
+  },
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "coffeescript/register"
+    ],
+    "inline-diffs": true,
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
   },
   "dependencies": {
     "es6-promise": "4.2.8",

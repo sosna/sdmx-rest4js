@@ -5,3 +5,4 @@ coverage
 .idea
 *.swp
 sdmx-rest4js.code-workspace
+.nyc_output
