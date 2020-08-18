@@ -30,13 +30,13 @@ checkStatus = (query, response) ->
 
 isDataFormat = (format) ->
   out = false
-  for k, v of DataFormat
+  for v in Object.values DataFormat
     out = true if v == format
   out
 
 isMetadataFormat = (format) ->
   out = false
-  for k, v of MetadataFormat
+  for v in Object.values MetadataFormat
     out = true if v == format
   out
 

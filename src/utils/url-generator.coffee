@@ -1,8 +1,4 @@
-{Service} = require '../service/service'
 {ApiVersion} = require '../utils/api-version'
-{DataQuery} = require '../data/data-query'
-{MetadataQuery} = require '../metadata/metadata-query'
-{AvailabilityQuery} = require '../avail/availability-query'
 {isItemScheme} = require '../metadata/metadata-type'
 {MetadataDetail} = require '../metadata/metadata-detail'
 {MetadataReferences} = require '../metadata/metadata-references'
@@ -66,6 +62,7 @@ createShortDataQuery = (q, s) ->
   u = u + "data/#{q.flow}"
   u = u + handleDataPathParams(q)
   u = u + handleDataQueryParams(q, s)
+  u
 
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
