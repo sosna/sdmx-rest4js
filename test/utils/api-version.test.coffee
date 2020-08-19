@@ -13,6 +13,7 @@ describe 'API versions', ->
     'v1.2.0'
     'v1.3.0'
     'v1.4.0'
+    'v1.5.0'
     'latest'
   ]
 
@@ -26,8 +27,8 @@ describe 'API versions', ->
   it 'is immutable', ->
     ApiVersion.should.be.frozen
 
-  it 'considers v1.4.0 as the latest version', ->
-    ApiVersion.LATEST.should.equal 'v1.4.0'
+  it 'considers v1.5.0 as the latest version', ->
+    ApiVersion.LATEST.should.equal 'v1.5.0'
 
 describe 'API resources', ->
   expectedResourcesV1 = [
