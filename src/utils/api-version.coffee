@@ -29,8 +29,13 @@ versions =
 # messages.
   v1_4_0: 'v1.4.0'
 
+# The version of the SDMX RESTFul API released in September 2020. The release
+# adds support for VTL artefacts and extends the list of supported media
+# types for schema queries.
+  v1_5_0: 'v1.5.0'
+
 # A shortcut to the most recent version of the SDMX RESTful API
-  LATEST: 'v1.4.0'
+  LATEST: 'v1.5.0'
 
 resourcesV1 = [
   'datastructure'
