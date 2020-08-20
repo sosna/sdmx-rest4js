@@ -63,8 +63,20 @@ resourcesV1 = [
   'metadata'
 ].sort()
 
-resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].
-  concat resourcesV1).sort()
+resourcesV3 = ([
+  'actualconstraint'
+  'allowedconstraint'
+  'availableconstraint'
+].concat resourcesV1).sort()
+
+resourcesV5 = ([
+  'transformationscheme'
+  'rulesetscheme'
+  'userdefinedoperatorscheme'
+  'customtypescheme'
+  'namepersonalisationscheme'
+  'namealiasscheme'
+].concat resourcesV3).sort()
 
 resources =
 
@@ -89,8 +101,11 @@ resources =
 # The set of valid resources for v1.4.0.
   v1_4_0: resourcesV3
 
+# The set of valid resources for v1.5.0.
+  v1_5_0: resourcesV5
+
 # The set of valid resources for the latest API version.
-  LATEST: resourcesV3
+  LATEST: resourcesV5
 
 exports.ApiVersion = Object.freeze versions
 exports.ApiResources = Object.freeze resources

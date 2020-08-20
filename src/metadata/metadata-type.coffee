@@ -10,6 +10,12 @@ itemSchemes = [
   'organisationunitscheme'
   'hierarchicalcodelist'
   'reportingtaxonomy'
+  'transformationscheme'
+  'rulesetscheme'
+  'userdefinedoperatorscheme'
+  'customtypescheme'
+  'namepersonalisationscheme'
+  'namealiasscheme'
 ]
 
 types =
@@ -36,6 +42,13 @@ types =
   ACTUAL_CONSTRAINT: 'actualconstraint'
   ALLOWED_CONSTRAINT: 'allowedconstraint'
   STRUCTURE: 'structure'
+  TRANSFORMATION_SCHEME: 'transformationscheme'
+  RULESET_SCHEME: 'rulesetscheme'
+  USER_DEFINED_OPERATOR_SCHEME: 'userdefinedoperatorscheme'
+  CUSTOM_TYPE_SCHEME: 'customtypescheme'
+  NAME_PERSONALISATION_SCHEME: 'namepersonalisationscheme'
+  NAME_ALIAS_SCHEME: 'namealiasscheme'
+
 
 exports.MetadataType = Object.freeze types
 exports.isItemScheme = (type) -> type in itemSchemes

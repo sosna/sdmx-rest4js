@@ -28,6 +28,12 @@ describe 'Metadata types', ->
     'actualconstraint'
     'allowedconstraint'
     'structure'
+    'transformationscheme'
+    'rulesetscheme'
+    'userdefinedoperatorscheme'
+    'customtypescheme'
+    'namepersonalisationscheme'
+    'namealiasscheme'
   ]
 
   it 'contains all the expected types of metadata and only those', ->
@@ -45,3 +51,21 @@ describe 'Metadata types', ->
 
   it 'considers reportingtaxonomy as item scheme', ->
     isItemScheme('reportingtaxonomy').should.be.true
+
+  it 'considers transformationscheme as item scheme', ->
+    isItemScheme('transformationscheme').should.be.true
+
+  it 'considers rulesetscheme as item scheme', ->
+    isItemScheme('rulesetscheme').should.be.true
+
+  it 'considers userdefinedoperatorscheme as item scheme', ->
+    isItemScheme('userdefinedoperatorscheme').should.be.true
+
+  it 'considers customtypescheme as item scheme', ->
+    isItemScheme('customtypescheme').should.be.true
+
+  it 'considers namepersonalisationscheme as item scheme', ->
+    isItemScheme('namepersonalisationscheme').should.be.true
+
+  it 'considers namealiasscheme as item scheme', ->
+    isItemScheme('namealiasscheme').should.be.true
