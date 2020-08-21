@@ -11,6 +11,7 @@
 {AvailabilityReferences} = require './avail/availability-references'
 {SchemaQuery} = require './schema/schema-query'
 {SchemaContext} = require './schema/schema-context'
+{SchemaFormat} = require './schema/schema-format'
 {Service} = require './service/service'
 {services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
@@ -29,17 +30,20 @@ checkStatus = (query, response) ->
   unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
 
-isDataFormat = (format) ->
+isFormat = (input, expected) ->
   out = false
-  for v in Object.values DataFormat
-    out = true if v == format
+  for v in Object.values expected
+    out = true if v == input
   out
 
+isDataFormat = (format) ->
+  isFormat(format, DataFormat)
+
 isMetadataFormat = (format) ->
-  out = false
-  for v in Object.values MetadataFormat
-    out = true if v == format
-  out
+  isFormat(format, MetadataFormat)
+
+isSchemaFormat = (format) ->
+  isFormat(format, SchemaFormat)
 
 isGenericFormat = (format) ->
   formats = [
@@ -56,7 +60,10 @@ isRequestedFormat = (requested, received) ->
 checkMediaType = (requested, response) ->
   fmt = response.headers.get('content-type')
   fmt = if fmt then fmt.replace /; version=/, ';version=' else fmt
-  unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
+  unless isDataFormat(fmt) \
+  or isMetadataFormat(fmt) \
+  or isGenericFormat(fmt) \
+  or isSchemaFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
   unless isRequestedFormat(requested, fmt)
     throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
@@ -392,3 +399,4 @@ module.exports =
     SdmxPatterns: SdmxPatterns
   schema:
     SchemaContext: SchemaContext
+    SchemaFormat: SchemaFormat
