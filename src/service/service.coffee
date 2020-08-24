@@ -1,6 +1,7 @@
 {ApiVersion} = require '../utils/api-version'
 {isValidEnum, createErrorMessage} = require '../utils/validators'
 {DataFormat} = require '../data/data-format'
+{MetadataFormat} = require '../metadata/metadata-format'
 
 defaults =
   api: ApiVersion.LATEST
@@ -30,6 +31,7 @@ service = class Service
     api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
     format: DataFormat.SDMX_JSON_1_0_0_WD
+    structureFormat: MetadataFormat.SDMX_ML_2_1_STRUCTURE
 
   @SDMXGR:
     id: 'SDMXGR'
@@ -66,6 +68,7 @@ service = class Service
       url: opts?.url
       api: opts?.api ? defaults.api
       format: opts?.format
+      structureFormat: opts?.structureFormat
     input = isValidService service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
     service
