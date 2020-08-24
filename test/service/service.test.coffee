@@ -5,13 +5,22 @@ should = require('chai').should()
 {DataFormat} = require '../../src/data/data-format'
 {services} = require '../../src/service/service'
 {MetadataFormat} = require '../../src/metadata/metadata-format'
+{SchemaFormat} = require '../../src/schema/schema-format'
 
 describe 'Service', ->
 
   it 'has the expected properties', ->
     service = Service.from({url: 'http://test.com'})
     service.should.be.an 'object'
-    service.should.include.keys ['id','name','api','url','format','structureFormat']
+    service.should.include.keys [
+      'id'
+      'name'
+      'api'
+      'url'
+      'format'
+      'structureFormat'
+      'schemaFormat'
+    ]
 
   it 'has the expected defaults', ->
     url = 'http://test.com'
@@ -22,6 +31,7 @@ describe 'Service', ->
     service.should.have.property('url').that.equals url
     service.should.have.property('format').that.is.undefined
     service.should.have.property('structureFormat').that.is.undefined
+    service.should.have.property('schemaFormat').that.is.undefined
 
   context 'when passing an object', ->
 
@@ -83,6 +93,10 @@ describe 'Service', ->
     it 'offers a default metadata format for some predefined services', ->
       format = MetadataFormat.SDMX_ML_2_1_STRUCTURE
       Service['ECB'].should.have.property('structureFormat').that.equals format
+
+    it 'offers a default schema format for some predefined services', ->
+      format = SchemaFormat.XML_SCHEMA
+      Service['ECB'].should.have.property('schemaFormat').that.equals format
 
     it 'offers access to secure instances of predefined services', ->
       s1 = Service.ECB
