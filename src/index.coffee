@@ -284,21 +284,19 @@ getUrl = (query, service) ->
   throw ReferenceError 'Not a valid service' unless service
   throw ReferenceError 'Not a valid query' unless query
   s = getService service
-  if (query.mode? \
+  q = if (query.mode? \
   or (query.flow? and query.references?) \
   or (query.flow? and query.component?))
-    q = getAvailabilityQuery query
-    return new UrlGenerator().getUrl q, s
+    getAvailabilityQuery query
   else if query.flow?
-    q = getDataQuery query
-    return new UrlGenerator().getUrl q, s
+    getDataQuery query
   else if query.resource?
-    q = getMetadataQuery query
-    return new UrlGenerator().getUrl q, s
+    getMetadataQuery query
   else if query.context?
-    q = getSchemaQuery query
-    return new UrlGenerator().getUrl q, s
-  else
+    getSchemaQuery query
+  if q 
+    return new UrlGenerator().getUrl q, s 
+  else 
     throw Error 'Not a valid query'
   
 #
@@ -351,8 +349,7 @@ getUrl = (query, service) ->
 request = (params...) ->
   request2(params...).then((response) ->
     checkStatus params[0], response
-    response.text()
-  )
+    response.text())
 
 #
 # Executes the supplied query against the supplied service and returns a

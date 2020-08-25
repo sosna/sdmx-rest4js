@@ -35,7 +35,7 @@ createDataQuery = (query, service) ->
 
 handleDataPathParams = (q) ->
   path = []
-  path.push q.provider if q.provider isnt 'all'
+  path.push q.provider unless q.provider is 'all'
   path.push q.key if q.key isnt 'all' or path.length
   if path.length then "/" + path.reverse().join('/') else ""
 
@@ -91,8 +91,10 @@ createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
   u = u + "#{q.resource}"
   u = handleMetaPathParams(q, s, u)
-  u = handleMetaQueryParams(q, u, q.detail isnt MetadataDetail.FULL,
-    q.references isnt MetadataReferences.NONE)
+  u = handleMetaQueryParams(
+    q, u, q.detail isnt MetadataDetail.FULL,
+    q.references isnt MetadataReferences.NONE
+  )
   u
 
 createAvailabilityQuery = (q, s) ->
@@ -107,7 +109,7 @@ createAvailabilityQuery = (q, s) ->
 
 handleAvailabilityPathParams = (q) ->
   path = []
-  path.push q.component if q.component isnt 'all'
+  path.push q.component unless q.component is 'all'
   path.push q.provider if q.provider isnt 'all' or path.length
   path.push q.key if q.key isnt 'all' or path.length
   if path.length then '/' + path.reverse().join('/') else ''
@@ -144,7 +146,7 @@ handleSchemaQueryParams = (q) ->
 createShortSchemaQuery = (q, s) ->
   u = createEntryPoint s
   u = u + "schema/#{q.context}/#{q.agency}/#{q.id}"
-  u = u + "/#{q.version}" if q.version isnt 'latest'
+  u = u + "/#{q.version}" unless q.version is 'latest'
   u = u + handleSchemaQueryParams(q)
   u
 
