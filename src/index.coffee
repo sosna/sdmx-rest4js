@@ -72,9 +72,11 @@ addHeaders = (opts, s, type) ->
   opts = opts ? {}
   headers = {}
   headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
-  headers.accept = s.format unless headers.accept if s.format and type is 'data'
-  headers.accept = s.structureFormat unless headers.accept if s.structureFormat and type is 'structure'
-  headers.accept = s.schemaFormat unless headers.accept if s.schemaFormat and type is 'schema'
+  unless headers.accept
+    headers.accept = switch type
+      when 'data' then s.format
+      when 'structure' then s.structureFormat
+      when 'schema' then s.schemaFormat
   headers['user-agent'] = userAgent unless headers['user-agent']
   opts.headers = headers
   opts
