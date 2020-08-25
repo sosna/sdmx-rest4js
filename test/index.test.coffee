@@ -344,6 +344,26 @@ describe 'API', ->
         sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB'
       response.should.eventually.equal 'OK'
 
+    it 'adds an accept header to structure queries if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/vnd.sdmx.structure+xml') > -1)
+        .get((uri) -> uri.indexOf('codelist') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {resource: 'codelist', id: 'CL_FREQ'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
+    it 'adds an accept header to schema queries if the service has a default format', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/xml') > -1)
+        .get((uri) -> uri.indexOf('schema') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {context: 'dataflow', agency: 'ECB', id: 'EXR'}, 'ECB'
+      response.should.eventually.equal 'OK'
+
     it 'adds an accept header to data URLs if the service has a default format', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('accept', (h) ->
@@ -354,7 +374,7 @@ describe 'API', ->
       response = sdmxrest.request url
       response.should.eventually.equal 'OK'
 
-    it 'does not overwrite the accept header passed by the client', ->
+    it 'does not overwrite the accept header passed by the client (data)', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .matchHeader('accept', (h) ->
           h[0].indexOf('application/xml') > -1)
@@ -367,13 +387,30 @@ describe 'API', ->
         sdmxrest.request {flow: 'EXR', key: 'A.CHF.NOK.SP00.A'}, 'ECB', opts
       response.should.eventually.equal 'OK'
 
-    it 'does not add an accept header to metadata URLs even if the service has a default format', ->
+    it 'does not overwrite the accept header passed by the client (structure)', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
-        .matchHeader('accept', (h) -> h[0] is '*/*')
-        .get((uri) -> uri.indexOf('CL_FREQ') > -1)
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/vnd.sdmx.structure+json;version=1.0.0') > -1)
+        .get((uri) -> uri.indexOf('codelist') > -1)
         .reply 200, 'OK'
-      url = 'http://sdw-wsrest.ecb.europa.eu/service/codelist/ECB/CL_FREQ'
-      response = sdmxrest.request url
+      opts =
+        headers:
+          accept: 'application/vnd.sdmx.structure+json;version=1.0.0'
+      response =
+        sdmxrest.request {resource: 'codelist', id: 'CL_FREQ'}, 'ECB', opts
+      response.should.eventually.equal 'OK'
+
+    it 'does not overwrite the accept header passed by the client (schema)', ->
+      query = nock('http://sdw-wsrest.ecb.europa.eu')
+        .matchHeader('accept', (h) ->
+          h[0].indexOf('application/vnd.sdmx.structure+xml;version=2.1') > -1)
+        .get((uri) -> uri.indexOf('schema') > -1)
+        .reply 200, 'OK'
+      opts =
+        headers:
+          accept: 'application/vnd.sdmx.structure+xml;version=2.1'
+      response =
+        sdmxrest.request {context: 'dataflow', agency: 'ECB', id: 'EXR'}, 'ECB', opts
       response.should.eventually.equal 'OK'
 
     it 'does not add an accept header to data queries if the service does not have a default format', ->
@@ -383,6 +420,24 @@ describe 'API', ->
         .reply 200, 'OK'
       response =
         sdmxrest.request {flow: 'EO'}, 'OECD'
+      response.should.eventually.equal 'OK'
+
+    it 'does not add an accept header to structure queries if the service does not have a default format', ->
+      query = nock('http://stats.oecd.org')
+        .matchHeader('accept', (h) -> h[0] is '*/*')
+        .get((uri) -> uri.indexOf('codelist') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {resource: 'codelist', id: 'CL_FREQ'}, 'OECD'
+      response.should.eventually.equal 'OK'
+
+    it 'does not add an accept header to schema queries if the service does not have a default format', ->
+      query = nock('http://stats.oecd.org')
+        .matchHeader('accept', (h) -> h[0] is '*/*' )
+        .get((uri) -> uri.indexOf('schema') > -1)
+        .reply 200, 'OK'
+      response =
+        sdmxrest.request {context: 'dataflow', agency: 'ECB', id: 'EXR'}, 'OECD'
       response.should.eventually.equal 'OK'
 
     it 'adds a default user agent to queries', ->

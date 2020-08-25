@@ -31,7 +31,7 @@ isValidQuery = (q) ->
     break unless isValid
   {isValid: isValid, errors: errors}
 
-toKeyString = (dims) ->
+toKeyString = (dims) -> 
   ((if Array.isArray d then d.join('+') else d ? '') for d in dims).join('.')
 
 toProviderString = (p) -> p.join('+')
