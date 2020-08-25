@@ -68,11 +68,13 @@ checkMediaType = (requested, response) ->
   unless isRequestedFormat(requested, fmt)
     throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
 
-addHeaders = (opts, s, isDataQuery) ->
+addHeaders = (opts, s, type) ->
   opts = opts ? {}
   headers = {}
   headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
-  headers.accept = s.format unless headers.accept if s.format and isDataQuery
+  headers.accept = s.format unless headers.accept if s.format and type is 'data'
+  headers.accept = s.structureFormat unless headers.accept if s.structureFormat and type is 'structure'
+  headers.accept = s.schemaFormat unless headers.accept if s.schemaFormat and type is 'schema'
   headers['user-agent'] = userAgent unless headers['user-agent']
   opts.headers = headers
   opts
@@ -364,9 +366,15 @@ request2 = (params...) ->
   s = if typeof q is 'string' then guessService q else getService params[1]
   u = if typeof q is 'string' then q else getUrl q, s
   o = if typeof q is 'string' then params[1] else params[2]
-  isDataQuery = if u.indexOf('/data/') > -1 then true else false
+  t = null
+  if u.indexOf('/data/') > -1
+    t = 'data'
+  else if u.indexOf('/schema/') > -1
+    t = 'schema'
+  else
+    t = 'structure'
 
-  requestOptions = addHeaders o, s, isDataQuery
+  requestOptions = addHeaders o, s, t
   fetch(u, requestOptions)
     .then((response) -> response)
 
