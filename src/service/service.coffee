@@ -35,6 +35,14 @@ service = class Service
     structureFormat: MetadataFormat.SDMX_ML_2_1_STRUCTURE
     schemaFormat: SchemaFormat.XML_SCHEMA
 
+  @UNICEF:
+    id: 'UNICEF'
+    name: 'UNICEF'
+    api: ApiVersion.v1_4_0
+    url: 'https://sdmx.data.unicef.org/ws/public/sdmxapi/rest'
+    format: DataFormat.SDMX_JSON_1_0_0
+    structureFormat: MetadataFormat.SDMX_JSON_1_0_0
+
   @SDMXGR:
     id: 'SDMXGR'
     name: 'SDMX Global Registry'
@@ -82,6 +90,7 @@ services = [
   service.EUROSTAT
   service.OECD_S
   service.WB
+  service.UNICEF
 ]
 
 exports.Service = service
