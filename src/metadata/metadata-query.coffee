@@ -21,8 +21,8 @@ ValidQuery =
   version: (q, i, e) -> isValidPattern(i, MultipleVersionsType, 'versions', e)
   detail: (q, i, e) -> isValidEnum(i, MetadataDetail, 'details', e)
   references: (q, i, e) -> isValidEnum(i, MetadataReferences, 'references', e)
-  item: (q, i, e) ->
-    isValidPattern(i, MultipleNestedIDType, 'items', e) and canHaveItem(q, e)
+  item: (q, i, e) -> isValidPattern(i, MultipleNestedIDType, 'items', e) and \
+    canHaveItem(q, e)
 
 canHaveItem = (query, errors) ->
   allowed = query.item is 'all' or isItemScheme query.resource

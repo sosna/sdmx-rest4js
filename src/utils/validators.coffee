@@ -2,11 +2,11 @@
 
 validEnum = (input, list, name, errors) ->
   found = false
-  for key, value of list
-    found = true if value is input
+  for v in Object.values list
+    found = true if v is input
   unless found
     errors.push "#{input} is not in the list of supported #{name} \
-      (#{value for key, value of list})"
+      (#{i for i in Object.values list})"
   found
 
 validPattern = (input, regex, name, errors) ->

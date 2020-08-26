@@ -29,8 +29,13 @@ versions =
 # messages.
   v1_4_0: 'v1.4.0'
 
+# The version of the SDMX RESTFul API released in September 2020. The release
+# adds support for VTL artefacts and extends the list of supported media
+# types for schema queries.
+  v1_5_0: 'v1.5.0'
+
 # A shortcut to the most recent version of the SDMX RESTful API
-  LATEST: 'v1.4.0'
+  LATEST: 'v1.5.0'
 
 resourcesV1 = [
   'datastructure'
@@ -58,8 +63,20 @@ resourcesV1 = [
   'metadata'
 ].sort()
 
-resourcesV3 = (['actualconstraint', 'allowedconstraint', 'availableconstraint'].
-  concat resourcesV1).sort()
+resourcesV3 = ([
+  'actualconstraint'
+  'allowedconstraint'
+  'availableconstraint'
+].concat resourcesV1).sort()
+
+resourcesV5 = ([
+  'transformationscheme'
+  'rulesetscheme'
+  'userdefinedoperatorscheme'
+  'customtypescheme'
+  'namepersonalisationscheme'
+  'namealiasscheme'
+].concat resourcesV3).sort()
 
 resources =
 
@@ -84,8 +101,11 @@ resources =
 # The set of valid resources for v1.4.0.
   v1_4_0: resourcesV3
 
+# The set of valid resources for v1.5.0.
+  v1_5_0: resourcesV5
+
 # The set of valid resources for the latest API version.
-  LATEST: resourcesV3
+  LATEST: resourcesV5
 
 exports.ApiVersion = Object.freeze versions
 exports.ApiResources = Object.freeze resources

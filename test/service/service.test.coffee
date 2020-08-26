@@ -4,13 +4,23 @@ should = require('chai').should()
 {Service} = require '../../src/service/service'
 {DataFormat} = require '../../src/data/data-format'
 {services} = require '../../src/service/service'
+{MetadataFormat} = require '../../src/metadata/metadata-format'
+{SchemaFormat} = require '../../src/schema/schema-format'
 
 describe 'Service', ->
 
   it 'has the expected properties', ->
     service = Service.from({url: 'http://test.com'})
     service.should.be.an 'object'
-    service.should.include.keys ['id','name','api','url','format']
+    service.should.include.keys [
+      'id'
+      'name'
+      'api'
+      'url'
+      'format'
+      'structureFormat'
+      'schemaFormat'
+    ]
 
   it 'has the expected defaults', ->
     url = 'http://test.com'
@@ -19,6 +29,9 @@ describe 'Service', ->
     service.should.have.property('id').that.is.undefined
     service.should.have.property('name').that.is.undefined
     service.should.have.property('url').that.equals url
+    service.should.have.property('format').that.is.undefined
+    service.should.have.property('structureFormat').that.is.undefined
+    service.should.have.property('schemaFormat').that.is.undefined
 
   context 'when passing an object', ->
 
@@ -63,6 +76,7 @@ describe 'Service', ->
         'OECD'
         'OECD_S'
         'WB'
+        'UNICEF'
       ]
       Service[s].should.be.an 'object' for s in i
       Service[s].should.have.property('id').that.is.not.undefined for s in i
@@ -73,9 +87,17 @@ describe 'Service', ->
       Service[s].url.should.contain 'http' for s in i when s.indexOf '_S' is -1
       Service[s].url.should.contain 'https' for s in i when s.indexOf('_S') > -1
 
-    it 'offers a default format for some predefined services', ->
+    it 'offers a default data format for some predefined services', ->
       format = DataFormat.SDMX_JSON_1_0_0_WD
       Service['ECB'].should.have.property('format').that.equals format
+
+    it 'offers a default metadata format for some predefined services', ->
+      format = MetadataFormat.SDMX_ML_2_1_STRUCTURE
+      Service['ECB'].should.have.property('structureFormat').that.equals format
+
+    it 'offers a default schema format for some predefined services', ->
+      format = SchemaFormat.XML_SCHEMA
+      Service['ECB'].should.have.property('schemaFormat').that.equals format
 
     it 'offers access to secure instances of predefined services', ->
       s1 = Service.ECB

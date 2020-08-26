@@ -1,6 +1,8 @@
 {ApiVersion} = require '../utils/api-version'
 {isValidEnum, createErrorMessage} = require '../utils/validators'
 {DataFormat} = require '../data/data-format'
+{MetadataFormat} = require '../metadata/metadata-format'
+{SchemaFormat} = require '../schema/schema-format'
 
 defaults =
   api: ApiVersion.LATEST
@@ -30,6 +32,16 @@ service = class Service
     api: ApiVersion.v1_0_2
     url: 'http://sdw-wsrest.ecb.europa.eu/service'
     format: DataFormat.SDMX_JSON_1_0_0_WD
+    structureFormat: MetadataFormat.SDMX_ML_2_1_STRUCTURE
+    schemaFormat: SchemaFormat.XML_SCHEMA
+
+  @UNICEF:
+    id: 'UNICEF'
+    name: 'UNICEF'
+    api: ApiVersion.v1_4_0
+    url: 'https://sdmx.data.unicef.org/ws/public/sdmxapi/rest'
+    format: DataFormat.SDMX_JSON_1_0_0
+    structureFormat: MetadataFormat.SDMX_JSON_1_0_0
 
   @SDMXGR:
     id: 'SDMXGR'
@@ -66,6 +78,8 @@ service = class Service
       url: opts?.url
       api: opts?.api ? defaults.api
       format: opts?.format
+      structureFormat: opts?.structureFormat
+      schemaFormat: opts?.schemaFormat
     input = isValidService service
     throw Error createErrorMessage(input.errors, 'service') unless input.isValid
     service
@@ -76,6 +90,7 @@ services = [
   service.EUROSTAT
   service.OECD_S
   service.WB
+  service.UNICEF
 ]
 
 exports.Service = service

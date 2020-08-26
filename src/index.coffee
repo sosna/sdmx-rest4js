@@ -11,6 +11,7 @@
 {AvailabilityReferences} = require './avail/availability-references'
 {SchemaQuery} = require './schema/schema-query'
 {SchemaContext} = require './schema/schema-context'
+{SchemaFormat} = require './schema/schema-format'
 {Service} = require './service/service'
 {services} = require './service/service'
 {UrlGenerator} = require './utils/url-generator'
@@ -29,17 +30,20 @@ checkStatus = (query, response) ->
   unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
 
-isDataFormat = (format) ->
+isFormat = (input, expected) ->
   out = false
-  for v in Object.values DataFormat
-    out = true if v == format
+  for v in Object.values expected
+    out = true if v == input
   out
 
+isDataFormat = (format) ->
+  isFormat(format, DataFormat)
+
 isMetadataFormat = (format) ->
-  out = false
-  for v in Object.values MetadataFormat
-    out = true if v == format
-  out
+  isFormat(format, MetadataFormat)
+
+isSchemaFormat = (format) ->
+  isFormat(format, SchemaFormat)
 
 isGenericFormat = (format) ->
   formats = [
@@ -56,16 +60,23 @@ isRequestedFormat = (requested, received) ->
 checkMediaType = (requested, response) ->
   fmt = response.headers.get('content-type')
   fmt = if fmt then fmt.replace /; version=/, ';version=' else fmt
-  unless isDataFormat(fmt) or isMetadataFormat(fmt) or isGenericFormat(fmt)
+  unless isDataFormat(fmt) \
+  or isMetadataFormat(fmt) \
+  or isGenericFormat(fmt) \
+  or isSchemaFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
   unless isRequestedFormat(requested, fmt)
     throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
 
-addHeaders = (opts, s, isDataQuery) ->
+addHeaders = (opts, s, type) ->
   opts = opts ? {}
   headers = {}
   headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
-  headers.accept = s.format unless headers.accept if s.format and isDataQuery
+  unless headers.accept
+    headers.accept = switch type
+      when 'data' then s.format
+      when 'structure' then s.structureFormat
+      when 'schema' then s.schemaFormat
   headers['user-agent'] = userAgent unless headers['user-agent']
   opts.headers = headers
   opts
@@ -273,21 +284,19 @@ getUrl = (query, service) ->
   throw ReferenceError 'Not a valid service' unless service
   throw ReferenceError 'Not a valid query' unless query
   s = getService service
-  if (query.mode? \
+  q = if (query.mode? \
   or (query.flow? and query.references?) \
   or (query.flow? and query.component?))
-    q = getAvailabilityQuery query
-    return new UrlGenerator().getUrl q, s
+    getAvailabilityQuery query
   else if query.flow?
-    q = getDataQuery query
-    return new UrlGenerator().getUrl q, s
+    getDataQuery query
   else if query.resource?
-    q = getMetadataQuery query
-    return new UrlGenerator().getUrl q, s
+    getMetadataQuery query
   else if query.context?
-    q = getSchemaQuery query
-    return new UrlGenerator().getUrl q, s
-  else
+    getSchemaQuery query
+  if q 
+    return new UrlGenerator().getUrl q, s 
+  else 
     throw Error 'Not a valid query'
   
 #
@@ -340,8 +349,7 @@ getUrl = (query, service) ->
 request = (params...) ->
   request2(params...).then((response) ->
     checkStatus params[0], response
-    response.text()
-  )
+    response.text())
 
 #
 # Executes the supplied query against the supplied service and returns a
@@ -357,9 +365,15 @@ request2 = (params...) ->
   s = if typeof q is 'string' then guessService q else getService params[1]
   u = if typeof q is 'string' then q else getUrl q, s
   o = if typeof q is 'string' then params[1] else params[2]
-  isDataQuery = if u.indexOf('/data/') > -1 then true else false
+  t = null
+  if u.indexOf('/data/') > -1
+    t = 'data'
+  else if u.indexOf('/schema/') > -1
+    t = 'schema'
+  else
+    t = 'structure'
 
-  requestOptions = addHeaders o, s, isDataQuery
+  requestOptions = addHeaders o, s, t
   fetch(u, requestOptions)
     .then((response) -> response)
 
@@ -392,3 +406,4 @@ module.exports =
     SdmxPatterns: SdmxPatterns
   schema:
     SchemaContext: SchemaContext
+    SchemaFormat: SchemaFormat

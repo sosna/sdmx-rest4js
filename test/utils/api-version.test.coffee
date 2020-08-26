@@ -13,6 +13,7 @@ describe 'API versions', ->
     'v1.2.0'
     'v1.3.0'
     'v1.4.0'
+    'v1.5.0'
     'latest'
   ]
 
@@ -26,8 +27,8 @@ describe 'API versions', ->
   it 'is immutable', ->
     ApiVersion.should.be.frozen
 
-  it 'considers v1.4.0 as the latest version', ->
-    ApiVersion.LATEST.should.equal 'v1.4.0'
+  it 'considers v1.5.0 as the latest version', ->
+    ApiVersion.LATEST.should.equal 'v1.5.0'
 
 describe 'API resources', ->
   expectedResourcesV1 = [
@@ -85,6 +86,41 @@ describe 'API resources', ->
     'availableconstraint'
   ].sort()
 
+  expectedResourcesV5 = [
+    'datastructure'
+    'metadatastructure'
+    'categoryscheme'
+    'conceptscheme'
+    'codelist'
+    'hierarchicalcodelist'
+    'organisationscheme'
+    'agencyscheme'
+    'dataproviderscheme'
+    'dataconsumerscheme'
+    'organisationunitscheme'
+    'dataflow'
+    'metadataflow'
+    'reportingtaxonomy'
+    'provisionagreement'
+    'structureset'
+    'process'
+    'categorisation'
+    'contentconstraint'
+    'attachmentconstraint'
+    'actualconstraint'
+    'allowedconstraint'
+    'structure'
+    'data'
+    'metadata'
+    'availableconstraint'
+    'transformationscheme'
+    'rulesetscheme'
+    'userdefinedoperatorscheme'
+    'customtypescheme'
+    'namepersonalisationscheme'
+    'namealiasscheme'
+  ].sort()
+
   it 'contains all the expected resources for version 1.0.0 and only those', ->
     ApiResources.v1_0_0.should.eql expectedResourcesV1
 
@@ -106,5 +142,8 @@ describe 'API resources', ->
   it 'contains all the expected resources for version 1.4.0 and only those', ->
     ApiResources.v1_4_0.should.eql expectedResourcesV3
 
+  it 'contains all the expected resources for version 1.5.0 and only those', ->
+    ApiResources.v1_5_0.should.eql expectedResourcesV5
+
   it 'contains all the expected resources for the latest version and only those', ->
-    ApiResources.LATEST.should.eql expectedResourcesV3
+    ApiResources.LATEST.should.eql expectedResourcesV5

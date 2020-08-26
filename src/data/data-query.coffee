@@ -19,7 +19,7 @@ ValidQuery =
   updatedAfter: (i, e) -> !i or isValidDate(i, 'updatedAfter', e)
   firstNObs: (i, e) -> !i or isValidNObs(i, 'firstNObs', e)
   lastNObs: (i, e) -> !i or isValidNObs(i, 'lastNObs', e)
-  obsDimension: (i, e) ->
+  obsDimension: (i, e) -> 
     !i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
   detail: (i, e) -> isValidEnum(i, DataDetail, 'details', e)
   history: (i, e) -> isValidHistory(i, e)

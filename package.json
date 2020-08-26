@@ -4,7 +4,7 @@
     "node": ">=10"
   },
   "description": "SDMX REST API client for JavaScript",
-  "version": "2.15.4",
+  "version": "2.16.0",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "rm -rf lib && mkdir lib",
@@ -54,7 +54,7 @@
     "coffeescript": "2.5.1",
     "eslint": "7.7.0",
     "eslint-plugin-coffee": "0.1.12",
-    "mocha": "8.1.1",
+    "mocha": "8.1.2",
     "nock": "13.0.4",
     "nyc": "15.1.0"
   },

@@ -9,6 +9,20 @@
     "plugin:coffee/eslint-recommended"
   ],
   "rules": {
-    "coffee/id-length": "off"
+    "coffee/id-length": 0,
+    "coffee/no-template-curly-in-string": 1,
+    "coffee/block-scoped-var": 1,
+    "coffee/class-methods-use-this": 1,
+    "coffee/complexity": 2,
+    "coffee/no-empty-function": 2,
+    "no-eval": 2,
+    "coffee/no-useless-return": 1,
+    "coffee/array-bracket-spacing": 1,
+    "coffee/comma-style": 1,
+    "coffee/function-paren-newline": 1,
+    "coffee/max-len": 2,
+    "coffee/max-depth": 2,
+    "coffee/no-unneeded-ternary": 2,
+    "coffee/no-negated-condition": 2
   }
 }
