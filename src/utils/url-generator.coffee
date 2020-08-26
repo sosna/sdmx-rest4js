@@ -1,7 +1,9 @@
 {ApiVersion} = require '../utils/api-version'
+{ApiResources} = require '../utils/api-version'
 {isItemScheme} = require '../metadata/metadata-type'
 {MetadataDetail} = require '../metadata/metadata-detail'
 {MetadataReferences} = require '../metadata/metadata-references'
+
 
 itemAllowed = (resource, api) ->
   api isnt ApiVersion.v1_0_0 and
@@ -174,9 +176,11 @@ checkDetail = (q, s) ->
     throw Error "#{q.detail} not allowed in #{s.api}"
 
 checkResource = (q, s) ->
-  if (s.api in excluded and (q.resource is 'actualconstraint' or
-  q.resource is 'allowedconstraint'))
-    throw Error "#{q.resource} not allowed in #{s.api}"
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.resource} not allowed in #{s.api}" \
+      unless q.resource in ApiResources[api]
+    
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
