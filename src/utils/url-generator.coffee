@@ -13,7 +13,7 @@ itemAllowed = (resource, api) ->
 createEntryPoint = (s) ->
   throw ReferenceError "#{s.url} is not a valid service" unless s.url
   url = s.url
-  url = s.url + '/' unless s.url.indexOf('/', s.url.length - 1) > -1
+  url = s.url + '/' unless s.url.endsWith('/')
   url
 
 createDataQuery = (query, service) ->
