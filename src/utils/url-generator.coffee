@@ -180,7 +180,29 @@ checkResource = (q, s) ->
     api = s.api.replace /\./g, '_'
     throw Error "#{q.resource} not allowed in #{s.api}" \
       unless q.resource in ApiResources[api]
-    
+
+specialRefs = [
+  'none'
+  'parents'
+  'parentsandsiblings'
+  'children'
+  'descendants'
+  'all'
+]
+
+excludedRefs = [
+  'structure'
+  'actualconstraint'
+  'allowedconstraint'
+]
+
+checkReferences = (q, s) ->
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.references} not allowed as reference in #{s.api}" \
+      unless (q.references in specialRefs or \
+              q.references in ApiResources[api]) and \ 
+              q.references not in excludedRefs
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
@@ -201,6 +223,7 @@ handleMetadataQuery = (qry, srv, skip) ->
   checkApiVersion(qry, srv)
   checkDetail(qry, srv)
   checkResource(qry, srv)
+  checkReferences(qry, srv) if qry.references
   if skip
     createShortMetadataQuery(qry, srv)
   else

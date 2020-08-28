@@ -349,18 +349,31 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'supports VTL artefacts since v1.5.0', ->
+    it 'supports VTL artefacts since v1.5.0 (type)', ->
       expected = 'http://test.com/transformationscheme'
       query = MetadataQuery.from({resource: 'transformationscheme'})
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'does not support VTL artefacts before v1.5.0', ->
+    it 'does not support VTL artefacts before v1.5.0 (type)', ->
       query = MetadataQuery.from({resource: 'transformationscheme'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'transformationscheme not allowed in v1.2.0')
+
+    it 'supports VTL artefacts since v1.5.0 (references)', ->
+      expected = 'http://test.com/codelist?references=transformationscheme'
+      query = MetadataQuery.from({resource: 'codelist', references: 'transformationscheme'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support VTL artefacts before v1.5.0 (references)', ->
+      query = MetadataQuery.from({resource: 'codelist', references: 'transformationscheme'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'transformationscheme not allowed as reference in v1.2.0')
 
   describe 'for data queries', ->
 
