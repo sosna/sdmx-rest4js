@@ -187,7 +187,7 @@ checkReferences = (q, s) ->
     api = s.api.replace /\./g, '_'
     throw Error "#{q.references} not allowed as reference in #{s.api}" \
       unless (q.references in ApiResources[api] or \
-              q.references in Object.values MetadataReferencesSpecial) and \ 
+              q.references in Object.values MetadataReferencesSpecial) and \
               q.references not in MetadataReferencesExcluded
 
 handleAvailabilityQuery = (qry, srv, skip) ->

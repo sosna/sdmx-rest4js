@@ -70,7 +70,7 @@ service = class Service
   @ECB_S: createSecureInstance @ECB
 
   @SDMXGR_S: createSecureInstance @SDMXGR
-  
+
   @OECD_S: createSecureInstance @OECD
 
   @from: (opts) ->
