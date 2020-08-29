@@ -14,10 +14,18 @@
     "coffee/block-scoped-var": 1,
     "coffee/class-methods-use-this": 1,
     "coffee/complexity": 2,
+
+    "coffee/no-else-return": 1,
     "coffee/no-empty-function": 2,
     "no-eval": 2,
+    "coffee/no-loop-func": 1,
+    "coffee/no-return-assign": 1,
+    "coffee/no-self-compare": 1,
+    "coffee/no-sequences": 1,
+    "coffee/no-unmodified-loop-condition": 1,
+    "coffee/no-unused-expressions": 1,
+    "no-useless-concat": 1,
     "coffee/no-useless-return": 1,
-
     "coffee/no-use-before-define": 1,
 
     "coffee/array-bracket-newline": 1,

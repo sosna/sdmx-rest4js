@@ -294,10 +294,8 @@ getUrl = (query, service) ->
     getMetadataQuery query
   else if query.context?
     getSchemaQuery query
-  if q
-    return new UrlGenerator().getUrl q, s
-  else
-    throw Error 'Not a valid query'
+  throw Error 'Not a valid query' unless q
+  return new UrlGenerator().getUrl q, s
 
 #
 # Executes the supplied query against the supplied service and returns a

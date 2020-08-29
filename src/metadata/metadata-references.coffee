@@ -37,10 +37,11 @@ excluded = [
 # All the predefined SDMX types are valid references, except for the 'catch all'
 # `structure`
 all = {}
-(->
-  all[k1] = v1 for k1, v1 of MetadataType when v1 not in excluded
-  all[k2] = v2 for k2, v2 of special
-)()
+for k1, v1 of MetadataType when v1 not in excluded
+  all[k1] = v1
+
+for k2, v2 of special
+  all[k2] = v2
 
 exports.MetadataReferences = Object.freeze all
 exports.MetadataReferencesExcluded = Object.freeze excluded
