@@ -71,7 +71,7 @@ checkMediaType = (requested, response) ->
 addHeaders = (opts, s, type) ->
   opts ?= {}
   headers = {}
-  headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
+  headers[key.toLowerCase()] = opts.headers[key] for own key of opts.headers
   unless headers.accept
     headers.accept = switch type
       when 'data' then s.format

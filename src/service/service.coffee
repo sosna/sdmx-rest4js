@@ -20,7 +20,7 @@ isValidService = (q) ->
 
 createSecureInstance = (service) ->
   secure = {}
-  secure[key] = service[key] for key of service
+  secure[key] = service[key] for own key of service
   secure.url = secure.url.replace('http', 'https')
   secure
 
