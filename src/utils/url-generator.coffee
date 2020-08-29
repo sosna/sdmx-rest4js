@@ -40,7 +40,7 @@ handleDataPathParams = (q) ->
   path = []
   path.push q.provider unless q.provider is 'all'
   path.push q.key if q.key isnt 'all' or path.length
-  if path.length then "/" + path.reverse().join('/') else ""
+  if path.length then '/' + path.reverse().join('/') else ''
 
 hasHistory = (q, s) ->
   if (s.api isnt ApiVersion.v1_0_0 and
@@ -58,7 +58,7 @@ handleDataQueryParams = (q, s) ->
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   p.push "firstNObservations=#{q.firstNObs}" if q.firstNObs
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
-  if p.length > 0 then "?" + p.reduceRight (x, y) -> x + "&" + y else ""
+  if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
 createShortDataQuery = (q, s) ->
   u = createEntryPoint s
@@ -77,16 +77,16 @@ createMetadataQuery = (query, service) ->
 handleMetaPathParams = (q, s, u) ->
   path = []
   if q.item isnt 'all' and itemAllowed(q.resource, s.api) then path.push q.item
-  if q.version isnt "latest" or path.length then path.push q.version
-  if q.id isnt "all" or path.length then path.push q.id
-  if q.agency isnt "all" or path.length then path.push q.agency
-  if path.length then u = u + "/" + path.reverse().join('/')
+  if q.version isnt 'latest' or path.length then path.push q.version
+  if q.id isnt 'all' or path.length then path.push q.id
+  if q.agency isnt 'all' or path.length then path.push q.agency
+  if path.length then u = u + '/' + path.reverse().join('/')
   u
 
 handleMetaQueryParams = (q, u, hd, hr) ->
-  if hd or hr then u = u + "?"
+  if hd or hr then u = u + '?'
   if hd then u = u + "detail=#{q.detail}"
-  if hd and hr then u = u + "&"
+  if hd and hr then u = u + '&'
   if hr then u = u + "references=#{q.references}"
   u
 
@@ -102,7 +102,7 @@ createShortMetadataQuery = (q, s) ->
 
 createAvailabilityQuery = (q, s) ->
   url = createEntryPoint s
-  url = url + "availableconstraint"
+  url = url + 'availableconstraint'
   url = url + "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
   url = url + "?mode=#{q.mode}&references=#{q.references}"
   url = url + "&startPeriod=#{q.start}" if q.start
@@ -166,10 +166,10 @@ checkMultipleItems = (i, s, r) ->
     throw Error "Multiple #{r} not allowed in #{s.api}"
 
 checkApiVersion = (q, s) ->
-  checkMultipleItems(q.agency, s, "agencies")
-  checkMultipleItems(q.id, s, "IDs")
-  checkMultipleItems(q.version, s, "versions")
-  checkMultipleItems(q.item, s, "items")
+  checkMultipleItems(q.agency, s, 'agencies')
+  checkMultipleItems(q.id, s, 'IDs')
+  checkMultipleItems(q.version, s, 'versions')
+  checkMultipleItems(q.item, s, 'items')
 
 checkDetail = (q, s) ->
   if (s.api in excluded and (q.detail is 'referencepartial' or
@@ -199,7 +199,7 @@ handleAvailabilityQuery = (qry, srv, skip) ->
     createAvailabilityQuery(qry, srv)
 
 handleDataQuery = (qry, srv, skip) ->
-  checkMultipleItems(qry.provider, srv, "providers")
+  checkMultipleItems(qry.provider, srv, 'providers')
   if skip
     createShortDataQuery(qry, srv)
   else

@@ -23,6 +23,7 @@
     "coffee/max-len": 2,
     "coffee/max-depth": 2,
     "coffee/no-unneeded-ternary": 2,
-    "coffee/no-negated-condition": 2
+    "coffee/no-negated-condition": 2,
+    "coffee/no-unnecessary-double-quotes": 1
   }
 }

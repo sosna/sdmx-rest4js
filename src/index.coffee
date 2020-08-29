@@ -25,7 +25,7 @@ fetch = require 'isomorphic-fetch'
 userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
 
 checkStatus = (query, response) ->
-  throw ReferenceError "Not a valid response" unless response
+  throw ReferenceError 'Not a valid response' unless response
   code  = response.status
   unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
