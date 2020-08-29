@@ -69,7 +69,7 @@ checkMediaType = (requested, response) ->
     throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
 
 addHeaders = (opts, s, type) ->
-  opts = opts ? {}
+  opts ?= {}
   headers = {}
   headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
   unless headers.accept

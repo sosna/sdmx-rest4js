@@ -21,19 +21,19 @@ createEntryPoint = (s) ->
 
 createDataQuery = (query, service) ->
   url = createEntryPoint service
-  url = url + "data/#{query.flow}/#{query.key}/#{query.provider}?"
+  url += "data/#{query.flow}/#{query.key}/#{query.provider}?"
   if query.obsDimension
-    url = url + "dimensionAtObservation=#{query.obsDimension}&"
-  url = url + "detail=#{query.detail}"
+    url += "dimensionAtObservation=#{query.obsDimension}&"
+  url += "detail=#{query.detail}"
   if (service.api isnt ApiVersion.v1_0_0 and
   service.api isnt ApiVersion.v1_0_1 and
   service.api isnt ApiVersion.v1_0_2)
-    url = url + "&includeHistory=#{query.history}"
-  url = url + "&startPeriod=#{query.start}" if query.start
-  url = url + "&endPeriod=#{query.end}" if query.end
-  url = url + "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
-  url = url + "&firstNObservations=#{query.firstNObs}" if query.firstNObs
-  url = url + "&lastNObservations=#{query.lastNObs}" if query.lastNObs
+    url += "&includeHistory=#{query.history}"
+  url += "&startPeriod=#{query.start}" if query.start
+  url += "&endPeriod=#{query.end}" if query.end
+  url += "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
+  url += "&firstNObservations=#{query.firstNObs}" if query.firstNObs
+  url += "&lastNObservations=#{query.lastNObs}" if query.lastNObs
   url
 
 handleDataPathParams = (q) ->
@@ -62,16 +62,16 @@ handleDataQueryParams = (q, s) ->
 
 createShortDataQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "data/#{q.flow}"
-  u = u + handleDataPathParams(q)
-  u = u + handleDataQueryParams(q, s)
+  u += "data/#{q.flow}"
+  u += handleDataPathParams(q)
+  u += handleDataQueryParams(q, s)
   u
 
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
-  url = url + "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
-  url = url + "/#{query.item}" if itemAllowed(query.resource, service.api)
-  url = url + "?detail=#{query.detail}&references=#{query.references}"
+  url += "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
+  url += "/#{query.item}" if itemAllowed(query.resource, service.api)
+  url += "?detail=#{query.detail}&references=#{query.references}"
   url
 
 handleMetaPathParams = (q, s, u) ->
@@ -84,15 +84,15 @@ handleMetaPathParams = (q, s, u) ->
   u
 
 handleMetaQueryParams = (q, u, hd, hr) ->
-  if hd or hr then u = u + '?'
-  if hd then u = u + "detail=#{q.detail}"
-  if hd and hr then u = u + '&'
-  if hr then u = u + "references=#{q.references}"
+  if hd or hr then u += '?'
+  if hd then u += "detail=#{q.detail}"
+  if hd and hr then u += '&'
+  if hr then u += "references=#{q.references}"
   u
 
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "#{q.resource}"
+  u += "#{q.resource}"
   u = handleMetaPathParams(q, s, u)
   u = handleMetaQueryParams(
     q, u, q.detail isnt MetadataDetail.FULL,
@@ -102,12 +102,12 @@ createShortMetadataQuery = (q, s) ->
 
 createAvailabilityQuery = (q, s) ->
   url = createEntryPoint s
-  url = url + 'availableconstraint'
-  url = url + "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
-  url = url + "?mode=#{q.mode}&references=#{q.references}"
-  url = url + "&startPeriod=#{q.start}" if q.start
-  url = url + "&endPeriod=#{q.end}" if q.end
-  url = url + "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  url += 'availableconstraint'
+  url += "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
+  url += "?mode=#{q.mode}&references=#{q.references}"
+  url += "&startPeriod=#{q.start}" if q.start
+  url += "&endPeriod=#{q.end}" if q.end
+  url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   url
 
 handleAvailabilityPathParams = (q) ->
@@ -128,16 +128,16 @@ handleAvailabilityQueryParams = (q) ->
 
 createShortAvailabilityQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "availableconstraint/#{q.flow}"
-  u = u + handleAvailabilityPathParams(q)
-  u = u + handleAvailabilityQueryParams(q)
+  u += "availableconstraint/#{q.flow}"
+  u += handleAvailabilityPathParams(q)
+  u += handleAvailabilityQueryParams(q)
   u
 
 createSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
-  u = u + "?explicitMeasure=#{q.explicit}"
-  u = u + "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
+  u += "?explicitMeasure=#{q.explicit}"
+  u += "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   u
 
 handleSchemaQueryParams = (q) ->
@@ -148,9 +148,9 @@ handleSchemaQueryParams = (q) ->
 
 createShortSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "schema/#{q.context}/#{q.agency}/#{q.id}"
-  u = u + "/#{q.version}" unless q.version is 'latest'
-  u = u + handleSchemaQueryParams(q)
+  u += "schema/#{q.context}/#{q.agency}/#{q.id}"
+  u += "/#{q.version}" unless q.version is 'latest'
+  u += handleSchemaQueryParams(q)
   u
 
 excluded = [
