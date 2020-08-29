@@ -53,6 +53,7 @@
     "coffee/no-unneeded-ternary": 2,
     "coffee/no-whitespace-before-property": 1,
     "coffee/object-curly-spacing": 1,
-    "coffee/operator-assignment": 1
+    "coffee/operator-assignment": 1,
+    "coffee/operator-linebreak": 1
   }
 }

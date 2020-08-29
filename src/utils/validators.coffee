@@ -29,8 +29,8 @@ validIso8601 = (input, name, errors) ->
   valid
 
 validPeriod = (input, name, errors) ->
-  valid = validIso8601(input, name, errors) \
-    or validPattern(input, ReportingPeriodType, name, errors)
+  valid = validIso8601(input, name, errors) or \
+    validPattern(input, ReportingPeriodType, name, errors)
   unless valid
     errors.push "#{name} must be a valid SDMX period or a valid ISO8601 date"
     valid = false

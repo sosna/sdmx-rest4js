@@ -60,10 +60,10 @@ isRequestedFormat = (requested, received) ->
 checkMediaType = (requested, response) ->
   fmt = response.headers.get('content-type')
   fmt = if fmt then fmt.replace /; version=/, ';version=' else fmt
-  unless isDataFormat(fmt) \
-  or isMetadataFormat(fmt) \
-  or isGenericFormat(fmt) \
-  or isSchemaFormat(fmt)
+  unless isDataFormat(fmt) or \
+  isMetadataFormat(fmt) or \
+  isGenericFormat(fmt) or \
+  isSchemaFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
   unless isRequestedFormat(requested, fmt)
     throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
@@ -120,8 +120,8 @@ getService = (input) ->
     throw ReferenceError "#{input} is not in the list of predefined services" \
       unless Service[input]
     Service[input]
-  else if input instanceof Object \
-  and Object.prototype.toString.call(input) is '[object Object]'
+  else if input instanceof Object and \
+  Object.prototype.toString.call(input) is '[object Object]'
     Service.from input
   else
     throw TypeError "Invalid type of #{input}. Expected an object or a string"
@@ -284,9 +284,9 @@ getUrl = (query, service) ->
   throw ReferenceError 'Not a valid service' unless service
   throw ReferenceError 'Not a valid query' unless query
   s = getService service
-  q = if (query.mode? \
-  or (query.flow? and query.references?) \
-  or (query.flow? and query.component?))
+  q = if (query.mode? or \
+  (query.flow? and query.references?) or \
+  (query.flow? and query.component?))
     getAvailabilityQuery query
   else if query.flow?
     getDataQuery query
