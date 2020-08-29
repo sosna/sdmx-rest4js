@@ -10,6 +10,18 @@ defaults =
   detail: DataDetail.FULL
   history: false
 
+isValidHistory = (input, errors) ->
+  valid = typeof input is 'boolean'
+  errors.push "#{input} is not a valid value for history. Must be true or \
+  false" unless valid
+  valid
+
+isValidNObs = (input, name, errors) ->
+  valid = typeof input is 'number' and input > 0
+  errors.push "#{input} is not a valid value for #{name}. Must be a positive \
+  integer" unless valid
+  valid
+
 ValidQuery =
   flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
   key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
@@ -23,18 +35,6 @@ ValidQuery =
     not i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
   detail: (i, e) -> isValidEnum(i, DataDetail, 'details', e)
   history: (i, e) -> isValidHistory(i, e)
-
-isValidHistory = (input, errors) ->
-  valid = typeof input is 'boolean'
-  errors.push "#{input} is not a valid value for history. Must be true or \
-  false" unless valid
-  valid
-
-isValidNObs = (input, name, errors) ->
-  valid = typeof input is 'number' and input > 0
-  errors.push "#{input} is not a valid value for #{name}. Must be a positive \
-  integer" unless valid
-  valid
 
 isValidQuery = (q) ->
   errors = []

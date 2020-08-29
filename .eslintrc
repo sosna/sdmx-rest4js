@@ -17,12 +17,8 @@
     "coffee/no-empty-function": 2,
     "no-eval": 2,
     "coffee/no-useless-return": 1,
-    "coffee/no-unnecessary-double-quotes": 1,
-    "coffee/no-private-function-fat-arrows": 1,
-    "coffee/shorthand-this": 1,
-    "coffee/empty-func-parens": 1,
-    "coffee/english-operators": 1,
-    "coffee/no-backticks": 2,
+
+    "coffee/no-use-before-define": 1,
 
     "coffee/array-bracket-newline": 1,
     "coffee/array-bracket-spacing": 1,
@@ -55,6 +51,28 @@
     "coffee/object-curly-spacing": 1,
     "coffee/operator-assignment": 1,
     "coffee/operator-linebreak": 1,
-    "space-in-parens": 1
+    "space-in-parens": 1,
+    "coffee/space-infix-ops": 1,
+    "coffee/space-unary-ops": 1,
+
+    "coffee/arrow-spacing": 1,
+    "no-duplicate-imports": 1,
+    "coffee/no-useless-computed-key": 1,
+
+    "coffee/no-backticks": 2,
+    "coffee/english-operators": 1,
+    "coffee/empty-func-parens": 1,  
+    "coffee/shorthand-this": 1,
+    "coffee/no-private-function-fat-arrows": 1,
+    "coffee/no-unnecessary-double-quotes": 1,
+
+    "coffee/no-unused-modules": 1,
+
+    "coffee/export": 1,
+    "coffee/no-named-as-default-member": 1,
+    "coffee/no-deprecated--import": 1,
+
+    "coffee/no-default-export": 1,
+    "coffee/no-anonymous-default-export": 1
   }
 }

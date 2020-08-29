@@ -14,6 +14,12 @@ defaults =
   references: MetadataReferences.NONE
   item: 'all'
 
+canHaveItem = (query, errors) ->
+  allowed = query.item is 'all' or isItemScheme query.resource
+  errors.push "#{query.resource} is not an item scheme and therefore it is \
+  not possible to query by item" unless allowed
+  allowed
+
 ValidQuery =
   resource: (q, i, e) -> isValidEnum(i, MetadataType, 'resources', e)
   agency: (q, i, e) -> isValidPattern(i, AgenciesRefType, 'agencies', e)
@@ -23,12 +29,6 @@ ValidQuery =
   references: (q, i, e) -> isValidEnum(i, MetadataReferences, 'references', e)
   item: (q, i, e) -> isValidPattern(i, MultipleNestedIDType, 'items', e) and \
     canHaveItem(q, e)
-
-canHaveItem = (query, errors) ->
-  allowed = query.item is 'all' or isItemScheme query.resource
-  errors.push "#{query.resource} is not an item scheme and therefore it is \
-  not possible to query by item" unless allowed
-  allowed
 
 isValidQuery = (query) ->
   errors = []

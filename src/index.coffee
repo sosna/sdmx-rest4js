@@ -303,12 +303,38 @@ getUrl = (query, service) ->
 # Executes the supplied query against the supplied service and returns a
 # Promise.
 #
+# At the difference with the request() function, request2() will
+# include the response headers and additional information such as the status.
+#
+# @see #request for additional information about the required parameters.
+#
+request2 = (params...) ->
+  q = params[0]
+  s = if typeof q is 'string' then guessService q else getService params[1]
+  u = if typeof q is 'string' then q else getUrl q, s
+  o = if typeof q is 'string' then params[1] else params[2]
+  t = null
+  if u.indexOf('/data/') > -1
+    t = 'data'
+  else if u.indexOf('/schema/') > -1
+    t = 'schema'
+  else
+    t = 'structure'
+
+  requestOptions = addHeaders o, s, t
+  fetch(u, requestOptions)
+    .then((response) -> response)
+
+#
+# Executes the supplied query against the supplied service and returns a
+# Promise.
+#
 # The returned Promise should be handled using the *then* and *catch* methods
 # offered by a Promise.
 #
 # @example Executes the supplied query against the supplied service
 #   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB')
- #    .then(function(data) {console.log(data);})
+#     .then(function(data) {console.log(data);})
 #     .catch(function(error) {console.log(error);});
 #
 # @example Executes the supplied query against the supplied service, asking the
@@ -323,7 +349,7 @@ getUrl = (query, service) ->
 #
 # @example Fetches the supplied URL
 #   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR')
- #    .then(function(data) {console.log(data);})
+#     .then(function(data) {console.log(data);})
 #     .catch(function(error) {console.log(error);});
 #
 # @example Fetches the supplied URL, asking the service to return a compressed
@@ -350,32 +376,6 @@ request = (params...) ->
   request2(params...).then((response) ->
     checkStatus params[0], response
     response.text())
-
-#
-# Executes the supplied query against the supplied service and returns a
-# Promise.
-#
-# At the difference with the request() function, request2() will
-# include the response headers and additional information such as the status.
-#
-# @see #request for additional information about the required parameters.
-#
-request2 = (params...) ->
-  q = params[0]
-  s = if typeof q is 'string' then guessService q else getService params[1]
-  u = if typeof q is 'string' then q else getUrl q, s
-  o = if typeof q is 'string' then params[1] else params[2]
-  t = null
-  if u.indexOf('/data/') > -1
-    t = 'data'
-  else if u.indexOf('/schema/') > -1
-    t = 'schema'
-  else
-    t = 'structure'
-
-  requestOptions = addHeaders o, s, t
-  fetch(u, requestOptions)
-    .then((response) -> response)
 
 module.exports =
   getService: getService
