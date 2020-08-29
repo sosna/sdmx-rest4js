@@ -17,8 +17,6 @@
     "coffee/no-empty-function": 2,
     "no-eval": 2,
     "coffee/no-useless-return": 1,
-    "coffee/array-bracket-spacing": 1,
-    "coffee/comma-style": 1,
     "coffee/function-paren-newline": 1,
     "coffee/max-len": 2,
     "coffee/max-depth": 2,
@@ -28,7 +26,15 @@
     "coffee/no-private-function-fat-arrows": 1,
     "coffee/shorthand-this": 1,
     "coffee/empty-func-parens": 1,
-    "coffee/english-operators": 1
-
+    "coffee/english-operators": 1,
+    "coffee/no-backticks": 2,
+    "coffee/array-bracket-newline": 1,
+    "coffee/array-bracket-spacing": 1,
+    "coffee/array-element-newline": 1,
+    "comma-spacing": 1,
+    "coffee/comma-style": 1,
+    "computed-property-spacing": 1,
+    "coffee/consistent-this": 1,
+    "eol-last": 1
   }
 }
