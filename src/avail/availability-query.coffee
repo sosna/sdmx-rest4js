@@ -17,9 +17,9 @@ ValidQuery =
   key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
   provider: (i, e) -> isValidPattern(i, MultipleProviderRefType, 'provider', e)
   component: (i, e) -> isValidPattern(i, NestedNCNameIDType, 'component', e)
-  start: (i, e) -> !i or isValidPeriod(i, 'start period', e)
-  end: (i, e) -> !i or isValidPeriod(i, 'end period', e)
-  updatedAfter: (i, e) -> !i or isValidDate(i, 'updatedAfter', e)
+  start: (i, e) -> not i or isValidPeriod(i, 'start period', e)
+  end: (i, e) -> not i or isValidPeriod(i, 'end period', e)
+  updatedAfter: (i, e) -> not i or isValidDate(i, 'updatedAfter', e)
   mode: (i, e) -> isValidEnum(i, AvailabilityMode, 'mode', e)
   references: (i, e) -> isValidEnum(i, AvailabilityReferences, 'references', e)
 

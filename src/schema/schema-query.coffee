@@ -15,7 +15,7 @@ ValidQuery =
   version: (q, i, e) -> isValidPattern(i, SingleVersionType, 'versions', e)
   explicit: (q, i, e) -> isValidExplicit(i, e)
   obsDimension: (q, i, e) ->
-    !i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
+    not i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
 
 isValidExplicit = (input, errors) ->
   valid = typeof input is 'boolean'

@@ -33,7 +33,7 @@ checkStatus = (query, response) ->
 isFormat = (input, expected) ->
   out = false
   for v in Object.values expected
-    out = true if v == input
+    out = true if v is input
   out
 
 isDataFormat = (format) ->

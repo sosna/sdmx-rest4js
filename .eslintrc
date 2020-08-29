@@ -24,6 +24,11 @@
     "coffee/max-depth": 2,
     "coffee/no-unneeded-ternary": 2,
     "coffee/no-negated-condition": 2,
-    "coffee/no-unnecessary-double-quotes": 1
+    "coffee/no-unnecessary-double-quotes": 1,
+    "coffee/no-private-function-fat-arrows": 1,
+    "coffee/shorthand-this": 1,
+    "coffee/empty-func-parens": 1,
+    "coffee/english-operators": 1
+
   }
 }
