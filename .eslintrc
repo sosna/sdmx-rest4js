@@ -9,12 +9,13 @@
     "plugin:coffee/eslint-recommended"
   ],
   "rules": {
-    "coffee/id-length": 0,
+    "coffee/no-await-in-loop": 1,
+    "no-console": 1,
     "coffee/no-template-curly-in-string": 1,
     "coffee/block-scoped-var": 1,
     "coffee/class-methods-use-this": 1,
     "coffee/complexity": 2,
-
+    "coffee/dot-notation": 1,
     "coffee/guard-for-in": 1,
     "coffee/no-else-return": 1,
     "coffee/no-empty-function": 2,
@@ -38,6 +39,7 @@
     "coffee/consistent-this": 1,
     "eol-last": 1,
     "coffee/function-paren-newline": 1,
+    "coffee/id-length": 0,
     "key-spacing": 1,
     "coffee/keyword-spacing": 1,
     "coffee/lines-between-class-members": 1,
