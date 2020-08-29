@@ -68,7 +68,9 @@ service = class Service
     url: 'http://wits.worldbank.org/API/V1/SDMX/V21/rest'
 
   @ECB_S: createSecureInstance @ECB
+
   @SDMXGR_S: createSecureInstance @SDMXGR
+  
   @OECD_S: createSecureInstance @OECD
 
   @from: (opts) ->
