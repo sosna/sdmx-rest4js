@@ -8,6 +8,12 @@ defaults =
   version: 'latest'
   explicit: false
 
+isValidExplicit = (input, errors) ->
+  valid = typeof input is 'boolean'
+  errors.push "#{input} is not a valid value for explicit. Must be true or \
+  false" unless valid
+  valid
+
 ValidQuery =
   context: (q, i, e) -> isValidEnum(i, SchemaContext, 'context', e)
   agency: (q, i, e) -> isValidPattern(i, NestedNCNameIDType, 'agency', e)
@@ -15,18 +21,12 @@ ValidQuery =
   version: (q, i, e) -> isValidPattern(i, SingleVersionType, 'versions', e)
   explicit: (q, i, e) -> isValidExplicit(i, e)
   obsDimension: (q, i, e) ->
-    !i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
-
-isValidExplicit = (input, errors) ->
-  valid = typeof input is 'boolean'
-  errors.push "#{input} is not a valid value for explicit. Must be true or \
-  false" unless valid
-  valid
+    not i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
 
 isValidQuery = (query) ->
   errors = []
   isValid = false
-  for k, v of query
+  for own k, v of query
     isValid = ValidQuery[k](query, v, errors)
     break unless isValid
   {isValid: isValid, errors: errors}

@@ -20,7 +20,7 @@ isValidService = (q) ->
 
 createSecureInstance = (service) ->
   secure = {}
-  secure[key] = service[key] for key of service
+  secure[key] = service[key] for own key of service
   secure.url = secure.url.replace('http', 'https')
   secure
 
@@ -68,7 +68,9 @@ service = class Service
     url: 'http://wits.worldbank.org/API/V1/SDMX/V21/rest'
 
   @ECB_S: createSecureInstance @ECB
+
   @SDMXGR_S: createSecureInstance @SDMXGR
+
   @OECD_S: createSecureInstance @OECD
 
   @from: (opts) ->

@@ -10,20 +10,6 @@ defaults =
   detail: DataDetail.FULL
   history: false
 
-ValidQuery =
-  flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
-  key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
-  provider: (i, e) -> isValidPattern(i, MultipleProviderRefType, 'provider', e)
-  start: (i, e) -> !i or isValidPeriod(i, 'start period', e)
-  end: (i, e) -> !i or isValidPeriod(i, 'end period', e)
-  updatedAfter: (i, e) -> !i or isValidDate(i, 'updatedAfter', e)
-  firstNObs: (i, e) -> !i or isValidNObs(i, 'firstNObs', e)
-  lastNObs: (i, e) -> !i or isValidNObs(i, 'lastNObs', e)
-  obsDimension: (i, e) -> 
-    !i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
-  detail: (i, e) -> isValidEnum(i, DataDetail, 'details', e)
-  history: (i, e) -> isValidHistory(i, e)
-
 isValidHistory = (input, errors) ->
   valid = typeof input is 'boolean'
   errors.push "#{input} is not a valid value for history. Must be true or \
@@ -36,10 +22,24 @@ isValidNObs = (input, name, errors) ->
   integer" unless valid
   valid
 
+ValidQuery =
+  flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
+  key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
+  provider: (i, e) -> isValidPattern(i, MultipleProviderRefType, 'provider', e)
+  start: (i, e) -> not i or isValidPeriod(i, 'start period', e)
+  end: (i, e) -> not i or isValidPeriod(i, 'end period', e)
+  updatedAfter: (i, e) -> not i or isValidDate(i, 'updatedAfter', e)
+  firstNObs: (i, e) -> not i or isValidNObs(i, 'firstNObs', e)
+  lastNObs: (i, e) -> not i or isValidNObs(i, 'lastNObs', e)
+  obsDimension: (i, e) ->
+    not i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
+  detail: (i, e) -> isValidEnum(i, DataDetail, 'details', e)
+  history: (i, e) -> isValidHistory(i, e)
+
 isValidQuery = (q) ->
   errors = []
   isValid = false
-  for k, v of q
+  for own k, v of q
     isValid = ValidQuery[k](v, errors)
     break unless isValid
   {isValid: isValid, errors: errors}

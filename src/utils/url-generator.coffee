@@ -1,7 +1,10 @@
 {ApiVersion} = require '../utils/api-version'
+{ApiResources} = require '../utils/api-version'
 {isItemScheme} = require '../metadata/metadata-type'
 {MetadataDetail} = require '../metadata/metadata-detail'
 {MetadataReferences} = require '../metadata/metadata-references'
+{MetadataReferencesExcluded} = require '../metadata/metadata-references'
+{MetadataReferencesSpecial} = require '../metadata/metadata-references'
 
 itemAllowed = (resource, api) ->
   api isnt ApiVersion.v1_0_0 and
@@ -18,26 +21,26 @@ createEntryPoint = (s) ->
 
 createDataQuery = (query, service) ->
   url = createEntryPoint service
-  url = url + "data/#{query.flow}/#{query.key}/#{query.provider}?"
+  url += "data/#{query.flow}/#{query.key}/#{query.provider}?"
   if query.obsDimension
-    url = url + "dimensionAtObservation=#{query.obsDimension}&"
-  url = url + "detail=#{query.detail}"
+    url += "dimensionAtObservation=#{query.obsDimension}&"
+  url += "detail=#{query.detail}"
   if (service.api isnt ApiVersion.v1_0_0 and
   service.api isnt ApiVersion.v1_0_1 and
   service.api isnt ApiVersion.v1_0_2)
-    url = url + "&includeHistory=#{query.history}"
-  url = url + "&startPeriod=#{query.start}" if query.start
-  url = url + "&endPeriod=#{query.end}" if query.end
-  url = url + "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
-  url = url + "&firstNObservations=#{query.firstNObs}" if query.firstNObs
-  url = url + "&lastNObservations=#{query.lastNObs}" if query.lastNObs
+    url += "&includeHistory=#{query.history}"
+  url += "&startPeriod=#{query.start}" if query.start
+  url += "&endPeriod=#{query.end}" if query.end
+  url += "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
+  url += "&firstNObservations=#{query.firstNObs}" if query.firstNObs
+  url += "&lastNObservations=#{query.lastNObs}" if query.lastNObs
   url
 
 handleDataPathParams = (q) ->
   path = []
   path.push q.provider unless q.provider is 'all'
   path.push q.key if q.key isnt 'all' or path.length
-  if path.length then "/" + path.reverse().join('/') else ""
+  if path.length then '/' + path.reverse().join('/') else ''
 
 hasHistory = (q, s) ->
   if (s.api isnt ApiVersion.v1_0_0 and
@@ -55,41 +58,41 @@ handleDataQueryParams = (q, s) ->
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   p.push "firstNObservations=#{q.firstNObs}" if q.firstNObs
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
-  if p.length > 0 then "?" + p.reduceRight (x, y) -> x + "&" + y else ""
+  if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
 createShortDataQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "data/#{q.flow}"
-  u = u + handleDataPathParams(q)
-  u = u + handleDataQueryParams(q, s)
+  u += "data/#{q.flow}"
+  u += handleDataPathParams(q)
+  u += handleDataQueryParams(q, s)
   u
 
 createMetadataQuery = (query, service) ->
   url = createEntryPoint service
-  url = url + "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
-  url = url + "/#{query.item}" if itemAllowed(query.resource, service.api)
-  url = url + "?detail=#{query.detail}&references=#{query.references}"
+  url += "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
+  url += "/#{query.item}" if itemAllowed(query.resource, service.api)
+  url += "?detail=#{query.detail}&references=#{query.references}"
   url
 
 handleMetaPathParams = (q, s, u) ->
   path = []
   if q.item isnt 'all' and itemAllowed(q.resource, s.api) then path.push q.item
-  if q.version isnt "latest" or path.length then path.push q.version
-  if q.id isnt "all" or path.length then path.push q.id
-  if q.agency isnt "all" or path.length then path.push q.agency
-  if path.length then u = u + "/" + path.reverse().join('/')
+  if q.version isnt 'latest' or path.length then path.push q.version
+  if q.id isnt 'all' or path.length then path.push q.id
+  if q.agency isnt 'all' or path.length then path.push q.agency
+  if path.length then u = u + '/' + path.reverse().join('/')
   u
 
 handleMetaQueryParams = (q, u, hd, hr) ->
-  if hd or hr then u = u + "?"
-  if hd then u = u + "detail=#{q.detail}"
-  if hd and hr then u = u + "&"
-  if hr then u = u + "references=#{q.references}"
+  if hd or hr then u += '?'
+  if hd then u += "detail=#{q.detail}"
+  if hd and hr then u += '&'
+  if hr then u += "references=#{q.references}"
   u
 
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "#{q.resource}"
+  u += "#{q.resource}"
   u = handleMetaPathParams(q, s, u)
   u = handleMetaQueryParams(
     q, u, q.detail isnt MetadataDetail.FULL,
@@ -99,12 +102,12 @@ createShortMetadataQuery = (q, s) ->
 
 createAvailabilityQuery = (q, s) ->
   url = createEntryPoint s
-  url = url + "availableconstraint"
-  url = url + "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
-  url = url + "?mode=#{q.mode}&references=#{q.references}"
-  url = url + "&startPeriod=#{q.start}" if q.start
-  url = url + "&endPeriod=#{q.end}" if q.end
-  url = url + "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  url += 'availableconstraint'
+  url += "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
+  url += "?mode=#{q.mode}&references=#{q.references}"
+  url += "&startPeriod=#{q.start}" if q.start
+  url += "&endPeriod=#{q.end}" if q.end
+  url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   url
 
 handleAvailabilityPathParams = (q) ->
@@ -125,16 +128,16 @@ handleAvailabilityQueryParams = (q) ->
 
 createShortAvailabilityQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "availableconstraint/#{q.flow}"
-  u = u + handleAvailabilityPathParams(q)
-  u = u + handleAvailabilityQueryParams(q)
+  u += "availableconstraint/#{q.flow}"
+  u += handleAvailabilityPathParams(q)
+  u += handleAvailabilityQueryParams(q)
   u
 
 createSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
-  u = u + "?explicitMeasure=#{q.explicit}"
-  u = u + "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
+  u += "?explicitMeasure=#{q.explicit}"
+  u += "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   u
 
 handleSchemaQueryParams = (q) ->
@@ -145,9 +148,9 @@ handleSchemaQueryParams = (q) ->
 
 createShortSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  u = u + "schema/#{q.context}/#{q.agency}/#{q.id}"
-  u = u + "/#{q.version}" unless q.version is 'latest'
-  u = u + handleSchemaQueryParams(q)
+  u += "schema/#{q.context}/#{q.agency}/#{q.id}"
+  u += "/#{q.version}" unless q.version is 'latest'
+  u += handleSchemaQueryParams(q)
   u
 
 excluded = [
@@ -163,10 +166,10 @@ checkMultipleItems = (i, s, r) ->
     throw Error "Multiple #{r} not allowed in #{s.api}"
 
 checkApiVersion = (q, s) ->
-  checkMultipleItems(q.agency, s, "agencies")
-  checkMultipleItems(q.id, s, "IDs")
-  checkMultipleItems(q.version, s, "versions")
-  checkMultipleItems(q.item, s, "items")
+  checkMultipleItems(q.agency, s, 'agencies')
+  checkMultipleItems(q.id, s, 'IDs')
+  checkMultipleItems(q.version, s, 'versions')
+  checkMultipleItems(q.item, s, 'items')
 
 checkDetail = (q, s) ->
   if (s.api in excluded and (q.detail is 'referencepartial' or
@@ -174,9 +177,18 @@ checkDetail = (q, s) ->
     throw Error "#{q.detail} not allowed in #{s.api}"
 
 checkResource = (q, s) ->
-  if (s.api in excluded and (q.resource is 'actualconstraint' or
-  q.resource is 'allowedconstraint'))
-    throw Error "#{q.resource} not allowed in #{s.api}"
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.resource} not allowed in #{s.api}" \
+      unless q.resource in ApiResources[api]
+
+checkReferences = (q, s) ->
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.references} not allowed as reference in #{s.api}" \
+      unless (q.references in ApiResources[api] or \
+              q.references in Object.values MetadataReferencesSpecial) and \
+              q.references not in MetadataReferencesExcluded
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
@@ -187,7 +199,7 @@ handleAvailabilityQuery = (qry, srv, skip) ->
     createAvailabilityQuery(qry, srv)
 
 handleDataQuery = (qry, srv, skip) ->
-  checkMultipleItems(qry.provider, srv, "providers")
+  checkMultipleItems(qry.provider, srv, 'providers')
   if skip
     createShortDataQuery(qry, srv)
   else
@@ -197,6 +209,7 @@ handleMetadataQuery = (qry, srv, skip) ->
   checkApiVersion(qry, srv)
   checkDetail(qry, srv)
   checkResource(qry, srv)
+  checkReferences(qry, srv) if qry.references
   if skip
     createShortMetadataQuery(qry, srv)
   else

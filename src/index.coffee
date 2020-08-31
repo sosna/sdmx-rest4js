@@ -25,7 +25,7 @@ fetch = require 'isomorphic-fetch'
 userAgent = 'sdmx-rest4js (https://github.com/sosna/sdmx-rest4js)'
 
 checkStatus = (query, response) ->
-  throw ReferenceError "Not a valid response" unless response
+  throw ReferenceError 'Not a valid response' unless response
   code  = response.status
   unless 100 <= code < 400 or (code is 404 and query.updatedAfter)
     throw RangeError "Request failed with error code #{code}"
@@ -33,7 +33,7 @@ checkStatus = (query, response) ->
 isFormat = (input, expected) ->
   out = false
   for v in Object.values expected
-    out = true if v == input
+    out = true if v is input
   out
 
 isDataFormat = (format) ->
@@ -60,18 +60,18 @@ isRequestedFormat = (requested, received) ->
 checkMediaType = (requested, response) ->
   fmt = response.headers.get('content-type')
   fmt = if fmt then fmt.replace /; version=/, ';version=' else fmt
-  unless isDataFormat(fmt) \
-  or isMetadataFormat(fmt) \
-  or isGenericFormat(fmt) \
-  or isSchemaFormat(fmt)
+  unless isDataFormat(fmt) or \
+  isMetadataFormat(fmt) or \
+  isGenericFormat(fmt) or \
+  isSchemaFormat(fmt)
     throw RangeError "Not an SDMX format: #{fmt}"
   unless isRequestedFormat(requested, fmt)
     throw RangeError "Wrong format: requested #{requested} but got #{fmt}"
 
 addHeaders = (opts, s, type) ->
-  opts = opts ? {}
+  opts ?= {}
   headers = {}
-  headers[key.toLowerCase()] = opts.headers[key] for key of opts.headers
+  headers[key.toLowerCase()] = opts.headers[key] for own key of opts.headers
   unless headers.accept
     headers.accept = switch type
       when 'data' then s.format
@@ -120,8 +120,8 @@ getService = (input) ->
     throw ReferenceError "#{input} is not in the list of predefined services" \
       unless Service[input]
     Service[input]
-  else if input instanceof Object \
-  and Object.prototype.toString.call(input) is '[object Object]'
+  else if input instanceof Object and \
+  Object.prototype.toString.call(input) is '[object Object]'
     Service.from input
   else
     throw TypeError "Invalid type of #{input}. Expected an object or a string"
@@ -284,9 +284,9 @@ getUrl = (query, service) ->
   throw ReferenceError 'Not a valid service' unless service
   throw ReferenceError 'Not a valid query' unless query
   s = getService service
-  q = if (query.mode? \
-  or (query.flow? and query.references?) \
-  or (query.flow? and query.component?))
+  q = if (query.mode? or \
+  (query.flow? and query.references?) or \
+  (query.flow? and query.component?))
     getAvailabilityQuery query
   else if query.flow?
     getDataQuery query
@@ -294,62 +294,8 @@ getUrl = (query, service) ->
     getMetadataQuery query
   else if query.context?
     getSchemaQuery query
-  if q 
-    return new UrlGenerator().getUrl q, s 
-  else 
-    throw Error 'Not a valid query'
-  
-#
-# Executes the supplied query against the supplied service and returns a
-# Promise.
-#
-# The returned Promise should be handled using the *then* and *catch* methods
-# offered by a Promise.
-#
-# @example Executes the supplied query against the supplied service
-#   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB')
- #    .then(function(data) {console.log(data);})
-#     .catch(function(error) {console.log(error);});
-#
-# @example Executes the supplied query against the supplied service, asking the
-#   service to return a compressed SDMX-JSON message.
-#   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB',
-#     {headers: {accept: DataFormat.SDMX_JSON, accept-encoding: "gzip"}})
-#     .then(function(data) {console.log(data);})
-#     .catch(function(error) {console.log(error);});
-#
-# In case you already have an SDMX 2.1 RESTful query string, you can also use it
-# with execute().
-#
-# @example Fetches the supplied URL
-#   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR')
- #    .then(function(data) {console.log(data);})
-#     .catch(function(error) {console.log(error);});
-#
-# @example Fetches the supplied URL, asking the service to return a compressed
-# SDMX-JSON message
-#   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR',
-#     {headers: {accept: DataFormat.SDMX_JSON, accept-encoding: "gzip"}})
-#     .then(function(data) {console.log(data);})
-#     .catch(function(error) {console.log(error);});
-#
-# @param [Object|String] query the query to be executed
-# @param [Object|String] service the service against which the query should be
-#   executed. This should not be set in case an SDMX 2.1 query string is passed
-#   as 1st parameter
-# @param [Object] opts additional options for the request. See the whatwg fetch
-#   specification for additional information.
-#
-# @throw an error in case the query and/or the service are not valid.
-#
-# @see #getDataQuery
-# @see #getMetadataQuery
-# @see #getService
-#
-request = (params...) ->
-  request2(params...).then((response) ->
-    checkStatus params[0], response
-    response.text())
+  throw Error 'Not a valid query' unless q
+  return new UrlGenerator().getUrl q, s
 
 #
 # Executes the supplied query against the supplied service and returns a
@@ -376,6 +322,58 @@ request2 = (params...) ->
   requestOptions = addHeaders o, s, t
   fetch(u, requestOptions)
     .then((response) -> response)
+
+#
+# Executes the supplied query against the supplied service and returns a
+# Promise.
+#
+# The returned Promise should be handled using the *then* and *catch* methods
+# offered by a Promise.
+#
+# @example Executes the supplied query against the supplied service
+#   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB')
+#     .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
+#
+# @example Executes the supplied query against the supplied service, asking the
+#   service to return a compressed SDMX-JSON message.
+#   sdmxrest.request({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB',
+#     {headers: {accept: DataFormat.SDMX_JSON, accept-encoding: "gzip"}})
+#     .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
+#
+# In case you already have an SDMX 2.1 RESTful query string, you can also use it
+# with execute().
+#
+# @example Fetches the supplied URL
+#   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR')
+#     .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
+#
+# @example Fetches the supplied URL, asking the service to return a compressed
+# SDMX-JSON message
+#   sdmxrest.request('http://sdw-wsrest.ecb.europa.eu/service/data/EXR',
+#     {headers: {accept: DataFormat.SDMX_JSON, accept-encoding: "gzip"}})
+#     .then(function(data) {console.log(data);})
+#     .catch(function(error) {console.log(error);});
+#
+# @param [Object|String] query the query to be executed
+# @param [Object|String] service the service against which the query should be
+#   executed. This should not be set in case an SDMX 2.1 query string is passed
+#   as 1st parameter
+# @param [Object] opts additional options for the request. See the whatwg fetch
+#   specification for additional information.
+#
+# @throw an error in case the query and/or the service are not valid.
+#
+# @see #getDataQuery
+# @see #getMetadataQuery
+# @see #getService
+#
+request = (params...) ->
+  request2(params...).then((response) ->
+    checkStatus params[0], response
+    response.text())
 
 module.exports =
   getService: getService
