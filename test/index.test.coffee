@@ -487,11 +487,13 @@ describe 'API', ->
       query = nock('http://sdw-wsrest.ecb.europa.eu')
         .get((uri) -> uri.indexOf('EXR') > -1)
         .reply 200, 'OK', {'X-My-Headers': 'My Header value'}
-      response =
-        sdmxrest.request2 {flow: 'EXR', key: 'A.CHF.EUR.SP00.A'}, 'ECB'
-      response.should.eventually.have.property('status').that.equals 200
-      response.should.eventually.have.property('headers').that.is.an 'object'
-      response.should.eventually.respondTo 'text'
+
+      request = sdmxrest.getDataQuery({flow: 'EXR', key: 'A.CHF.EUR.SP00.A'})
+      sdmxrest.request2(request, 'ECB').then((response) ->
+        response.should.have.property('status').that.equals 200
+        response.should.have.property('headers')
+        response.should.respondTo 'text'
+      )      
 
   describe 'when using checkStatus()', ->
     it 'throws an errir in case there is no response', ->
