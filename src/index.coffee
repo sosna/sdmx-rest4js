@@ -77,6 +77,7 @@ addHeaders = (opts, s, type) ->
       when 'data' then s.format
       when 'structure' then s.structureFormat
       when 'schema' then s.schemaFormat
+  headers.accept = '*/*' unless headers.accept
   headers['user-agent'] = userAgent unless headers['user-agent']
   opts.headers = headers
   opts
