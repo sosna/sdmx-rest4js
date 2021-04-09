@@ -26,6 +26,15 @@ createSecureInstance = (service) ->
 
 service = class Service
 
+  @BIS:
+    id: 'BIS'
+    name: 'Bank for International Settlements'
+    api: ApiVersion.v1_4_0
+    url: 'https://stats.bis.org/api/v1'
+    format: DataFormat.SDMX_JSON_1_0_0
+    structureFormat: MetadataFormat.SDMX_JSON_1_0_0
+    schemaFormat: SchemaFormat.XML_SCHEMA
+
   @ECB:
     id: 'ECB'
     name: 'European Central Bank'
@@ -87,12 +96,13 @@ service = class Service
     service
 
 services = [
+  service.BIS
   service.ECB_S
-  service.SDMXGR_S
   service.EUROSTAT
   service.OECD_S
-  service.WB
+  service.SDMXGR_S
   service.UNICEF
+  service.WB
 ]
 
 exports.Service = service
