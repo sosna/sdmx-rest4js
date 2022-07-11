@@ -34,8 +34,12 @@ versions =
 # types for schema queries.
   v1_5_0: 'v1.5.0'
 
+# The version of the SDMX RESTFul API released in October 2021. The release
+# adds support for SDMX 3.0.
+  v2_0_0: 'v2.0.0'
+
 # A shortcut to the most recent version of the SDMX RESTful API
-  LATEST: 'v1.5.0'
+  LATEST: 'v2.0.0'
 
 resourcesV1 = [
   'datastructure'
@@ -61,6 +65,7 @@ resourcesV1 = [
   'structure'
   'data'
   'metadata'
+  'schema'
 ].sort()
 
 resourcesV3 = ([
@@ -77,6 +82,46 @@ resourcesV5 = ([
   'namepersonalisationscheme'
   'namealiasscheme'
 ].concat resourcesV3).sort()
+
+resourcesV6 = [
+  'datastructure'
+  'metadatastructure'
+  'categoryscheme'
+  'conceptscheme'
+  'codelist'
+  'hierarchy'
+  'hierarchyassociation'
+  'valuelist'
+  'agencyscheme'
+  'dataproviderscheme'
+  'dataconsumerscheme'
+  'organisationunitscheme'
+  'dataflow'
+  'metadataflow'
+  'reportingtaxonomy'
+  'provisionagreement'
+  'structuremap'
+  'representationmap'
+  'conceptschememap'
+  'categoryschememap'
+  'organisationschememap'
+  'reportingtaxonomymap'
+  'process'
+  'categorisation'
+  'dataconstraint'
+  'metadataconstraint'
+  'structure'
+  'transformationscheme'
+  'rulesetscheme'
+  'userdefinedoperatorscheme'
+  'customtypescheme'
+  'namepersonalisationscheme'
+  'vtlmappingscheme'
+  'data'
+  'schema'
+  'metadata'
+  'availability'
+].sort()
 
 resources =
 
@@ -104,8 +149,11 @@ resources =
 # The set of valid resources for v1.5.0.
   v1_5_0: resourcesV5
 
+# The set of valid resources for v2.0.0.
+  v2_0_0: resourcesV6
+
 # The set of valid resources for the latest API version.
-  LATEST: resourcesV5
+  LATEST: resourcesV6
 
 exports.ApiVersion = Object.freeze versions
 exports.ApiResources = Object.freeze resources
