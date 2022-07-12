@@ -72,9 +72,25 @@ describe 'URL Generator', ->
         agency: 'BIS'
         item: 'HIERARCHY'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'hierarchicalcodelist not allowed in v2.0.0')
 
     it 'does not support hiearchy queries before API version 1.2.0', ->
       expected = "http://test.com/hierarchicalcodelist/BIS/HCL/latest\
@@ -182,19 +198,6 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple items not allowed in v1.2.0')
-
-    it 'defaults to latest API version', ->
-      expected = "http://test.com/hierarchicalcodelist/ECB/HCL/latest/HIERARCHY\
-      ?detail=full&references=none"
-      query = MetadataQuery.from({
-        resource: 'hierarchicalcodelist'
-        id: 'HCL'
-        agency: 'ECB'
-        item: 'HIERARCHY'
-      })
-      service = Service.from({url: 'http://test.com'})
-      url = new UrlGenerator().getUrl(query, service)
-      url.should.equal expected
 
     it 'offers to skip default values for metadata', ->
       expected = "http://test.com/codelist"
@@ -316,19 +319,41 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'referencecompletestubs not allowed in v1.0.2')
 
-    it 'supports actualconstraint since v1.3.0', ->
+    it 'supports actualconstraint since v1.3.0 and until v2.0.0', ->
       expected = 'http://test.com/actualconstraint'
       query = MetadataQuery.from({resource: 'actualconstraint'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'supports allowedconstraint since v1.3.0', ->
-      expected = 'http://test.com/allowedconstraint'
-      query = MetadataQuery.from({resource: 'allowedconstraint'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'supports allowedconstraint since v1.3.0 and until v2.0.0', ->
+      expected = 'http://test.com/allowedconstraint'
+      query = MetadataQuery.from({resource: 'allowedconstraint'})
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'allowedconstraint not allowed in v2.0.0')
+
 
     it 'does not support actualconstraint before v1.3.0', ->
       query = MetadataQuery.from({resource: 'actualconstraint'})
@@ -342,12 +367,25 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'allowedconstraint not allowed in v1.0.2')
 
-    it 'supports actualconstraint since v1.3.0', ->
+    it 'supports actualconstraint since v1.3.0 and until v2.0.0', ->
       expected = 'http://test.com/actualconstraint'
       query = MetadataQuery.from({resource: 'actualconstraint'})
-      service = Service.from({url: 'http://test.com'})
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'actualconstraint not allowed in v2.0.0')
 
     it 'supports VTL artefacts since v1.5.0 (type)', ->
       expected = 'http://test.com/transformationscheme'
