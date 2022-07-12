@@ -5,13 +5,12 @@ name: Build
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [master, develop]
   pull_request:
-    branches: [ master, develop ]
+    branches: [master, develop]
 
 jobs:
   build:
-
     runs-on: ${{matrix.os}}
 
     strategy:
@@ -20,23 +19,21 @@ jobs:
         node-version: [10.x, 12.x, 14.x]
 
     steps:
-    - name: Checkout project
-      uses: actions/checkout@v2
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install project 
-      run: npm ci
-    - name: Build project
-      run: npm run build
-    - name: Run tests
-      run: npm run test
-    - name: Check coding conventions
-      run: npm run lint
-    - name: Check test coverage
-      run: npm run coverage
-    - name: Send coverage to codecov
-      uses: codecov/codecov-action@v1
-      with:
-        file: ./coverage/lcov.info
+      - name: Checkout project
+        uses: actions/checkout@v2
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install project
+        run: npm ci
+      - name: Build project
+        run: npm run build
+      - name: Run tests
+        run: npm run test
+      - name: Check test coverage
+        run: npm run coverage
+      - name: Send coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage/lcov.info
