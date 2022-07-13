@@ -142,6 +142,7 @@ describe 'API resources', ->
     'metadataflow'
     'reportingtaxonomy'
     'provisionagreement'
+    'metadataprovisionagreement'
     'structuremap'
     'representationmap'
     'conceptschememap'
