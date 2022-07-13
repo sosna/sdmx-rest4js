@@ -10,6 +10,7 @@ describe 'Schema context', ->
     'dataflow'
     'metadataflow'
     'provisionagreement'
+    'metadataprovisionagreement'
   ]
 
   it 'contains all the expected contexts and only those', ->
