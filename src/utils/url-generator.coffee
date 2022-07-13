@@ -182,13 +182,6 @@ checkResource = (q, s) ->
     throw Error "#{q.resource} not allowed in #{s.api}" \
       unless q.resource in ApiResources[api]
 
-checkContext = (q, s) ->
-  if s and s.api
-    api = s.api.replace /\./g, '_'
-    throw Error "#{q.context} not allowed in #{s.api}" \
-      unless q.context in ApiResources[api]
-
-
 checkReferences = (q, s) ->
   if s and s.api
     api = s.api.replace /\./g, '_'
@@ -196,6 +189,17 @@ checkReferences = (q, s) ->
       unless (q.references in ApiResources[api] or \
               q.references in Object.values MetadataReferencesSpecial) and \
               q.references not in MetadataReferencesExcluded
+
+checkContext = (q, s) ->
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.context} not allowed in #{s.api}" \
+      unless q.context in ApiResources[api]
+
+checkExplicit = (q, s) ->
+  if q.explicit and s and s.api and s.api is ApiVersion.v2_0_0
+    throw Error "explicit parameter not allowed in #{s.api}"
+
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
@@ -224,6 +228,7 @@ handleMetadataQuery = (qry, srv, skip) ->
 
 handleSchemaQuery = (qry, srv, skip) ->
   checkContext(qry, srv)
+  checkExplicit(qry, srv)
   if skip
     createShortSchemaQuery(qry, srv)
   else
