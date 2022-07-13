@@ -182,6 +182,13 @@ checkResource = (q, s) ->
     throw Error "#{q.resource} not allowed in #{s.api}" \
       unless q.resource in ApiResources[api]
 
+checkContext = (q, s) ->
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.context} not allowed in #{s.api}" \
+      unless q.context in ApiResources[api]
+
+
 checkReferences = (q, s) ->
   if s and s.api
     api = s.api.replace /\./g, '_'
@@ -216,6 +223,7 @@ handleMetadataQuery = (qry, srv, skip) ->
     createMetadataQuery(qry, srv)
 
 handleSchemaQuery = (qry, srv, skip) ->
+  checkContext(qry, srv)
   if skip
     createShortSchemaQuery(qry, srv)
   else

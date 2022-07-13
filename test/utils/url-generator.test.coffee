@@ -813,3 +813,24 @@ describe 'for schema queries', ->
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
+
+    it 'supports metadataprovisionagreement since v2.0.0', ->
+      expected = "http://test.com/schema/metadataprovisionagreement/ECB/EXR?\
+      dimensionAtObservation=TEST"
+      query = SchemaQuery.from(
+        {context: 'metadataprovisionagreement', id: 'EXR', agency: 'ECB',
+        obsDimension: 'TEST'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+
+    it 'does not support metadataprovisionagreement before v2.0.0', ->
+      expected = "http://test.com/schema/metadataprovisionagreement/ECB/EXR?\
+      &dimensionAtObservation=TEST"
+      query = SchemaQuery.from(
+        {context: 'metadataprovisionagreement', id: 'EXR', agency: 'ECB',
+        obsDimension: 'TEST'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'metadataprovisionagreement not allowed in v1.5.0')
