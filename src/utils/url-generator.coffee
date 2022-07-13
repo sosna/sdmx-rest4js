@@ -5,6 +5,7 @@
 {MetadataReferences} = require '../metadata/metadata-references'
 {MetadataReferencesExcluded} = require '../metadata/metadata-references'
 {MetadataReferencesSpecial} = require '../metadata/metadata-references'
+{VersionNumber} = require '../utils/sdmx-patterns'
 
 itemAllowed = (resource, api) ->
   api isnt ApiVersion.v1_0_0 and
@@ -200,6 +201,10 @@ checkExplicit = (q, s) ->
   if q.explicit and s and s.api and s.api is ApiVersion.v2_0_0
     throw Error "explicit parameter not allowed in #{s.api}"
 
+checkVersion = (q, s) ->
+  if s and s.api and s.api isnt ApiVersion.v2_0_0
+      throw Error "Semantic versioning not allowed in #{s.api}" \
+        unless q.version is 'latest' or q.version.match VersionNumber
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
@@ -229,6 +234,7 @@ handleMetadataQuery = (qry, srv, skip) ->
 handleSchemaQuery = (qry, srv, skip) ->
   checkContext(qry, srv)
   checkExplicit(qry, srv)
+  checkVersion(qry, srv)
   if skip
     createShortSchemaQuery(qry, srv)
   else

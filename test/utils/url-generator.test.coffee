@@ -757,8 +757,8 @@ describe 'for schema queries', ->
 
     it 'generates a URL for a schema query', ->
       expected = "http://sdw-wsrest.ecb.europa.eu/service/schema/dataflow\
-      /ECB/EXR/latest?explicitMeasure=false"
-      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB'})
+      /ECB/EXR/1.0?explicitMeasure=false"
+      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.0'})
       service = Service.ECB
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
@@ -824,7 +824,6 @@ describe 'for schema queries', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-
     it 'does not support metadataprovisionagreement before v2.0.0', ->
       query = SchemaQuery.from(
         {context: 'metadataprovisionagreement', id: 'EXR', agency: 'ECB',
@@ -840,3 +839,19 @@ describe 'for schema queries', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'explicit parameter not allowed in v2.0.0')
+
+    it 'does not support semver before v2.0.0', ->
+      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB', version: '~'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+    it 'rewrites version keywords since v2.0.0', ->
+      expected = "http://test.com/schema/metadataprovisionagreement/ECB/EXR/~?\
+      dimensionAtObservation=TEST"
+      query = SchemaQuery.from(
+        {context: 'metadataprovisionagreement', id: 'EXR', agency: 'ECB',
+        obsDimension: 'TEST', version: 'latest'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected

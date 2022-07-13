@@ -63,6 +63,10 @@ SingleVersionTypeAlone = /// ^
   #{SingleVersionType.source}
   $ ///
 
+VersionNumberAlone = /// ^
+  #{VersionNumber.source}
+  $ ///
+
 VersionTypeAlone = /// ^
   #{VersionType.source}
   $ ///
@@ -130,6 +134,7 @@ exports.NestedNCNameIDType = NestedNCNameIDTypeAlone
 exports.IDType = IDTypeAlone
 exports.VersionType = VersionTypeAlone
 exports.SingleVersionType = SingleVersionTypeAlone
+exports.VersionNumber = VersionNumberAlone
 exports.NestedIDType = NestedIDTypeAlone
 exports.FlowRefType = FlowRefType
 exports.ProviderRefType = ProviderRefType
