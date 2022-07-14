@@ -136,9 +136,13 @@ createShortAvailabilityQuery = (q, s) ->
 
 createSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
-  u += "?explicitMeasure=#{q.explicit}"
-  u += "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
+  u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{v}"
+  if s.api is ApiVersion.v2_0_0
+    u += "?dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  else
+    u += "?explicitMeasure=#{q.explicit}"
+    u += "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   u
 
 handleSchemaQueryParams = (q) ->
@@ -150,7 +154,7 @@ handleSchemaQueryParams = (q) ->
 createShortSchemaQuery = (q, s) ->
   u = createEntryPoint s
   u += "schema/#{q.context}/#{q.agency}/#{q.id}"
-  u += "/#{q.version}" unless q.version is 'latest'
+  u += "/#{q.version}" unless q.version is 'latest' or q.version is '~'
   u += handleSchemaQueryParams(q)
   u
 
