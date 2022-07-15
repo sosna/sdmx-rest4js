@@ -166,7 +166,7 @@ excluded = [
   ApiVersion.v1_2_0
 ]
 
-excludedRaw = ([
+preSdmx3 = ([
   ApiVersion.v1_3_0
   ApiVersion.v1_4_0
   ApiVersion.v1_5_0
@@ -187,7 +187,7 @@ checkDetail = (q, s) ->
   q.detail is 'allcompletestubs' or q.detail is 'referencecompletestubs'))
     throw Error "#{q.detail} not allowed in #{s.api}"
 
-  if (s.api in excludedRaw and q.detail is 'raw')
+  if (s.api in preSdmx3 and q.detail is 'raw')
     throw Error "raw not allowed in #{s.api}"
 
 checkResource = (q, s) ->
@@ -203,6 +203,10 @@ checkReferences = (q, s) ->
       unless (q.references in ApiResources[api] or \
               q.references in Object.values MetadataReferencesSpecial) and \
               q.references not in MetadataReferencesExcluded
+  
+  if (s.api in preSdmx3 and q.references is 'ancestors')
+    throw Error "ancestors not allowed as reference in #{s.api}"
+  
 
 checkContext = (q, s) ->
   if s and s.api

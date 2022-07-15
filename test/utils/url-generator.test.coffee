@@ -432,6 +432,19 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'transformationscheme not allowed as reference in v1.2.0')
 
+    it 'supports ancestors since v2.0.0 (references)', ->
+      expected = 'http://test.com/codelist?references=ancestors'
+      query = MetadataQuery.from({resource: 'codelist', references: 'ancestors'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support ancestors before v2.0.0 (references)', ->
+      query = MetadataQuery.from({resource: 'codelist', references: 'ancestors'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'ancestors not allowed as reference in v1.5.0')
+
   describe 'for data queries', ->
 
     it 'generates a URL for a full data query', ->
