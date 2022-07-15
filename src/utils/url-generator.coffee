@@ -166,6 +166,12 @@ excluded = [
   ApiVersion.v1_2_0
 ]
 
+excludedRaw = ([
+  ApiVersion.v1_3_0
+  ApiVersion.v1_4_0
+  ApiVersion.v1_5_0
+].concat excluded)
+
 checkMultipleItems = (i, s, r) ->
   if s.api in excluded and /\+/.test i
     throw Error "Multiple #{r} not allowed in #{s.api}"
@@ -180,6 +186,9 @@ checkDetail = (q, s) ->
   if (s.api in excluded and (q.detail is 'referencepartial' or
   q.detail is 'allcompletestubs' or q.detail is 'referencecompletestubs'))
     throw Error "#{q.detail} not allowed in #{s.api}"
+
+  if (s.api in excludedRaw and q.detail is 'raw')
+    throw Error "raw not allowed in #{s.api}"
 
 checkResource = (q, s) ->
   if s and s.api
