@@ -19,4 +19,7 @@ details =
   # Referenced artefacts are returned as complete stubs.
   REFERENCE_COMPLETE_STUBS: 'referencecompletestubs'
 
+  # Same as full, except that returned extended codelists are not resolved.
+  RAW: 'raw'
+
 exports.MetadataDetail = Object.freeze details
