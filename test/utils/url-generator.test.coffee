@@ -25,7 +25,8 @@ describe 'URL Generator', ->
       expected = "http://test.com/service/codelist/all/all/\
       latest/all?detail=full&references=none"
       query = MetadataQuery.from({resource: 'codelist'})
-      service = Service.from({url: "http://test.com/service/"})
+      service = Service.from(
+        {url: "http://test.com/service/", api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -33,7 +34,8 @@ describe 'URL Generator', ->
       expected = "http://test.com/service/dataflow/all/all/\
       latest?detail=full&references=none"
       query = MetadataQuery.from({resource: 'dataflow'})
-      service = Service.from({url: "http://test.com/service/"})
+      service = Service.from(
+        {url: "http://test.com/service/", api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -113,9 +115,21 @@ describe 'URL Generator', ->
         id: 'CL_FREQ'
         agency: 'ECB+BIS'
       })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB,BIS'
+      })
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
+
 
     it 'does not support multiple agencies before API version 1.3.0', ->
       query = MetadataQuery.from({
@@ -126,6 +140,54 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple agencies not allowed in v1.2.0')
+
+    it 'Rewrites , for multiple agencies before API version 2.0.0', ->
+      expected = "http://test.com/codelist/ECB+BIS/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB,BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites + for multiple agencies since API 2.0.0', ->
+      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB+BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites * for agencies before API version 2.0.0', ->
+      expected = "http://test.com/codelist/all/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites all for agencies since API 2.0.0', ->
+      expected = "http://test.com/codelist/*/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
 
     it 'supports multiple IDs for API version 1.3.0 and above', ->
       expected = "http://test.com/codelist/ECB/CL_FREQ+CL_DECIMALS/latest/all\

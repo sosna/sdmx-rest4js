@@ -68,11 +68,20 @@ createShortDataQuery = (q, s) ->
   u += handleDataQueryParams(q, s)
   u
 
-createMetadataQuery = (query, service) ->
-  url = createEntryPoint service
-  url += "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
-  url += "/#{query.item}" if itemAllowed(query.resource, service.api)
-  url += "?detail=#{query.detail}&references=#{query.references}"
+createMetadataQuery = (q, s) ->
+  url = createEntryPoint s
+  a = q.agency
+  if s.api is ApiVersion.v2_0_0 and a is "all"
+    a = "*"
+  else if s.api isnt ApiVersion.v2_0_0 and a is "*"
+    a = "all"
+  else if s.api is ApiVersion.v2_0_0 and a.indexOf("\+") > -1
+    a = a.replace /\+/, ","
+  else if s.api isnt ApiVersion.v2_0_0 and a.indexOf(",") > -1
+    a = a.replace /,/, "+"
+  url += "#{q.resource}/#{a}/#{q.id}/#{q.version}"
+  url += "/#{q.item}" if itemAllowed(q.resource, s.api)
+  url += "?detail=#{q.detail}&references=#{q.references}"
   url
 
 handleMetaPathParams = (q, s, u) ->
