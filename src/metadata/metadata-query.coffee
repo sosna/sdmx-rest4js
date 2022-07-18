@@ -3,7 +3,7 @@
 {MetadataType, isItemScheme} = require './metadata-type'
 {AgenciesRefType, MultipleIDType, MultipleVersionsType, MultipleNestedIDType} =
   require '../utils/sdmx-patterns'
-{isValidEnum, isValidPattern, createErrorMessage} =
+{isValidEnum, isValidMultipleEnum, isValidPattern, createErrorMessage} =
   require '../utils/validators'
 
 defaults =
@@ -21,7 +21,7 @@ canHaveItem = (query, errors) ->
   allowed
 
 ValidQuery =
-  resource: (q, i, e) -> isValidEnum(i, MetadataType, 'resources', e)
+  resource: (q, i, e) -> isValidMultipleEnum(i, MetadataType, 'resources', e)
   agency: (q, i, e) -> isValidPattern(i, AgenciesRefType, 'agencies', e)
   id: (q, i, e) -> isValidPattern(i, MultipleIDType, 'resource ids', e)
   version: (q, i, e) -> isValidPattern(i, MultipleVersionsType, 'versions', e)
@@ -50,10 +50,12 @@ query = class MetadataQuery
     id = toQueryParam id if Array.isArray id
     vs = opts?.version ? defaults.version
     vs = toQueryParam vs if Array.isArray vs
+    rs = opts?.resource
+    rs = toQueryParam rs if Array.isArray rs
     item = opts?.item ? defaults.item
     item = toQueryParam item if Array.isArray item
     query =
-      resource: opts?.resource
+      resource: rs
       agency: a
       id: id
       version: vs

@@ -40,6 +40,25 @@ describe 'Metadata query', ->
       query = MetadataQuery.from({resource: resource})
       query.should.have.property('resource').that.equals resource
 
+    it 'a string representing multiple resource types can be used', ->
+      type = 'codelist+dataflow'
+      query = MetadataQuery.from({resource: type})
+      query.should.have.property('resource').that.equals type
+
+      type = 'codelist,dataflow'
+      query = MetadataQuery.from({resource: type})
+      query.should.have.property('resource').that.equals type
+
+    it 'an array representing multiple resource types can be used', ->
+      types = ['codelist', 'dataflow']
+      query = MetadataQuery.from({resource: types})
+      query.should.have.property('resource').that.equals 'codelist+dataflow'
+
+    it 'a string representing all resource types can be used', ->
+      type = '*'
+      query = MetadataQuery.from({resource: type})
+      query.should.have.property('resource').that.equals type
+
     it 'throws an exception if the resource type is not set', ->
       test = -> MetadataQuery.from({})
       should.Throw(test, Error, 'Not a valid metadata query')
