@@ -68,18 +68,29 @@ createShortDataQuery = (q, s) ->
   u += handleDataQueryParams(q, s)
   u
 
+toApiKeywords = (q, s, value) ->
+  v = value
+  if s.api is ApiVersion.v2_0_0 and v is "all"
+    v = "*"
+  else if s.api isnt ApiVersion.v2_0_0 and v is "*"
+    v = "all"
+  else if s.api is ApiVersion.v2_0_0 and v.indexOf("\+") > -1
+    v = v.replace /\+/, ","
+  else if s.api isnt ApiVersion.v2_0_0 and v.indexOf(",") > -1
+    v = v.replace /,/, "+"
+  v
+
+getAgency = (q, s) ->
+  toApiKeywords(q, s, q.agency)
+
+getResourceId = (q, s) ->
+  toApiKeywords(q, s, q.id)
+  
 createMetadataQuery = (q, s) ->
   url = createEntryPoint s
-  a = q.agency
-  if s.api is ApiVersion.v2_0_0 and a is "all"
-    a = "*"
-  else if s.api isnt ApiVersion.v2_0_0 and a is "*"
-    a = "all"
-  else if s.api is ApiVersion.v2_0_0 and a.indexOf("\+") > -1
-    a = a.replace /\+/, ","
-  else if s.api isnt ApiVersion.v2_0_0 and a.indexOf(",") > -1
-    a = a.replace /,/, "+"
-  url += "#{q.resource}/#{a}/#{q.id}/#{q.version}"
+  agency = getAgency q, s
+  id = getResourceId q, s
+  url += "#{q.resource}/#{agency}/#{id}/#{q.version}"
   url += "/#{q.item}" if itemAllowed(q.resource, s.api)
   url += "?detail=#{q.detail}&references=#{q.references}"
   url

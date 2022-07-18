@@ -197,7 +197,7 @@ describe 'URL Generator', ->
         id: 'CL_FREQ+CL_DECIMALS'
         agency: 'ECB'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -210,6 +210,54 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple IDs not allowed in v1.2.0')
+
+    it 'Rewrites , for multiple resource IDs before API version 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/CL_FREQ+CL_DECIMALS/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ,CL_DECIMALS'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites + for multiple resource IDs since API 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/CL_FREQ,CL_UNIT/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ+CL_UNIT'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites * for resource IDs before API version 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/all/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: '*'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites all for resources IDs since API 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/*/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'all'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
 
     it 'supports multiple versions for API version 1.3.0 and above', ->
       expected = "http://test.com/codelist/ECB/CL_FREQ/1.0+1.1/all\
