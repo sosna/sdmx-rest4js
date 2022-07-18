@@ -35,6 +35,7 @@ excluded = [
   'structure'
   'actualconstraint'
   'allowedconstraint'
+  '*'
 ]
 
 # All the predefined SDMX types are valid references, except for the 'catch all'

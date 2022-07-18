@@ -48,6 +48,7 @@ describe 'Metadata types', ->
     'reportingtaxonomymap'
     'metadataproviderscheme'
     'metadataprovisionagreement'
+    '*'
   ]
 
   it 'contains all the expected types of metadata and only those', ->

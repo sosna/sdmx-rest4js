@@ -62,6 +62,7 @@ types =
   REPORTING_TAXONOMY_MAP: 'reportingtaxonomymap'
   METADATA_PROVIDER_SCHEME: 'metadataproviderscheme'
   METADATA_PROVISION_AGREEMENT: 'metadataprovisionagreement'
+  SDMX_3_0_ALL: '*'
 
 exports.MetadataType = Object.freeze types
 exports.isItemScheme = (type) -> type in itemSchemes

@@ -59,6 +59,7 @@ describe 'Metadata references', ->
     'structure'
     'actualconstraint'
     'allowedconstraint'
+    '*'
   ]
 
   special = [
