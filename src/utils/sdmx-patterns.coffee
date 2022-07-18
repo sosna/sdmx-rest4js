@@ -119,7 +119,10 @@ MultipleAgenciesRefType = /// ^
   $///
 
 MultipleIDType = /// ^
-  #{IDType.source}([+]#{IDType.source})*
+  (
+  #{Sdmx_3_0_all.source}
+  | #{IDType.source}([+,]#{IDType.source})*
+  )
   $///
 
 MultipleNestedIDType = /// ^
