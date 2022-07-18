@@ -35,7 +35,7 @@ formats =
   # non-normalized periods
   SDMX_CSV_1_0_0: 'application/vnd.sdmx.data+csv;version=1.0.0'
 
-  # The SDMX-CSV 1.0.0 data format, with default labels,
+  # The SDMX-CSV 2.0.0 data format, with default labels,
   # non-normalized periods and no keys
   SDMX_CSV_2_0_0: 'application/vnd.sdmx.data+csv;version=2.0.0'
 
