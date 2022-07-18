@@ -101,6 +101,7 @@ resourcesV6 = [
   'metadataflow'
   'reportingtaxonomy'
   'provisionagreement'
+  'metadataprovisionagreement'
   'structuremap'
   'representationmap'
   'conceptschememap'

@@ -5,6 +5,7 @@
 {MetadataReferences} = require '../metadata/metadata-references'
 {MetadataReferencesExcluded} = require '../metadata/metadata-references'
 {MetadataReferencesSpecial} = require '../metadata/metadata-references'
+{VersionNumber} = require '../utils/sdmx-patterns'
 
 itemAllowed = (resource, api) ->
   api isnt ApiVersion.v1_0_0 and
@@ -135,9 +136,13 @@ createShortAvailabilityQuery = (q, s) ->
 
 createSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{q.version}"
-  u += "?explicitMeasure=#{q.explicit}"
-  u += "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
+  u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{v}"
+  if s.api is ApiVersion.v2_0_0
+    u += "?dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  else
+    u += "?explicitMeasure=#{q.explicit}"
+    u += "&dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   u
 
 handleSchemaQueryParams = (q) ->
@@ -149,7 +154,7 @@ handleSchemaQueryParams = (q) ->
 createShortSchemaQuery = (q, s) ->
   u = createEntryPoint s
   u += "schema/#{q.context}/#{q.agency}/#{q.id}"
-  u += "/#{q.version}" unless q.version is 'latest'
+  u += "/#{q.version}" unless q.version is 'latest' or q.version is '~'
   u += handleSchemaQueryParams(q)
   u
 
@@ -190,6 +195,21 @@ checkReferences = (q, s) ->
               q.references in Object.values MetadataReferencesSpecial) and \
               q.references not in MetadataReferencesExcluded
 
+checkContext = (q, s) ->
+  if s and s.api
+    api = s.api.replace /\./g, '_'
+    throw Error "#{q.context} not allowed in #{s.api}" \
+      unless q.context in ApiResources[api]
+
+checkExplicit = (q, s) ->
+  if q.explicit and s and s.api and s.api is ApiVersion.v2_0_0
+    throw Error "explicit parameter not allowed in #{s.api}"
+
+checkVersion = (q, s) ->
+  if s and s.api and s.api isnt ApiVersion.v2_0_0
+      throw Error "Semantic versioning not allowed in #{s.api}" \
+        unless q.version is 'latest' or q.version.match VersionNumber
+
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
     throw Error "Availability query not supported in #{srv.api}"
@@ -216,6 +236,9 @@ handleMetadataQuery = (qry, srv, skip) ->
     createMetadataQuery(qry, srv)
 
 handleSchemaQuery = (qry, srv, skip) ->
+  checkContext(qry, srv)
+  checkExplicit(qry, srv)
+  checkVersion(qry, srv)
   if skip
     createShortSchemaQuery(qry, srv)
   else

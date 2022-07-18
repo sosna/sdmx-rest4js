@@ -185,12 +185,29 @@ describe 'Schema query', ->
       test = SchemaQuery.from(q)
       test.should.have.property('version').that.equals q.version
 
+    it 'a semver string can be passed', ->
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '2.3+.1'
+      test = SchemaQuery.from(q)
+      test.should.have.property('version').that.equals q.version
+
+      q = 
+        context: 'datastructure'
+        agency: 'BIS'
+        id: 'BIS_CBS'
+        version: '1.10.0-draft'
+      test = SchemaQuery.from(q)
+      test.should.have.property('version').that.equals q.version 
+
     it 'a string representing multiple versions cannot be used', ->
       q = 
         context: 'datastructure'
         agency: 'BIS'
         id: 'BIS_CBS'
-        version: '1.0+2.1.1'
+        version: '1.0,2.1.1'
       test = -> SchemaQuery.from(q)
       should.Throw(test, Error, 'Not a valid schema query')
 
