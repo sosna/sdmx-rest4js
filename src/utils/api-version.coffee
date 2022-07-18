@@ -94,6 +94,7 @@ resourcesV6 = [
   'valuelist'
   'agencyscheme'
   'dataproviderscheme'
+  'metadataproviderscheme'
   'dataconsumerscheme'
   'organisationunitscheme'
   'dataflow'

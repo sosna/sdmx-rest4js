@@ -136,6 +136,7 @@ describe 'API resources', ->
     'valuelist'
     'agencyscheme'
     'dataproviderscheme'
+    'metadataproviderscheme'
     'dataconsumerscheme'
     'organisationunitscheme'
     'dataflow'
