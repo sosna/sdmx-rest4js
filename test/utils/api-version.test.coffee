@@ -14,6 +14,7 @@ describe 'API versions', ->
     'v1.3.0'
     'v1.4.0'
     'v1.5.0'
+    'v2.0.0'
     'latest'
   ]
 
@@ -27,8 +28,8 @@ describe 'API versions', ->
   it 'is immutable', ->
     ApiVersion.should.be.frozen
 
-  it 'considers v1.5.0 as the latest version', ->
-    ApiVersion.LATEST.should.equal 'v1.5.0'
+  it 'considers v2.0.0 as the latest version', ->
+    ApiVersion.LATEST.should.equal 'v2.0.0'
 
 describe 'API resources', ->
   expectedResourcesV1 = [
@@ -55,6 +56,7 @@ describe 'API resources', ->
     'structure'
     'data'
     'metadata'
+    'schema'
   ].sort()
 
   expectedResourcesV3 = [
@@ -83,6 +85,7 @@ describe 'API resources', ->
     'structure'
     'data'
     'metadata'
+    'schema'
     'availableconstraint'
   ].sort()
 
@@ -112,6 +115,7 @@ describe 'API resources', ->
     'structure'
     'data'
     'metadata'
+    'schema'
     'availableconstraint'
     'transformationscheme'
     'rulesetscheme'
@@ -119,6 +123,47 @@ describe 'API resources', ->
     'customtypescheme'
     'namepersonalisationscheme'
     'namealiasscheme'
+  ].sort()
+
+  expectedResourcesV6 = [
+    'datastructure'
+    'metadatastructure'
+    'categoryscheme'
+    'conceptscheme'
+    'codelist'
+    'hierarchy'
+    'hierarchyassociation'
+    'valuelist'
+    'agencyscheme'
+    'dataproviderscheme'
+    'metadataproviderscheme'
+    'dataconsumerscheme'
+    'organisationunitscheme'
+    'dataflow'
+    'metadataflow'
+    'reportingtaxonomy'
+    'provisionagreement'
+    'structuremap'
+    'representationmap'
+    'conceptschememap'
+    'categoryschememap'
+    'organisationschememap'
+    'reportingtaxonomymap'
+    'process'
+    'categorisation'
+    'dataconstraint'
+    'metadataconstraint'
+    'structure'
+    'transformationscheme'
+    'rulesetscheme'
+    'userdefinedoperatorscheme'
+    'customtypescheme'
+    'namepersonalisationscheme'
+    'vtlmappingscheme'
+    'availability'
+    'data'
+    'schema'
+    'metadata'
   ].sort()
 
   it 'contains all the expected resources for version 1.0.0 and only those', ->
@@ -145,5 +190,8 @@ describe 'API resources', ->
   it 'contains all the expected resources for version 1.5.0 and only those', ->
     ApiResources.v1_5_0.should.eql expectedResourcesV5
 
+  it 'contains all the expected resources for version 2.0.0 and only those', ->
+    ApiResources.v2_0_0.should.eql expectedResourcesV6
+
   it 'contains all the expected resources for the latest version and only those', ->
-    ApiResources.LATEST.should.eql expectedResourcesV5
+    ApiResources.LATEST.should.eql expectedResourcesV6
