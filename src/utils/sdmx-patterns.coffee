@@ -109,8 +109,13 @@ MultipleProviderRefType = /// ^
   (#{ProviderRefType.source}([+]#{ProviderRefType.source})*)
   $///
 
+Sdmx_3_0_all = ///\*///  
+
 MultipleAgenciesRefType = /// ^
-  (#{NestedNCNameIDType.source}([+]#{NestedNCNameIDType.source})*)
+  (
+  #{Sdmx_3_0_all.source}
+  | #{NestedNCNameIDType.source}([+,]#{NestedNCNameIDType.source})*
+  )
   $///
 
 MultipleIDType = /// ^
