@@ -127,7 +127,10 @@ MultipleIDType = /// ^
   $///
 
 MultipleNestedIDType = /// ^
-  #{NestedIDType.source}([+]#{NestedIDType.source})*
+  (
+  #{Sdmx_3_0_all.source}
+  | #{NestedIDType.source}([+]#{NestedIDType.source})*
+  )
   $///
 
 MultipleVersionsType = /// ^

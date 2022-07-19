@@ -267,6 +267,15 @@ describe 'Metadata query', ->
       query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
       query.should.have.property('item').that.equals 'A+B'
 
+    it 'strings representing all items can be used', ->
+      items = "all"
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
+      query.should.have.property('item').that.equals 'all'
+
+      items = "*"
+      query = MetadataQuery.from({resource: MetadataType.CODELIST, item: items})
+      query.should.have.property('item').that.equals '*'
+
   describe 'when setting the amount of details', ->
 
     it 'a string representing the amount of details can be passed', ->
