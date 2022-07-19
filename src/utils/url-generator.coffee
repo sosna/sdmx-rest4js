@@ -80,17 +80,12 @@ toApiKeywords = (q, s, value) ->
     v = v.replace /,/, "+"
   v
 
-getAgency = (q, s) ->
-  toApiKeywords(q, s, q.agency)
-
-getResourceId = (q, s) ->
-  toApiKeywords(q, s, q.id)
-  
 createMetadataQuery = (q, s) ->
   url = createEntryPoint s
-  agency = getAgency q, s
-  id = getResourceId q, s
-  url += "#{q.resource}/#{agency}/#{id}/#{q.version}"
+  res = toApiKeywords q, s, q.resource
+  agency = toApiKeywords q, s, q.agency
+  id = toApiKeywords q, s, q.id
+  url += "#{res}/#{agency}/#{id}/#{q.version}"
   url += "/#{q.item}" if itemAllowed(q.resource, s.api)
   url += "?detail=#{q.detail}&references=#{q.references}"
   url
@@ -113,7 +108,8 @@ handleMetaQueryParams = (q, u, hd, hr) ->
 
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
-  u += "#{q.resource}"
+  r = toApiKeywords q, s, q.resource
+  u += "#{r}"
   u = handleMetaPathParams(q, s, u)
   u = handleMetaQueryParams(
     q, u, q.detail isnt MetadataDetail.FULL,
@@ -210,11 +206,22 @@ checkDetail = (q, s) ->
   if (s.api in preSdmx3 and q.detail is 'raw')
     throw Error "raw not allowed in #{s.api}"
 
-checkResource = (q, s) ->
+checkResource = (q, s, r) ->
   if s and s.api
     api = s.api.replace /\./g, '_'
-    throw Error "#{q.resource} not allowed in #{s.api}" \
-      unless q.resource in ApiResources[api]
+    throw Error "#{r} not allowed in #{s.api}" unless r in ApiResources[api] \
+    or (s.api is ApiVersion.v2_0_0  and r is "*")
+
+checkResources = (q, s) ->
+  r = q.resource
+  if s and s.api is ApiVersion.v2_0_0 and r.indexOf("\+") > -1
+    for i in r.split "+"
+      checkResource q, s, i
+  else if s and s.api isnt ApiVersion.v2_0_0 and r.indexOf(",") > -1
+    for i in r.split ","
+      checkResource q, s, i
+  else if s and s.api
+    checkResource q, s, r
 
 checkReferences = (q, s) ->
   if s and s.api
@@ -261,7 +268,7 @@ handleDataQuery = (qry, srv, skip) ->
 handleMetadataQuery = (qry, srv, skip) ->
   checkApiVersion(qry, srv)
   checkDetail(qry, srv)
-  checkResource(qry, srv)
+  checkResources(qry, srv)
   checkReferences(qry, srv) if qry.references
   if skip
     createShortMetadataQuery(qry, srv)

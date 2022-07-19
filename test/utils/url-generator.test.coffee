@@ -107,6 +107,26 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'Does not support multiple artefact types before API version 2.0.0', ->
+      query = MetadataQuery.from({resource: 'codelist+dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'codelist+dataflow not allowed in v1.5.0')
+
+    it 'Rewrites + for multiple artefact types in API 2.0.0', ->
+      expected = "http://test.com/codelist,dataflow"
+      query = MetadataQuery.from({resource: 'codelist+dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Supports all for artefact types via * since API 2.0.0', ->
+      expected = "http://test.com/*"
+      query = MetadataQuery.from({resource: '*'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'supports multiple agencies for API version 1.3.0 and above', ->
       expected = "http://test.com/codelist/ECB+BIS/CL_FREQ/latest/all\
       ?detail=full&references=none"
