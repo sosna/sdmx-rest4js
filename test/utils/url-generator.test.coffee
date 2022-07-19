@@ -139,7 +139,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/~/*\
+      expected = "http://test.com/structure/codelist/ECB,BIS/CL_FREQ/~/*\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -174,7 +174,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites + for multiple agencies since API 2.0.0', ->
-      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/~/*\
+      expected = "http://test.com/structure/codelist/ECB,BIS/CL_FREQ/~/*\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -198,7 +198,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites all for agencies since API 2.0.0', ->
-      expected = "http://test.com/codelist/*/CL_FREQ/~/*\
+      expected = "http://test.com/structure/codelist/*/CL_FREQ/~/*\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -244,7 +244,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites + for multiple resource IDs since API 2.0.0', ->
-      expected = "http://test.com/codelist/BIS/CL_FREQ,CL_UNIT/~/*\
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ,CL_UNIT/~/*\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -268,7 +268,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites all for resources IDs since API 2.0.0', ->
-      expected = "http://test.com/codelist/BIS/*/~/*\
+      expected = "http://test.com/structure/codelist/BIS/*/~/*\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -330,7 +330,7 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'Multiple items not allowed in v1.2.0')
 
     it 'Rewrites + for multiple items since API 2.0.0', ->
-      expected = "http://test.com/codelist/BIS/CL_FREQ/~/A,M\
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/~/A,M\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -357,7 +357,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites all for items since API 2.0.0', ->
-      expected = "http://test.com/codelist/BIS/CL_FREQ/1.0/*\
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/1.0/*\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -638,7 +638,7 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
 
     it 'rewrites version keywords since v2.0.0', ->
-      expected = "http://test.com/dataflow/BIS/EXR/~\
+      expected = "http://test.com/structure/dataflow/BIS/EXR/~\
       ?detail=full&references=none"
       query = MetadataQuery.from(
         {resource: 'dataflow', agency: 'BIS', id: 'EXR', version: 'latest'})

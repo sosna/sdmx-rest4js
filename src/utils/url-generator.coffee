@@ -82,6 +82,7 @@ toApiKeywords = (q, s, value) ->
 
 createMetadataQuery = (q, s) ->
   url = createEntryPoint s
+  url += "structure/" unless s.api in preSdmx3
   res = toApiKeywords q, s, q.resource
   agency = toApiKeywords q, s, q.agency
   id = toApiKeywords q, s, q.id
