@@ -111,6 +111,7 @@ handleMetaQueryParams = (q, u, hd, hr) ->
 
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
+  u += "structure/" unless s.api in preSdmx3
   r = toApiKeywords q, s, q.resource
   u += "#{r}"
   u = handleMetaPathParams(q, s, u)

@@ -114,14 +114,14 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'codelist+dataflow not allowed in v1.5.0')
 
     it 'Rewrites + for multiple artefact types in API 2.0.0', ->
-      expected = "http://test.com/codelist,dataflow"
+      expected = "http://test.com/structure/codelist,dataflow"
       query = MetadataQuery.from({resource: 'codelist+dataflow'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'Supports all for artefact types via * since API 2.0.0', ->
-      expected = "http://test.com/*"
+      expected = "http://test.com/structure/*"
       query = MetadataQuery.from({resource: '*'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -373,28 +373,28 @@ describe 'URL Generator', ->
     it 'offers to skip default values for metadata', ->
       expected = "http://test.com/codelist"
       query = MetadataQuery.from({resource: 'codelist'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (id)', ->
       expected = "http://test.com/codelist/all/CL_FREQ"
       query = MetadataQuery.from({resource: 'codelist', id: 'CL_FREQ'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (version)', ->
       expected = "http://test.com/codelist/all/all/42"
       query = MetadataQuery.from({resource: 'codelist', version: '42'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (item)', ->
       expected = "http://test.com/codelist/all/all/latest/1"
       query = MetadataQuery.from({resource: 'codelist', item: '1'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -408,7 +408,7 @@ describe 'URL Generator', ->
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/codelist?detail=allstubs"
       query = MetadataQuery.from({resource: 'codelist', detail: 'allstubs'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -418,7 +418,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         references: 'datastructure'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -429,7 +429,7 @@ describe 'URL Generator', ->
         detail: 'allstubs'
         references: 'datastructure'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -439,7 +439,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencepartial'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -449,7 +449,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'allcompletestubs'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -459,12 +459,12 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencecompletestubs'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'supports raw since 2.0.0', ->
-      expected = "http://test.com/codelist?detail=raw"
+      expected = "http://test.com/structure/codelist?detail=raw"
       query = MetadataQuery.from({
         resource: 'codelist'
         detail: 'raw'
@@ -580,7 +580,7 @@ describe 'URL Generator', ->
     it 'supports VTL artefacts since v1.5.0 (type)', ->
       expected = 'http://test.com/transformationscheme'
       query = MetadataQuery.from({resource: 'transformationscheme'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -593,7 +593,7 @@ describe 'URL Generator', ->
     it 'supports VTL artefacts since v1.5.0 (references)', ->
       expected = 'http://test.com/codelist?references=transformationscheme'
       query = MetadataQuery.from({resource: 'codelist', references: 'transformationscheme'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -604,7 +604,7 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'transformationscheme not allowed as reference in v1.2.0')
 
     it 'supports ancestors since v2.0.0 (references)', ->
-      expected = 'http://test.com/codelist?references=ancestors'
+      expected = 'http://test.com/structure/codelist?references=ancestors'
       query = MetadataQuery.from({resource: 'codelist', references: 'ancestors'})
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -617,7 +617,7 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'ancestors not allowed as reference in v1.5.0')
 
     it 'supports semver since v2.0.0 (version)', ->
-      expected = 'http://test.com/codelist/BIS/CL_FREQ/1.2+.0'
+      expected = 'http://test.com/structure/codelist/BIS/CL_FREQ/1.2+.0'
       query = MetadataQuery.from(
         {resource: 'codelist', agency: 'BIS', id: 'CL_FREQ', version: '1.2+.0'})
       service = Service.from({url: 'http://test.com'})
