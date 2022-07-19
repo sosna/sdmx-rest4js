@@ -48,7 +48,7 @@ describe 'URL Generator', ->
         agency: 'ECB'
         item: 'A'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -139,14 +139,14 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/latest/all\
+      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/~/all\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
         id: 'CL_FREQ'
         agency: 'ECB,BIS'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -174,7 +174,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites + for multiple agencies since API 2.0.0', ->
-      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/latest/all\
+      expected = "http://test.com/codelist/ECB,BIS/CL_FREQ/~/all\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -198,7 +198,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites all for agencies since API 2.0.0', ->
-      expected = "http://test.com/codelist/*/CL_FREQ/latest/all\
+      expected = "http://test.com/codelist/*/CL_FREQ/~/all\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -244,7 +244,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites + for multiple resource IDs since API 2.0.0', ->
-      expected = "http://test.com/codelist/BIS/CL_FREQ,CL_UNIT/latest/all\
+      expected = "http://test.com/codelist/BIS/CL_FREQ,CL_UNIT/~/all\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -268,7 +268,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Rewrites all for resources IDs since API 2.0.0', ->
-      expected = "http://test.com/codelist/BIS/*/latest/all\
+      expected = "http://test.com/codelist/BIS/*/~/all\
       ?detail=full&references=none"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -574,6 +574,37 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'ancestors not allowed as reference in v1.5.0')
+
+    it 'supports semver since v2.0.0 (version)', ->
+      expected = 'http://test.com/codelist/BIS/CL_FREQ/1.2+.0'
+      query = MetadataQuery.from(
+        {resource: 'codelist', agency: 'BIS', id: 'CL_FREQ', version: '1.2+.0'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support semver before v2.0.0', ->
+      query = MetadataQuery.from(
+        {resource: 'dataflow', id: 'EXR', agency: 'ECB', version: '~'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+      query = MetadataQuery.from(
+        {resource: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.2+.42'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+    it 'rewrites version keywords since v2.0.0', ->
+      expected = "http://test.com/dataflow/BIS/EXR/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from(
+        {resource: 'dataflow', agency: 'BIS', id: 'EXR', version: 'latest'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
 
   describe 'for data queries', ->
 

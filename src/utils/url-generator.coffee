@@ -85,7 +85,8 @@ createMetadataQuery = (q, s) ->
   res = toApiKeywords q, s, q.resource
   agency = toApiKeywords q, s, q.agency
   id = toApiKeywords q, s, q.id
-  url += "#{res}/#{agency}/#{id}/#{q.version}"
+  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
+  url += "#{res}/#{agency}/#{id}/#{v}"
   url += "/#{q.item}" if itemAllowed(q.resource, s.api)
   url += "?detail=#{q.detail}&references=#{q.references}"
   url
@@ -193,10 +194,11 @@ checkMultipleItems = (i, s, r) ->
     throw Error "Multiple #{r} not allowed in #{s.api}"
 
 checkApiVersion = (q, s) ->
-  checkMultipleItems(q.agency, s, 'agencies')
-  checkMultipleItems(q.id, s, 'IDs')
-  checkMultipleItems(q.version, s, 'versions')
-  checkMultipleItems(q.item, s, 'items')
+  checkMultipleItems q.agency, s, 'agencies'
+  checkMultipleItems q.id, s, 'IDs'
+  checkMultipleItems q.version, s, 'versions'
+  checkMultipleItems q.item, s, 'items'
+  checkMultipleVersions q, s
 
 checkDetail = (q, s) ->
   if (s.api in excluded and (q.detail is 'referencepartial' or
@@ -246,9 +248,26 @@ checkExplicit = (q, s) ->
     throw Error "explicit parameter not allowed in #{s.api}"
 
 checkVersion = (q, s) ->
+  v = q.version
   if s and s.api and s.api isnt ApiVersion.v2_0_0
       throw Error "Semantic versioning not allowed in #{s.api}" \
-        unless q.version is 'latest' or q.version.match VersionNumber
+        unless v is 'latest' or v.match VersionNumber
+
+checkVersionWithAll = (q, s, v) ->
+  if s and s.api and s.api isnt ApiVersion.v2_0_0
+      throw Error "Semantic versioning not allowed in #{s.api}" \
+        unless v is 'latest' or v is 'all' or v.match VersionNumber
+
+checkMultipleVersions = (q, s) ->
+  v = q.version
+  if v.indexOf("\+") > -1
+    for i in v.split "+"
+      checkVersionWithAll q, s, i
+  else if v.indexOf(",") > -1
+    for i in v.split ","
+      checkVersionWithAll q, s, i
+  else
+    checkVersionWithAll q, s, v
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
