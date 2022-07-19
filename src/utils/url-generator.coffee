@@ -85,9 +85,10 @@ createMetadataQuery = (q, s) ->
   res = toApiKeywords q, s, q.resource
   agency = toApiKeywords q, s, q.agency
   id = toApiKeywords q, s, q.id
+  item = toApiKeywords q, s, q.item
   v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
   url += "#{res}/#{agency}/#{id}/#{v}"
-  url += "/#{q.item}" if itemAllowed(q.resource, s.api)
+  url += "/#{item}" if itemAllowed(q.resource, s.api)
   url += "?detail=#{q.detail}&references=#{q.references}"
   url
 
