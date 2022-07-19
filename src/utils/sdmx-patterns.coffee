@@ -48,6 +48,7 @@ VersionType = ///
   all                         # The string all
   | latest                    # Or the string latest
   | #{VersionNumber.source}   # Or a version number
+  | #{SemVer.source}          # Or semver
   )                           # Ends the OR clause
   ///
 
