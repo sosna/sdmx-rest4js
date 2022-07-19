@@ -54,7 +54,7 @@ describe 'Metadata query', ->
       query = MetadataQuery.from({resource: types})
       query.should.have.property('resource').that.equals 'codelist+dataflow'
 
-    it 'a string representing all resource types can be used', ->
+    it 'the character representing all resource types can be used', ->
       type = '*'
       query = MetadataQuery.from({resource: type})
       query.should.have.property('resource').that.equals type
