@@ -114,6 +114,13 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'codelist+dataflow not allowed in v1.5.0')
 
     it 'Rewrites + for multiple artefact types in API 2.0.0', ->
+      expected = "http://test.com/structure/codelist,dataflow/*/*/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({resource: 'codelist+dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
       expected = "http://test.com/structure/codelist,dataflow"
       query = MetadataQuery.from({resource: 'codelist+dataflow'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
@@ -121,6 +128,13 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'Supports all for artefact types via * since API 2.0.0', ->
+      expected = "http://test.com/structure/*/*/*/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({resource: '*'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
       expected = "http://test.com/structure/*"
       query = MetadataQuery.from({resource: '*'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
@@ -185,6 +199,16 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+      expected = "http://test.com/structure/codelist/ECB,BIS/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB+BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'Rewrites * for agencies before API version 2.0.0', ->
       expected = "http://test.com/codelist/all/CL_FREQ/latest/all\
       ?detail=full&references=none"
@@ -197,6 +221,16 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+      expected = "http://test.com/codelist/all/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'Rewrites all for agencies since API 2.0.0', ->
       expected = "http://test.com/structure/codelist/*/CL_FREQ/~/*\
       ?detail=full&references=none"
@@ -207,6 +241,16 @@ describe 'URL Generator', ->
       })
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/*/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'supports multiple IDs for API version 1.3.0 and above', ->
@@ -243,6 +287,16 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+      expected = "http://test.com/codelist/BIS/CL_FREQ+CL_DECIMALS"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ,CL_DECIMALS'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'Rewrites + for multiple resource IDs since API 2.0.0', ->
       expected = "http://test.com/structure/codelist/BIS/CL_FREQ,CL_UNIT/~/*\
       ?detail=full&references=none"
@@ -253,6 +307,16 @@ describe 'URL Generator', ->
       })
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ,CL_UNIT"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ+CL_UNIT'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'Rewrites * for resource IDs before API version 2.0.0', ->
@@ -267,6 +331,17 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+      expected = "http://test.com/codelist/BIS/all/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: '*'
+        agency: 'BIS'
+        version: '1.0'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'Rewrites all for resources IDs since API 2.0.0', ->
       expected = "http://test.com/structure/codelist/BIS/*/~/*\
       ?detail=full&references=none"
@@ -277,6 +352,17 @@ describe 'URL Generator', ->
       })
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/*/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'all'
+        agency: 'BIS'
+        version: '1.0'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'supports multiple versions for API version 1.3.0 and above', ->
@@ -342,6 +428,17 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/~/A,M"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        item: 'A+M'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'Rewrites * for items before API version 2.0.0', ->
       expected = "http://test.com/codelist/BIS/CL_FREQ/1.0/all\
       ?detail=full&references=none"
@@ -356,6 +453,18 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+      expected = "http://test.com/codelist/BIS/CL_FREQ/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        version: '1.0'
+        item: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'Rewrites all for items since API 2.0.0', ->
       expected = "http://test.com/structure/codelist/BIS/CL_FREQ/1.0/*\
       ?detail=full&references=none"
@@ -368,6 +477,18 @@ describe 'URL Generator', ->
       })
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        version: '1.0'
+        item: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip default values for metadata', ->
@@ -464,6 +585,16 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'supports raw since 2.0.0', ->
+      expected = "http://test.com/structure/codelist/*/*/~/*?\
+      detail=raw&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        detail: 'raw'
+      })
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
       expected = "http://test.com/structure/codelist?detail=raw"
       query = MetadataQuery.from({
         resource: 'codelist'
@@ -617,6 +748,14 @@ describe 'URL Generator', ->
       should.Throw(test, Error, 'ancestors not allowed as reference in v1.5.0')
 
     it 'supports semver since v2.0.0 (version)', ->
+      expected = 'http://test.com/structure/codelist/BIS/CL_FREQ/1.2+.0/*?\
+      detail=full&references=none'
+      query = MetadataQuery.from(
+        {resource: 'codelist', agency: 'BIS', id: 'CL_FREQ', version: '1.2+.0'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
       expected = 'http://test.com/structure/codelist/BIS/CL_FREQ/1.2+.0'
       query = MetadataQuery.from(
         {resource: 'codelist', agency: 'BIS', id: 'CL_FREQ', version: '1.2+.0'})
@@ -644,6 +783,13 @@ describe 'URL Generator', ->
         {resource: 'dataflow', agency: 'BIS', id: 'EXR', version: 'latest'})
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/dataflow/BIS/EXR"
+      query = MetadataQuery.from(
+        {resource: 'dataflow', agency: 'BIS', id: 'EXR', version: 'latest'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
 

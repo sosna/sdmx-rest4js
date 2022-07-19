@@ -68,13 +68,17 @@ createShortDataQuery = (q, s) ->
   u += handleDataQueryParams(q, s)
   u
 
-toApiKeywords = (q, s, value) ->
+toApiKeywords = (q, s, value, isVersion = false) ->
   v = value
   if s.api is ApiVersion.v2_0_0 and v is "all"
     v = "*"
   else if s.api isnt ApiVersion.v2_0_0 and v is "*"
     v = "all"
-  else if s.api is ApiVersion.v2_0_0 and v.indexOf("\+") > -1
+  else if s.api is ApiVersion.v2_0_0 and v is "latest"
+    v = "~"
+  else if s.api isnt ApiVersion.v2_0_0 and v is "~"
+    v = "latest"
+  else if s.api is ApiVersion.v2_0_0 and not isVersion and v.indexOf("\+") > -1
     v = v.replace /\+/, ","
   else if s.api isnt ApiVersion.v2_0_0 and v.indexOf(",") > -1
     v = v.replace /,/, "+"
@@ -95,10 +99,10 @@ createMetadataQuery = (q, s) ->
 
 handleMetaPathParams = (q, s, u) ->
   path = []
-  if q.item isnt 'all' and itemAllowed(q.resource, s.api) then path.push q.item
-  if q.version isnt 'latest' or path.length then path.push q.version
-  if q.id isnt 'all' or path.length then path.push q.id
-  if q.agency isnt 'all' or path.length then path.push q.agency
+  if q.item isnt 'all' and q.item isnt '*' and itemAllowed(q.resource, s.api) then path.push toApiKeywords q, s, q.item
+  if (q.version isnt 'latest' and q.version isnt '~') or path.length then path.push toApiKeywords q, s, q.version, true
+  if (q.id isnt 'all' and q.id isnt '*') or path.length then path.push toApiKeywords q, s, q.id
+  if (q.agency isnt 'all' and q.agency isnt '*') or path.length then path.push toApiKeywords q, s, q.agency
   if path.length then u = u + '/' + path.reverse().join('/')
   u
 
