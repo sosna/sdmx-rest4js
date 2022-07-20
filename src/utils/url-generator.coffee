@@ -76,8 +76,6 @@ toApiKeywords = (q, s, value, isVersion = false) ->
     v = "all"
   else if s.api is ApiVersion.v2_0_0 and v is "latest"
     v = "~"
-  else if s.api isnt ApiVersion.v2_0_0 and v is "~"
-    v = "latest"
   else if s.api is ApiVersion.v2_0_0 and not isVersion and v.indexOf("\+") > -1
     v = v.replace /\+/, ","
   else if s.api isnt ApiVersion.v2_0_0 and v.indexOf(",") > -1
@@ -223,13 +221,15 @@ checkResource = (q, s, r) ->
 
 checkResources = (q, s) ->
   r = q.resource
-  if s and s.api is ApiVersion.v2_0_0 and r.indexOf("\+") > -1
+  if s.api in preSdmx3
+    checkResource q, s, r
+  else if r.indexOf("\+") > -1
     for i in r.split "+"
       checkResource q, s, i
-  else if s and s.api isnt ApiVersion.v2_0_0 and r.indexOf(",") > -1
+  else if r.indexOf(",") > -1
     for i in r.split ","
       checkResource q, s, i
-  else if s and s.api
+  else
     checkResource q, s, r
 
 checkReferences = (q, s) ->

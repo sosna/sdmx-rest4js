@@ -113,6 +113,20 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'codelist+dataflow not allowed in v1.5.0')
 
+    it 'Supports multiple artefact types since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist,dataflow/*/*/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({resource: 'codelist,dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist,dataflow"
+      query = MetadataQuery.from({resource: 'codelist,dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+    
     it 'Rewrites + for multiple artefact types in API 2.0.0', ->
       expected = "http://test.com/structure/codelist,dataflow/*/*/~\
       ?detail=full&references=none"
@@ -375,6 +389,18 @@ describe 'URL Generator', ->
         version: '1.0+1.1'
       })
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/ECB/CL_FREQ/1.0.0,1.1.0/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        version: '1.0.0,1.1.0'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -675,7 +701,6 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'allowedconstraint not allowed in v2.0.0')
 
-
     it 'does not support actualconstraint before v1.3.0', ->
       query = MetadataQuery.from({resource: 'actualconstraint'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
@@ -791,7 +816,6 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
-
 
   describe 'for data queries', ->
 

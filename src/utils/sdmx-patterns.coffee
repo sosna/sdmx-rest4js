@@ -134,7 +134,7 @@ MultipleNestedIDType = /// ^
   $///
 
 MultipleVersionsType = /// ^
-  #{VersionType.source}([+]#{VersionType.source})*
+  #{VersionType.source}([+,]#{VersionType.source})*
   $///
 
 ReportingPeriodType = /// ^
