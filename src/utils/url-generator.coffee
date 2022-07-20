@@ -68,19 +68,39 @@ createShortDataQuery = (q, s) ->
   u += handleDataQueryParams(q, s)
   u
 
-createMetadataQuery = (query, service) ->
-  url = createEntryPoint service
-  url += "#{query.resource}/#{query.agency}/#{query.id}/#{query.version}"
-  url += "/#{query.item}" if itemAllowed(query.resource, service.api)
-  url += "?detail=#{query.detail}&references=#{query.references}"
+toApiKeywords = (q, s, value, isVersion = false) ->
+  v = value
+  if s.api is ApiVersion.v2_0_0 and v is "all"
+    v = "*"
+  else if s.api isnt ApiVersion.v2_0_0 and v is "*"
+    v = "all"
+  else if s.api is ApiVersion.v2_0_0 and v is "latest"
+    v = "~"
+  else if s.api is ApiVersion.v2_0_0 and not isVersion and v.indexOf("\+") > -1
+    v = v.replace /\+/, ","
+  else if s.api isnt ApiVersion.v2_0_0 and v.indexOf(",") > -1
+    v = v.replace /,/, "+"
+  v
+
+createMetadataQuery = (q, s) ->
+  url = createEntryPoint s
+  url += "structure/" unless s.api in preSdmx3
+  res = toApiKeywords q, s, q.resource
+  agency = toApiKeywords q, s, q.agency
+  id = toApiKeywords q, s, q.id
+  item = toApiKeywords q, s, q.item
+  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
+  url += "#{res}/#{agency}/#{id}/#{v}"
+  url += "/#{item}" if itemAllowed(q.resource, s.api)
+  url += "?detail=#{q.detail}&references=#{q.references}"
   url
 
 handleMetaPathParams = (q, s, u) ->
   path = []
-  if q.item isnt 'all' and itemAllowed(q.resource, s.api) then path.push q.item
-  if q.version isnt 'latest' or path.length then path.push q.version
-  if q.id isnt 'all' or path.length then path.push q.id
-  if q.agency isnt 'all' or path.length then path.push q.agency
+  if q.item isnt 'all' and q.item isnt '*' and itemAllowed(q.resource, s.api) then path.push toApiKeywords q, s, q.item
+  if (q.version isnt 'latest' and q.version isnt '~') or path.length then path.push toApiKeywords q, s, q.version, true
+  if (q.id isnt 'all' and q.id isnt '*') or path.length then path.push toApiKeywords q, s, q.id
+  if (q.agency isnt 'all' and q.agency isnt '*') or path.length then path.push toApiKeywords q, s, q.agency
   if path.length then u = u + '/' + path.reverse().join('/')
   u
 
@@ -93,7 +113,9 @@ handleMetaQueryParams = (q, u, hd, hr) ->
 
 createShortMetadataQuery = (q, s) ->
   u = createEntryPoint s
-  u += "#{q.resource}"
+  u += "structure/" unless s.api in preSdmx3
+  r = toApiKeywords q, s, q.resource
+  u += "#{r}"
   u = handleMetaPathParams(q, s, u)
   u = handleMetaQueryParams(
     q, u, q.detail isnt MetadataDetail.FULL,
@@ -166,26 +188,49 @@ excluded = [
   ApiVersion.v1_2_0
 ]
 
+preSdmx3 = ([
+  ApiVersion.v1_3_0
+  ApiVersion.v1_4_0
+  ApiVersion.v1_5_0
+].concat excluded)
+
 checkMultipleItems = (i, s, r) ->
   if s.api in excluded and /\+/.test i
     throw Error "Multiple #{r} not allowed in #{s.api}"
 
 checkApiVersion = (q, s) ->
-  checkMultipleItems(q.agency, s, 'agencies')
-  checkMultipleItems(q.id, s, 'IDs')
-  checkMultipleItems(q.version, s, 'versions')
-  checkMultipleItems(q.item, s, 'items')
+  checkMultipleItems q.agency, s, 'agencies'
+  checkMultipleItems q.id, s, 'IDs'
+  checkMultipleItems q.version, s, 'versions'
+  checkMultipleItems q.item, s, 'items'
+  checkMultipleVersions q, s
 
 checkDetail = (q, s) ->
   if (s.api in excluded and (q.detail is 'referencepartial' or
   q.detail is 'allcompletestubs' or q.detail is 'referencecompletestubs'))
     throw Error "#{q.detail} not allowed in #{s.api}"
 
-checkResource = (q, s) ->
+  if (s.api in preSdmx3 and q.detail is 'raw')
+    throw Error "raw not allowed in #{s.api}"
+
+checkResource = (q, s, r) ->
   if s and s.api
     api = s.api.replace /\./g, '_'
-    throw Error "#{q.resource} not allowed in #{s.api}" \
-      unless q.resource in ApiResources[api]
+    throw Error "#{r} not allowed in #{s.api}" unless r in ApiResources[api] \
+    or (s.api is ApiVersion.v2_0_0  and r is "*")
+
+checkResources = (q, s) ->
+  r = q.resource
+  if s.api in preSdmx3
+    checkResource q, s, r
+  else if r.indexOf("\+") > -1
+    for i in r.split "+"
+      checkResource q, s, i
+  else if r.indexOf(",") > -1
+    for i in r.split ","
+      checkResource q, s, i
+  else
+    checkResource q, s, r
 
 checkReferences = (q, s) ->
   if s and s.api
@@ -194,6 +239,10 @@ checkReferences = (q, s) ->
       unless (q.references in ApiResources[api] or \
               q.references in Object.values MetadataReferencesSpecial) and \
               q.references not in MetadataReferencesExcluded
+  
+  if (s.api in preSdmx3 and q.references is 'ancestors')
+    throw Error "ancestors not allowed as reference in #{s.api}"
+  
 
 checkContext = (q, s) ->
   if s and s.api
@@ -206,9 +255,26 @@ checkExplicit = (q, s) ->
     throw Error "explicit parameter not allowed in #{s.api}"
 
 checkVersion = (q, s) ->
+  v = q.version
   if s and s.api and s.api isnt ApiVersion.v2_0_0
       throw Error "Semantic versioning not allowed in #{s.api}" \
-        unless q.version is 'latest' or q.version.match VersionNumber
+        unless v is 'latest' or v.match VersionNumber
+
+checkVersionWithAll = (q, s, v) ->
+  if s and s.api and s.api isnt ApiVersion.v2_0_0
+      throw Error "Semantic versioning not allowed in #{s.api}" \
+        unless v is 'latest' or v is 'all' or v.match VersionNumber
+
+checkMultipleVersions = (q, s) ->
+  v = q.version
+  if v.indexOf("\+") > -1
+    for i in v.split "+"
+      checkVersionWithAll q, s, i
+  else if v.indexOf(",") > -1
+    for i in v.split ","
+      checkVersionWithAll q, s, i
+  else
+    checkVersionWithAll q, s, v
 
 handleAvailabilityQuery = (qry, srv, skip) ->
   if srv.api in excluded
@@ -228,7 +294,7 @@ handleDataQuery = (qry, srv, skip) ->
 handleMetadataQuery = (qry, srv, skip) ->
   checkApiVersion(qry, srv)
   checkDetail(qry, srv)
-  checkResource(qry, srv)
+  checkResources(qry, srv)
   checkReferences(qry, srv) if qry.references
   if skip
     createShortMetadataQuery(qry, srv)

@@ -9,6 +9,18 @@ validEnum = (input, list, name, errors) ->
       (#{i for i in Object.values list})"
   found
 
+validMultipleEnum = (input, list, name, errors) ->
+  found = false
+  if input and input.indexOf("\+") > -1
+    output = [validEnum(r, list, name, errors) for r in input.split("+")]
+    found = false not in output
+  else if input and input.indexOf(",") > -1
+    output = [validEnum(r, list, name, errors) for r in input.split(",")]
+    found = false not in output
+  else
+    found = validEnum(input, list, name, errors)
+  found
+
 validPattern = (input, regex, name, errors) ->
   valid = input and input.match regex
   unless valid
@@ -37,6 +49,7 @@ validPeriod = (input, name, errors) ->
   valid
 
 exports.isValidEnum = validEnum
+exports.isValidMultipleEnum = validMultipleEnum
 exports.isValidPattern = validPattern
 exports.createErrorMessage = createErrorMessage
 exports.isValidDate = validIso8601

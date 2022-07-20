@@ -48,6 +48,7 @@ VersionType = ///
   all                         # The string all
   | latest                    # Or the string latest
   | #{VersionNumber.source}   # Or a version number
+  | #{SemVer.source}          # Or semver
   )                           # Ends the OR clause
   ///
 
@@ -109,20 +110,31 @@ MultipleProviderRefType = /// ^
   (#{ProviderRefType.source}([+]#{ProviderRefType.source})*)
   $///
 
+Sdmx_3_0_all = ///\*///  
+
 MultipleAgenciesRefType = /// ^
-  (#{NestedNCNameIDType.source}([+]#{NestedNCNameIDType.source})*)
+  (
+  #{Sdmx_3_0_all.source}
+  | #{NestedNCNameIDType.source}([+,]#{NestedNCNameIDType.source})*
+  )
   $///
 
 MultipleIDType = /// ^
-  #{IDType.source}([+]#{IDType.source})*
+  (
+  #{Sdmx_3_0_all.source}
+  | #{IDType.source}([+,]#{IDType.source})*
+  )
   $///
 
 MultipleNestedIDType = /// ^
-  #{NestedIDType.source}([+]#{NestedIDType.source})*
+  (
+  #{Sdmx_3_0_all.source}
+  | #{NestedIDType.source}([+]#{NestedIDType.source})*
+  )
   $///
 
 MultipleVersionsType = /// ^
-  #{VersionType.source}([+]#{VersionType.source})*
+  #{VersionType.source}([+,]#{VersionType.source})*
   $///
 
 ReportingPeriodType = /// ^

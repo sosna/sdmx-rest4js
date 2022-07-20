@@ -48,7 +48,21 @@ types =
   CUSTOM_TYPE_SCHEME: 'customtypescheme'
   NAME_PERSONALISATION_SCHEME: 'namepersonalisationscheme'
   NAME_ALIAS_SCHEME: 'namealiasscheme'
-
+  DATA_CONSTRAINT: 'dataconstraint'
+  METADATA_CONSTRAINT: 'metadataconstraint'
+  HIERARCHY: 'hierarchy'
+  HIERARCHY_ASSOCIATION: 'hierarchyassociation'
+  VTL_MAPPING_SCHEME: 'vtlmappingscheme'
+  VALUE_LIST: 'valuelist'
+  STRUCTURE_MAP: 'structuremap'
+  REPRESENTATION_MAP: 'representationmap'
+  CONCEPT_SCHEME_MAP: 'conceptschememap'
+  CATEGORY_SCHEME_MAP: 'categoryschememap'
+  ORGANISATION_SCHEME_MAP: 'organisationschememap'
+  REPORTING_TAXONOMY_MAP: 'reportingtaxonomymap'
+  METADATA_PROVIDER_SCHEME: 'metadataproviderscheme'
+  METADATA_PROVISION_AGREEMENT: 'metadataprovisionagreement'
+  SDMX_3_0_ALL: '*'
 
 exports.MetadataType = Object.freeze types
 exports.isItemScheme = (type) -> type in itemSchemes

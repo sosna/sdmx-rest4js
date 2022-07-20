@@ -19,6 +19,9 @@ special =
   # artefacts referenced by these artefacts will be returned.
   PARENTSANDSIBLINGS: 'parentsandsiblings'
 
+  # The artefacts that use the artefact matching the query, up to any level.
+  ANCESTORS: 'ancestors'
+
   # The artefacts referenced by the matching artefact will be returned.
   CHILDREN: 'children'
 
@@ -32,6 +35,7 @@ excluded = [
   'structure'
   'actualconstraint'
   'allowedconstraint'
+  '*'
 ]
 
 # All the predefined SDMX types are valid references, except for the 'catch all'

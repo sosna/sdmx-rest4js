@@ -34,6 +34,21 @@ describe 'Metadata types', ->
     'customtypescheme'
     'namepersonalisationscheme'
     'namealiasscheme'
+    'dataconstraint'
+    'metadataconstraint'
+    'hierarchy'
+    'hierarchyassociation'
+    'vtlmappingscheme'
+    'valuelist'
+    'structuremap'
+    'representationmap'
+    'conceptschememap'
+    'categoryschememap'
+    'organisationschememap'
+    'reportingtaxonomymap'
+    'metadataproviderscheme'
+    'metadataprovisionagreement'
+    '*'
   ]
 
   it 'contains all the expected types of metadata and only those', ->
