@@ -57,19 +57,25 @@ translateDetail = (detail) ->
   else
     "attributes=dsd&measures=all"
 
-createV2DataUrl = (query, service) ->
-  url = createEntryPoint service
-  fc = parseFlow query.flow
-  url += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{query.key}?"
-  if query.obsDimension
-    url += "dimensionAtObservation=#{query.obsDimension}&"
-  url += translateDetail query.detail
-  url += "&includeHistory=#{query.history}"
-  url += "&startPeriod=#{query.start}" if query.start
-  url += "&endPeriod=#{query.end}" if query.end
-  url += "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
-  url += "&firstNObservations=#{query.firstNObs}" if query.firstNObs
-  url += "&lastNObservations=#{query.lastNObs}" if query.lastNObs
+createV2DataUrl = (q, s) ->
+  if q.provider isnt "all"
+    throw Error "provider not allowed in #{s.api}"
+  if q.start
+    throw Error "start not allowed in #{s.api}"
+  if q.end
+    throw Error "end not allowed in #{s.api}"
+  url = createEntryPoint s
+  fc = parseFlow q.flow
+  url += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{q.key}?"
+  if q.obsDimension
+    url += "dimensionAtObservation=#{q.obsDimension}&"
+  url += translateDetail q.detail
+  url += "&includeHistory=#{q.history}"
+  url += "&startPeriod=#{q.start}" if q.start
+  url += "&endPeriod=#{q.end}" if q.end
+  url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  url += "&firstNObservations=#{q.firstNObs}" if q.firstNObs
+  url += "&lastNObservations=#{q.lastNObs}" if q.lastNObs
   url
 
 createDataQuery = (query, service) ->
@@ -115,6 +121,12 @@ createShortV1Url = (q, s) ->
   u
 
 createShortV2Url = (q, s) ->
+  if q.provider isnt "all"
+    throw Error "provider not allowed in #{s.api}"
+  if q.start
+    throw Error "start not allowed in #{s.api}"
+  if q.end
+    throw Error "end not allowed in #{s.api}"
   u = createEntryPoint s
   fc = parseFlow q.flow
   u += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"

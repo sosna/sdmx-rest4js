@@ -932,6 +932,13 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
+    it 'offers to skip default values for data (v2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*"
+      query = DataQuery.from({flow: 'EXR'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'offers to skip defaults but adds them when needed (provider)', ->
       expected = "http://test.com/data/EXR/all/ECB"
       query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
@@ -1034,6 +1041,39 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple providers not allowed in v1.2.0')
+
+    it 'throws an error when using provider with 2.0.0', ->
+      query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service
+      should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+      query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service, true
+      should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+    it 'throws an error when using start with 2.0.0', ->
+      query = DataQuery.from({flow: 'EXR', start: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service
+      should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+      query = DataQuery.from({flow: 'EXR', start: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service, true
+      should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+    it 'throws an error when using end with 2.0.0', ->
+      query = DataQuery.from({flow: 'EXR', end: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service
+      should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+      query = DataQuery.from({flow: 'EXR', end: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service, true
+      should.Throw(test, Error, 'end not allowed in v2.0.0')
 
   it 'throws an exception if no query is supplied', ->
     test = -> new UrlGenerator().getUrl()
