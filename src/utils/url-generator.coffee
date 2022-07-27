@@ -77,8 +77,6 @@ createV2DataUrl = (q, s) ->
     url += "dimensionAtObservation=#{q.obsDimension}&"
   url += translateDetail q.detail
   url += "&includeHistory=#{q.history}"
-  url += "&startPeriod=#{q.start}" if q.start
-  url += "&endPeriod=#{q.end}" if q.end
   url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   url += "&firstNObservations=#{q.firstNObs}" if q.firstNObs
   url += "&lastNObservations=#{q.lastNObs}" if q.lastNObs
