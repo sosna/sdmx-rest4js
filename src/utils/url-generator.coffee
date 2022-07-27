@@ -170,7 +170,8 @@ createMetadataQuery = (q, s) ->
   agency = toApiKeywords q, s, q.agency
   id = toApiKeywords q, s, q.id
   item = toApiKeywords q, s, q.item
-  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
+  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest"\
+  then "~" else q.version
   url += "#{res}/#{agency}/#{id}/#{v}"
   url += "/#{item}" if itemAllowed(q.resource, s.api)
   url += "?detail=#{q.detail}&references=#{q.references}"
@@ -178,10 +179,14 @@ createMetadataQuery = (q, s) ->
 
 handleMetaPathParams = (q, s, u) ->
   path = []
-  if q.item isnt 'all' and q.item isnt '*' and itemAllowed(q.resource, s.api) then path.push toApiKeywords q, s, q.item
-  if (q.version isnt 'latest' and q.version isnt '~') or path.length then path.push toApiKeywords q, s, q.version, true
-  if (q.id isnt 'all' and q.id isnt '*') or path.length then path.push toApiKeywords q, s, q.id
-  if (q.agency isnt 'all' and q.agency isnt '*') or path.length then path.push toApiKeywords q, s, q.agency
+  if q.item isnt 'all' and q.item isnt '*' and itemAllowed(q.resource, s.api)\
+  then path.push toApiKeywords q, s, q.item
+  if (q.version isnt 'latest' and q.version isnt '~') or path.length\
+  then path.push toApiKeywords q, s, q.version, true
+  if (q.id isnt 'all' and q.id isnt '*') or path.length
+  then path.push toApiKeywords q, s, q.id
+  if (q.agency isnt 'all' and q.agency isnt '*') or path.length
+  then path.push toApiKeywords q, s, q.agency
   if path.length then u = u + '/' + path.reverse().join('/')
   u
 
@@ -239,7 +244,8 @@ createShortAvailabilityQuery = (q, s) ->
 
 createSchemaQuery = (q, s) ->
   u = createEntryPoint s
-  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~" else q.version
+  v = if s.api is ApiVersion.v2_0_0 and q.version is "latest" then "~"\
+  else q.version
   u += "schema/#{q.context}/#{q.agency}/#{q.id}/#{v}"
   if s.api is ApiVersion.v2_0_0
     u += "?dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
@@ -338,13 +344,13 @@ checkExplicit = (q, s) ->
 checkVersion = (q, s) ->
   v = q.version
   if s and s.api and s.api isnt ApiVersion.v2_0_0
-      throw Error "Semantic versioning not allowed in #{s.api}" \
-        unless v is 'latest' or v.match VersionNumber
+    throw Error "Semantic versioning not allowed in #{s.api}" \
+      unless v is 'latest' or v.match VersionNumber
 
 checkVersionWithAll = (q, s, v) ->
   if s and s.api and s.api isnt ApiVersion.v2_0_0
-      throw Error "Semantic versioning not allowed in #{s.api}" \
-        unless v is 'latest' or v is 'all' or v.match VersionNumber
+    throw Error "Semantic versioning not allowed in #{s.api}" \
+      unless v is 'latest' or v is 'all' or v.match VersionNumber
 
 checkMultipleVersions = (q, s) ->
   v = q.version

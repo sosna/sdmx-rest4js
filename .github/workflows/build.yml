@@ -37,3 +37,5 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           file: ./coverage/lcov.info
+      - name: Check coding guidelines
+        run: npm run lint
