@@ -1,6 +1,7 @@
 {ApiVersion} = require '../utils/api-version'
 {ApiResources} = require '../utils/api-version'
 {isItemScheme} = require '../metadata/metadata-type'
+{DataDetail} = require '../data/data-detail'
 {MetadataDetail} = require '../metadata/metadata-detail'
 {MetadataReferences} = require '../metadata/metadata-references'
 {MetadataReferencesExcluded} = require '../metadata/metadata-references'
@@ -20,7 +21,7 @@ createEntryPoint = (s) ->
   url = s.url + '/' unless s.url.endsWith('/')
   url
 
-createDataQuery = (query, service) ->
+createV1DataUrl = (query, service) ->
   url = createEntryPoint service
   url += "data/#{query.flow}/#{query.key}/#{query.provider}?"
   if query.obsDimension
@@ -37,9 +38,54 @@ createDataQuery = (query, service) ->
   url += "&lastNObservations=#{query.lastNObs}" if query.lastNObs
   url
 
+parseFlow = (flow) ->
+  parts = flow.split ","
+  if parts.length == 1
+    ["*", flow, "*"]
+  else if parts.length == 2
+    parts.concat ["*"]
+  else
+    parts
+
+translateDetail = (detail) ->
+  if detail == DataDetail.NO_DATA
+    "attributes=dataset,series&measures=none"
+  else if detail == DataDetail.DATA_ONLY
+    "attributes=none&measures=all"
+  else if detail == DataDetail.SERIES_KEYS_ONLY
+    "attributes=none&measures=none"
+  else
+    "attributes=dsd&measures=all"
+
+createV2DataUrl = (query, service) ->
+  url = createEntryPoint service
+  fc = parseFlow query.flow
+  url += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{query.key}?"
+  if query.obsDimension
+    url += "dimensionAtObservation=#{query.obsDimension}&"
+  url += translateDetail query.detail
+  url += "&includeHistory=#{query.history}"
+  url += "&startPeriod=#{query.start}" if query.start
+  url += "&endPeriod=#{query.end}" if query.end
+  url += "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
+  url += "&firstNObservations=#{query.firstNObs}" if query.firstNObs
+  url += "&lastNObservations=#{query.lastNObs}" if query.lastNObs
+  url
+
+createDataQuery = (query, service) ->
+  if service.api in preSdmx3
+    createV1DataUrl query, service
+  else
+    createV2DataUrl query, service
+
 handleDataPathParams = (q) ->
   path = []
   path.push q.provider unless q.provider is 'all'
+  path.push q.key if q.key isnt 'all' or path.length
+  if path.length then '/' + path.reverse().join('/') else ''
+
+handleData2PathParams = (q) ->
+  path = []
   path.push q.key if q.key isnt 'all' or path.length
   if path.length then '/' + path.reverse().join('/') else ''
 
@@ -61,12 +107,26 @@ handleDataQueryParams = (q, s) ->
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
-createShortDataQuery = (q, s) ->
+createShortV1Url = (q, s) ->
   u = createEntryPoint s
   u += "data/#{q.flow}"
   u += handleDataPathParams(q)
   u += handleDataQueryParams(q, s)
   u
+
+createShortV2Url = (q, s) ->
+  u = createEntryPoint s
+  fc = parseFlow q.flow
+  u += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"
+  u += handleDataPathParams(q)
+  u += handleDataQueryParams(q, s)
+  u
+ 
+createShortDataQuery = (q, s) ->
+  if s.api in preSdmx3
+    createShortV1Url q, s
+  else
+    createShortV2Url q, s
 
 toApiKeywords = (q, s, value, isVersion = false) ->
   v = value

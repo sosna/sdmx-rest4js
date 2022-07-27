@@ -844,11 +844,43 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'generates a URL for a full data query (2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A\
+      ?dimensionAtObservation=CURRENCY\
+      &attributes=dataset,series&measures=none\
+      &includeHistory=true\
+      &updatedAfter=2016-03-01T00:00:00Z\
+      &firstNObservations=1&lastNObservations=1"
+      query = DataQuery.from({
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        obsDimension: 'CURRENCY'
+        detail: 'nodata'
+        history: true
+        updatedAfter: '2016-03-01T00:00:00Z'
+        firstNObs: 1
+        lastNObs: 1
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v2_0_0
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
     it 'generates a URL for a partial data query', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/all?\
       detail=full&includeHistory=false"
       query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'generates a URL for a partial data query (2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -875,19 +907,16 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'defaults to latest API', ->
-      expected = "http://test.com/data/EXR/A..EUR.SP00.A/ECB?\
-      dimensionAtObservation=CURRENCY&detail=nodata&includeHistory=true\
-      &startPeriod=2010&endPeriod=2015&updatedAfter=2016-03-01T00:00:00Z\
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A?\
+      dimensionAtObservation=CURRENCY&attributes=dataset,series&measures=none\
+      &includeHistory=true&updatedAfter=2016-03-01T00:00:00Z\
       &firstNObservations=1&lastNObservations=1"
       query = DataQuery.from({
         flow: 'EXR'
         key: 'A..EUR.SP00.A'
-        provider: 'ECB'
         obsDimension: 'CURRENCY'
         detail: 'nodata'
         history: true
-        start: '2010'
-        end: '2015'
         updatedAfter: '2016-03-01T00:00:00Z'
         firstNObs: 1
         lastNObs: 1
@@ -899,28 +928,28 @@ describe 'URL Generator', ->
     it 'offers to skip default values for data', ->
       expected = "http://test.com/data/EXR"
       query = DataQuery.from({flow: 'EXR'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (provider)', ->
       expected = "http://test.com/data/EXR/all/ECB"
       query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (start)', ->
       expected = "http://test.com/data/EXR?startPeriod=2010"
       query = DataQuery.from({flow: 'EXR', start: '2010'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (end)', ->
       expected = "http://test.com/data/EXR?endPeriod=2010"
       query = DataQuery.from({flow: 'EXR', end: '2010'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -930,42 +959,42 @@ describe 'URL Generator', ->
         flow: 'EXR'
         updatedAfter: '2016-03-01T00:00:00Z'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (firstNObs)', ->
       expected = "http://test.com/data/EXR?firstNObservations=1"
       query = DataQuery.from({flow: 'EXR', firstNObs: 1})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (lastNObs)', ->
       expected = "http://test.com/data/EXR?lastNObservations=2"
       query = DataQuery.from({flow: 'EXR', lastNObs: 2})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/data/EXR?detail=dataonly"
       query = DataQuery.from({flow: 'EXR', detail: 'dataonly'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (history)', ->
       expected = "http://test.com/data/EXR?includeHistory=true"
       query = DataQuery.from({flow: 'EXR', history: true})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (obsDim)', ->
       expected = "http://test.com/data/EXR?dimensionAtObservation=CURR"
       query = DataQuery.from({flow: 'EXR', obsDimension: 'CURR'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -980,7 +1009,7 @@ describe 'URL Generator', ->
         start: '2010'
         updatedAfter: '2016-03-01T00:00:00Z'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -996,7 +1025,7 @@ describe 'URL Generator', ->
         updatedAfter: '2016-03-01T00:00:00Z'
         provider: ['SDMX,ECB', 'BIS']
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
