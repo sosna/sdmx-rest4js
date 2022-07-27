@@ -113,6 +113,16 @@ handleDataQueryParams = (q, s) ->
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
+handleData2QueryParams = (q, s) ->
+  p = []
+  p.push "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
+  p.push "#{translateDetail q.detail}" unless q.detail is 'full'
+  p.push "includeHistory=#{q.history}" if hasHistory(q, s)
+  p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  p.push "firstNObservations=#{q.firstNObs}" if q.firstNObs
+  p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
+  if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
+
 createShortV1Url = (q, s) ->
   u = createEntryPoint s
   u += "data/#{q.flow}"
@@ -130,8 +140,8 @@ createShortV2Url = (q, s) ->
   u = createEntryPoint s
   fc = parseFlow q.flow
   u += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"
-  u += handleDataPathParams(q)
-  u += handleDataQueryParams(q, s)
+  u += handleData2PathParams(q)
+  u += handleData2QueryParams(q, s)
   u
  
 createShortDataQuery = (q, s) ->
