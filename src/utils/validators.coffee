@@ -12,10 +12,10 @@ validEnum = (input, list, name, errors) ->
 validMultipleEnum = (input, list, name, errors) ->
   found = false
   if input and input.indexOf("\+") > -1
-    output = [validEnum(r, list, name, errors) for r in input.split("+")]
+    output = (validEnum(r, list, name, errors) for r in input.split("+"))
     found = false not in output
   else if input and input.indexOf(",") > -1
-    output = [validEnum(r, list, name, errors) for r in input.split(",")]
+    output = (validEnum(r, list, name, errors) for r in input.split(","))
     found = false not in output
   else
     found = validEnum(input, list, name, errors)

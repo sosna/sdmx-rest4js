@@ -110,7 +110,7 @@ MultipleProviderRefType = /// ^
   (#{ProviderRefType.source}([+]#{ProviderRefType.source})*)
   $///
 
-Sdmx_3_0_all = ///\*///  
+Sdmx_3_0_all = ///\*///
 
 MultipleAgenciesRefType = /// ^
   (
