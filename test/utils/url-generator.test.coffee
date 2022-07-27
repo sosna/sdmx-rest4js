@@ -1079,7 +1079,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'supports multiple providers for API version 1.3.0 and above', ->
+    it 'supports multiple providers for API version 1.3.0 and until 2.0.0', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/SDMX,ECB+BIS?\
       updatedAfter=2016-03-01T00:00:00Z\
       &startPeriod=2010&dimensionAtObservation=CURRENCY"
@@ -1133,6 +1133,89 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       test = -> new UrlGenerator().getUrl query, service, true
       should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+    it 'translates details=full with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'full'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR/*"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'full'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates details=dataonly with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=none&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'dataonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR/*?\
+      attributes=none&measures=all"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'dataonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates details=serieskeysonly with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=none&measures=none&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'serieskeysonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR/*?\
+      attributes=none&measures=none"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'serieskeysonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates details=nodata with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=dataset,series&measures=none&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'nodata'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR/*?\
+      attributes=dataset,series&measures=none"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'nodata'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
 
   it 'throws an exception if no query is supplied', ->
     test = -> new UrlGenerator().getUrl()

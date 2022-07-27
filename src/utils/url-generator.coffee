@@ -66,7 +66,8 @@ createV2DataUrl = (q, s) ->
     throw Error "end not allowed in #{s.api}"
   url = createEntryPoint s
   fc = parseFlow q.flow
-  url += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{q.key}?"
+  url += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/"
+  url += if q.key == "all" then "*?" else "#{q.key}?"
   if q.obsDimension
     url += "dimensionAtObservation=#{q.obsDimension}&"
   url += translateDetail q.detail
