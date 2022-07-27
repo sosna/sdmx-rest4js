@@ -1217,6 +1217,60 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
+    it 'translates 1-part dataflow in the correct 2.0.0 context', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR/*"
+      query = DataQuery.from({
+        flow: 'EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates 2-parts dataflow in the correct 2.0.0 context', ->
+      expected = "http://test.com/data/dataflow/ECB/EXR/*/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'ECB,EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/ECB/EXR/*"
+      query = DataQuery.from({
+        flow: 'ECB,EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates 3-parts dataflow in the correct 2.0.0 context', ->
+      expected = "http://test.com/data/dataflow/ECB/EXR/1.42/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'ECB,EXR,1.42'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/ECB/EXR/1.42"
+      query = DataQuery.from({
+        flow: 'ECB,EXR,1.42'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
   it 'throws an exception if no query is supplied', ->
     test = -> new UrlGenerator().getUrl()
     should.Throw(test, Error,
