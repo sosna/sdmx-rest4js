@@ -57,13 +57,18 @@ translateDetail = (detail) ->
   else
     "attributes=dsd&measures=all"
 
-createV2DataUrl = (q, s) ->
+validateDataForV2 = (q, s) ->
   if q.provider isnt "all"
     throw Error "provider not allowed in #{s.api}"
   if q.start
     throw Error "start not allowed in #{s.api}"
   if q.end
     throw Error "end not allowed in #{s.api}"
+  if q.key.indexOf("\+") > -1
+    throw Error "+ not allowed in key in #{s.api}"
+
+createV2DataUrl = (q, s) ->
+  validateDataForV2 q, s
   url = createEntryPoint s
   fc = parseFlow q.flow
   url += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/"
@@ -132,12 +137,7 @@ createShortV1Url = (q, s) ->
   u
 
 createShortV2Url = (q, s) ->
-  if q.provider isnt "all"
-    throw Error "provider not allowed in #{s.api}"
-  if q.start
-    throw Error "start not allowed in #{s.api}"
-  if q.end
-    throw Error "end not allowed in #{s.api}"
+  validateDataForV2 q, s
   u = createEntryPoint s
   fc = parseFlow q.flow
   u += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"
