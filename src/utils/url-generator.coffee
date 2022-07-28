@@ -223,6 +223,7 @@ createV1AvailUrl = (q, s) ->
   url
 
 createV2AvailUrl = (q, s) ->
+  validateDataForV2 q, s
   url = createEntryPoint s
   url += 'availableconstraint'
   fc = parseFlow q.flow
@@ -238,7 +239,6 @@ createAvailabilityQuery = (q, s) ->
   else
     createV2AvailUrl q, s
   
-
 handleAvailabilityPathParams = (q) ->
   path = []
   path.push q.component unless q.component is 'all'
@@ -277,6 +277,7 @@ createShortV1AvailUrl = (q, s) ->
   u
 
 createShortV2AvailUrl = (q, s) ->
+  validateDataForV2 q, s
   u = createEntryPoint s
   u += "availableconstraint/dataflow/"
   fc = parseFlow q.flow

@@ -1500,6 +1500,39 @@ describe 'for availability queries', ->
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
+  it 'throws an error when using provider with 2.0.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', provider: 'ECB'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service
+    should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+    query = AvailabilityQuery.from({flow: 'EXR', provider: 'ECB'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service, true
+    should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+  it 'throws an error when using start with 2.0.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', start: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service
+    should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+    query = AvailabilityQuery.from({flow: 'EXR', start: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service, true
+    should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+  it 'throws an error when using end with 2.0.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', end: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service
+    should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+    query = AvailabilityQuery.from({flow: 'EXR', end: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service, true
+    should.Throw(test, Error, 'end not allowed in v2.0.0')
+
 describe 'for schema queries', ->
 
     it 'generates a URL for a schema query', ->
