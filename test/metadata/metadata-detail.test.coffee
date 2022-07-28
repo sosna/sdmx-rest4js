@@ -11,6 +11,7 @@ describe 'Metadata detail', ->
     'referencepartial'
     'allcompletestubs'
     'referencecompletestubs'
+    'raw'
   ]
 
   it 'contains all the expected details and only those', ->

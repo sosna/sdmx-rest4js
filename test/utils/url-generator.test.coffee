@@ -25,7 +25,8 @@ describe 'URL Generator', ->
       expected = "http://test.com/service/codelist/all/all/\
       latest/all?detail=full&references=none"
       query = MetadataQuery.from({resource: 'codelist'})
-      service = Service.from({url: "http://test.com/service/"})
+      service = Service.from(
+        {url: "http://test.com/service/", api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -33,7 +34,8 @@ describe 'URL Generator', ->
       expected = "http://test.com/service/dataflow/all/all/\
       latest?detail=full&references=none"
       query = MetadataQuery.from({resource: 'dataflow'})
-      service = Service.from({url: "http://test.com/service/"})
+      service = Service.from(
+        {url: "http://test.com/service/", api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -46,7 +48,7 @@ describe 'URL Generator', ->
         agency: 'ECB'
         item: 'A'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -72,9 +74,25 @@ describe 'URL Generator', ->
         agency: 'BIS'
         item: 'HIERARCHY'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'hierarchicalcodelist not allowed in v2.0.0')
 
     it 'does not support hiearchy queries before API version 1.2.0', ->
       expected = "http://test.com/hierarchicalcodelist/BIS/HCL/latest\
@@ -89,6 +107,54 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'Does not support multiple artefact types before API version 2.0.0', ->
+      query = MetadataQuery.from({resource: 'codelist+dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'codelist+dataflow not allowed in v1.5.0')
+
+    it 'Supports multiple artefact types since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist,dataflow/*/*/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({resource: 'codelist,dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist,dataflow"
+      query = MetadataQuery.from({resource: 'codelist,dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+    
+    it 'Rewrites + for multiple artefact types in API 2.0.0', ->
+      expected = "http://test.com/structure/codelist,dataflow/*/*/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({resource: 'codelist+dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist,dataflow"
+      query = MetadataQuery.from({resource: 'codelist+dataflow'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Supports all for artefact types via * since API 2.0.0', ->
+      expected = "http://test.com/structure/*/*/*/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({resource: '*'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/*"
+      query = MetadataQuery.from({resource: '*'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'supports multiple agencies for API version 1.3.0 and above', ->
       expected = "http://test.com/codelist/ECB+BIS/CL_FREQ/latest/all\
       ?detail=full&references=none"
@@ -97,9 +163,21 @@ describe 'URL Generator', ->
         id: 'CL_FREQ'
         agency: 'ECB+BIS'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/ECB,BIS/CL_FREQ/~/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB,BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
 
     it 'does not support multiple agencies before API version 1.3.0', ->
       query = MetadataQuery.from({
@@ -111,6 +189,84 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple agencies not allowed in v1.2.0')
 
+    it 'Rewrites , for multiple agencies before API version 2.0.0', ->
+      expected = "http://test.com/codelist/ECB+BIS/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB,BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'Rewrites + for multiple agencies since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist/ECB,BIS/CL_FREQ/~/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB+BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/ECB,BIS/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB+BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites * for agencies before API version 2.0.0', ->
+      expected = "http://test.com/codelist/all/CL_FREQ/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/codelist/all/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites all for agencies since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist/*/CL_FREQ/~/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/*/CL_FREQ"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
     it 'supports multiple IDs for API version 1.3.0 and above', ->
       expected = "http://test.com/codelist/ECB/CL_FREQ+CL_DECIMALS/latest/all\
       ?detail=full&references=none"
@@ -119,11 +275,11 @@ describe 'URL Generator', ->
         id: 'CL_FREQ+CL_DECIMALS'
         agency: 'ECB'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-    it 'does not support multiple agencies before API version 1.3.0', ->
+    it 'does not support multiple IDs before API version 1.3.0', ->
       query = MetadataQuery.from({
         resource: 'codelist'
         id: 'CL_FREQ+CL_DECIMALS'
@@ -132,6 +288,96 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple IDs not allowed in v1.2.0')
+
+    it 'Rewrites , for multiple resource IDs before API version 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/CL_FREQ+CL_DECIMALS/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ,CL_DECIMALS'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/codelist/BIS/CL_FREQ+CL_DECIMALS"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ,CL_DECIMALS'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites + for multiple resource IDs since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ,CL_UNIT/~/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ+CL_UNIT'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ,CL_UNIT"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ+CL_UNIT'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites * for resource IDs before API version 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/all/latest/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: '*'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/codelist/BIS/all/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: '*'
+        agency: 'BIS'
+        version: '1.0'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites all for resources IDs since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist/BIS/*/~/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'all'
+        agency: 'BIS'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/*/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'all'
+        agency: 'BIS'
+        version: '1.0'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
 
     it 'supports multiple versions for API version 1.3.0 and above', ->
       expected = "http://test.com/codelist/ECB/CL_FREQ/1.0+1.1/all\
@@ -142,7 +388,19 @@ describe 'URL Generator', ->
         agency: 'ECB'
         version: '1.0+1.1'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/ECB/CL_FREQ/1.0.0,1.1.0/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'ECB'
+        version: '1.0.0,1.1.0'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -167,7 +425,7 @@ describe 'URL Generator', ->
         version: '1.0'
         item: 'A+M'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -183,44 +441,107 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple items not allowed in v1.2.0')
 
-    it 'defaults to latest API version', ->
-      expected = "http://test.com/hierarchicalcodelist/ECB/HCL/latest/HIERARCHY\
+    it 'Rewrites + for multiple items since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/~/A,M\
       ?detail=full&references=none"
       query = MetadataQuery.from({
-        resource: 'hierarchicalcodelist'
-        id: 'HCL'
-        agency: 'ECB'
-        item: 'HIERARCHY'
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        item: 'A+M'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/~/A,M"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        item: 'A+M'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites * for items before API version 2.0.0', ->
+      expected = "http://test.com/codelist/BIS/CL_FREQ/1.0/all\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        version: '1.0'
+        item: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/codelist/BIS/CL_FREQ/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        version: '1.0'
+        item: '*'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'Rewrites all for items since API 2.0.0', ->
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/1.0/*\
+      ?detail=full&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        version: '1.0'
+        item: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist/BIS/CL_FREQ/1.0"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        id: 'CL_FREQ'
+        agency: 'BIS'
+        version: '1.0'
+        item: 'all'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip default values for metadata', ->
       expected = "http://test.com/codelist"
       query = MetadataQuery.from({resource: 'codelist'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (id)', ->
       expected = "http://test.com/codelist/all/CL_FREQ"
       query = MetadataQuery.from({resource: 'codelist', id: 'CL_FREQ'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (version)', ->
       expected = "http://test.com/codelist/all/all/42"
       query = MetadataQuery.from({resource: 'codelist', version: '42'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (item)', ->
       expected = "http://test.com/codelist/all/all/latest/1"
       query = MetadataQuery.from({resource: 'codelist', item: '1'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -234,7 +555,7 @@ describe 'URL Generator', ->
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/codelist?detail=allstubs"
       query = MetadataQuery.from({resource: 'codelist', detail: 'allstubs'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -244,7 +565,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         references: 'datastructure'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -255,7 +576,7 @@ describe 'URL Generator', ->
         detail: 'allstubs'
         references: 'datastructure'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -265,7 +586,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'referencepartial'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -275,7 +596,7 @@ describe 'URL Generator', ->
         resource: 'codelist'
         detail: 'allcompletestubs'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -284,6 +605,26 @@ describe 'URL Generator', ->
       query = MetadataQuery.from({
         resource: 'codelist'
         detail: 'referencecompletestubs'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'supports raw since 2.0.0', ->
+      expected = "http://test.com/structure/codelist/*/*/~/*?\
+      detail=raw&references=none"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        detail: 'raw'
+      })
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/codelist?detail=raw"
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        detail: 'raw'
       })
       service = Service.from({url: 'http://test.com'})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -315,20 +656,50 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_0_2})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'referencecompletestubs not allowed in v1.0.2')
+    
+    it 'does not support raw before v2.0.0', ->
+      query = MetadataQuery.from({
+        resource: 'codelist'
+        detail: 'raw'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'raw not allowed in v1.5.0')
 
-    it 'supports actualconstraint since v1.3.0', ->
+    it 'supports actualconstraint since v1.3.0 and until v2.0.0', ->
       expected = 'http://test.com/actualconstraint'
       query = MetadataQuery.from({resource: 'actualconstraint'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'supports allowedconstraint since v1.3.0', ->
-      expected = 'http://test.com/allowedconstraint'
-      query = MetadataQuery.from({resource: 'allowedconstraint'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'supports allowedconstraint since v1.3.0 and until v2.0.0', ->
+      expected = 'http://test.com/allowedconstraint'
+      query = MetadataQuery.from({resource: 'allowedconstraint'})
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'allowedconstraint not allowed in v2.0.0')
 
     it 'does not support actualconstraint before v1.3.0', ->
       query = MetadataQuery.from({resource: 'actualconstraint'})
@@ -342,17 +713,30 @@ describe 'URL Generator', ->
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'allowedconstraint not allowed in v1.0.2')
 
-    it 'supports actualconstraint since v1.3.0', ->
+    it 'supports actualconstraint since v1.3.0 and until v2.0.0', ->
       expected = 'http://test.com/actualconstraint'
       query = MetadataQuery.from({resource: 'actualconstraint'})
-      service = Service.from({url: 'http://test.com'})
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_4_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'actualconstraint not allowed in v2.0.0')
 
     it 'supports VTL artefacts since v1.5.0 (type)', ->
       expected = 'http://test.com/transformationscheme'
       query = MetadataQuery.from({resource: 'transformationscheme'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -365,7 +749,7 @@ describe 'URL Generator', ->
     it 'supports VTL artefacts since v1.5.0 (references)', ->
       expected = 'http://test.com/codelist?references=transformationscheme'
       query = MetadataQuery.from({resource: 'codelist', references: 'transformationscheme'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -374,6 +758,64 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'transformationscheme not allowed as reference in v1.2.0')
+
+    it 'supports ancestors since v2.0.0 (references)', ->
+      expected = 'http://test.com/structure/codelist?references=ancestors'
+      query = MetadataQuery.from({resource: 'codelist', references: 'ancestors'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support ancestors before v2.0.0 (references)', ->
+      query = MetadataQuery.from({resource: 'codelist', references: 'ancestors'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'ancestors not allowed as reference in v1.5.0')
+
+    it 'supports semver since v2.0.0 (version)', ->
+      expected = 'http://test.com/structure/codelist/BIS/CL_FREQ/1.2+.0/*?\
+      detail=full&references=none'
+      query = MetadataQuery.from(
+        {resource: 'codelist', agency: 'BIS', id: 'CL_FREQ', version: '1.2+.0'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = 'http://test.com/structure/codelist/BIS/CL_FREQ/1.2+.0'
+      query = MetadataQuery.from(
+        {resource: 'codelist', agency: 'BIS', id: 'CL_FREQ', version: '1.2+.0'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support semver before v2.0.0', ->
+      query = MetadataQuery.from(
+        {resource: 'dataflow', id: 'EXR', agency: 'ECB', version: '~'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+      query = MetadataQuery.from(
+        {resource: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.2+.42'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+    it 'rewrites version keywords since v2.0.0', ->
+      expected = "http://test.com/structure/dataflow/BIS/EXR/~\
+      ?detail=full&references=none"
+      query = MetadataQuery.from(
+        {resource: 'dataflow', agency: 'BIS', id: 'EXR', version: 'latest'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/structure/dataflow/BIS/EXR"
+      query = MetadataQuery.from(
+        {resource: 'dataflow', agency: 'BIS', id: 'EXR', version: 'latest'})
+      service = Service.from({url: 'http://test.com'})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
 
   describe 'for data queries', ->
 
@@ -402,11 +844,43 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
+    it 'generates a URL for a full data query (2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A\
+      ?dimensionAtObservation=CURRENCY\
+      &attributes=dataset,series&measures=none\
+      &includeHistory=true\
+      &updatedAfter=2016-03-01T00:00:00Z\
+      &firstNObservations=1&lastNObservations=1"
+      query = DataQuery.from({
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        obsDimension: 'CURRENCY'
+        detail: 'nodata'
+        history: true
+        updatedAfter: '2016-03-01T00:00:00Z'
+        firstNObs: 1
+        lastNObs: 1
+      })
+      service = Service.from({
+        url: 'http://test.com'
+        api: ApiVersion.v2_0_0
+      })
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
     it 'generates a URL for a partial data query', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/all?\
       detail=full&includeHistory=false"
       query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_1_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'generates a URL for a partial data query (2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
@@ -433,19 +907,16 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'defaults to latest API', ->
-      expected = "http://test.com/data/EXR/A..EUR.SP00.A/ECB?\
-      dimensionAtObservation=CURRENCY&detail=nodata&includeHistory=true\
-      &startPeriod=2010&endPeriod=2015&updatedAfter=2016-03-01T00:00:00Z\
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A?\
+      dimensionAtObservation=CURRENCY&attributes=dataset,series&measures=none\
+      &includeHistory=true&updatedAfter=2016-03-01T00:00:00Z\
       &firstNObservations=1&lastNObservations=1"
       query = DataQuery.from({
         flow: 'EXR'
         key: 'A..EUR.SP00.A'
-        provider: 'ECB'
         obsDimension: 'CURRENCY'
         detail: 'nodata'
         history: true
-        start: '2010'
-        end: '2015'
         updatedAfter: '2016-03-01T00:00:00Z'
         firstNObs: 1
         lastNObs: 1
@@ -457,28 +928,35 @@ describe 'URL Generator', ->
     it 'offers to skip default values for data', ->
       expected = "http://test.com/data/EXR"
       query = DataQuery.from({flow: 'EXR'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip default values for data (v2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR"
+      query = DataQuery.from({flow: 'EXR'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds them when needed (provider)', ->
       expected = "http://test.com/data/EXR/all/ECB"
       query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (start)', ->
       expected = "http://test.com/data/EXR?startPeriod=2010"
       query = DataQuery.from({flow: 'EXR', start: '2010'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (end)', ->
       expected = "http://test.com/data/EXR?endPeriod=2010"
       query = DataQuery.from({flow: 'EXR', end: '2010'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -488,42 +966,87 @@ describe 'URL Generator', ->
         flow: 'EXR'
         updatedAfter: '2016-03-01T00:00:00Z'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (updatedAfter, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR?updatedAfter=2016-03-01T00:00:00Z"
+      query = DataQuery.from({
+        flow: 'EXR'
+        updatedAfter: '2016-03-01T00:00:00Z'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (firstNObs)', ->
       expected = "http://test.com/data/EXR?firstNObservations=1"
       query = DataQuery.from({flow: 'EXR', firstNObs: 1})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (firstNObs, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR?firstNObservations=1"
+      query = DataQuery.from({flow: 'EXR', firstNObs: 1})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (lastNObs)', ->
       expected = "http://test.com/data/EXR?lastNObservations=2"
       query = DataQuery.from({flow: 'EXR', lastNObs: 2})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (lastNObs, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR?lastNObservations=2"
+      query = DataQuery.from({flow: 'EXR', lastNObs: 2})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (detail)', ->
       expected = "http://test.com/data/EXR?detail=dataonly"
       query = DataQuery.from({flow: 'EXR', detail: 'dataonly'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (detail, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR?attributes=none&measures=all"
+      query = DataQuery.from({flow: 'EXR', detail: 'dataonly'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (history)', ->
       expected = "http://test.com/data/EXR?includeHistory=true"
       query = DataQuery.from({flow: 'EXR', history: true})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (history, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR?includeHistory=true"
+      query = DataQuery.from({flow: 'EXR', history: true})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (obsDim)', ->
       expected = "http://test.com/data/EXR?dimensionAtObservation=CURR"
       query = DataQuery.from({flow: 'EXR', obsDimension: 'CURR'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'offers to skip defaults but adds params when needed (obsDim, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR?dimensionAtObservation=CURR"
+      query = DataQuery.from({flow: 'EXR', obsDimension: 'CURR'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -538,11 +1061,25 @@ describe 'URL Generator', ->
         start: '2010'
         updatedAfter: '2016-03-01T00:00:00Z'
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
-    it 'supports multiple providers for API version 1.3.0 and above', ->
+    it 'offers to skip defaults but adds params when needed (various, 2.0.0)', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A?\
+      updatedAfter=2016-03-01T00:00:00Z\
+      &dimensionAtObservation=CURRENCY"
+      query = DataQuery.from({
+        flow: 'EXR'
+        key: 'A..EUR.SP00.A'
+        obsDimension: 'CURRENCY'
+        updatedAfter: '2016-03-01T00:00:00Z'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'supports multiple providers for API version 1.3.0 and until 2.0.0', ->
       expected = "http://test.com/data/EXR/A..EUR.SP00.A/SDMX,ECB+BIS?\
       updatedAfter=2016-03-01T00:00:00Z\
       &startPeriod=2010&dimensionAtObservation=CURRENCY"
@@ -554,7 +1091,7 @@ describe 'URL Generator', ->
         updatedAfter: '2016-03-01T00:00:00Z'
         provider: ['SDMX,ECB', 'BIS']
       })
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_3_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -563,6 +1100,193 @@ describe 'URL Generator', ->
       service = Service.from({url: 'http://test.com', api: ApiVersion.v1_2_0})
       test = -> new UrlGenerator().getUrl(query, service)
       should.Throw(test, Error, 'Multiple providers not allowed in v1.2.0')
+
+    it 'throws an error when using provider with 2.0.0', ->
+      query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service
+      should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+      query = DataQuery.from({flow: 'EXR', provider: 'ECB'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service, true
+      should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+    it 'throws an error when using start with 2.0.0', ->
+      query = DataQuery.from({flow: 'EXR', start: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service
+      should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+      query = DataQuery.from({flow: 'EXR', start: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service, true
+      should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+    it 'throws an error when using end with 2.0.0', ->
+      query = DataQuery.from({flow: 'EXR', end: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service
+      should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+      query = DataQuery.from({flow: 'EXR', end: '2007'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl query, service, true
+      should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+    it 'translates details=full with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'full'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'full'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates details=dataonly with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=none&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'dataonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR?\
+      attributes=none&measures=all"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'dataonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates details=serieskeysonly with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=none&measures=none&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'serieskeysonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR?\
+      attributes=none&measures=none"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'serieskeysonly'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates details=nodata with 2.0.0', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=dataset,series&measures=none&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'nodata'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR?\
+      attributes=dataset,series&measures=none"
+      query = DataQuery.from({
+        flow: 'EXR'
+        detail: 'nodata'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates 1-part dataflow in the correct 2.0.0 context', ->
+      expected = "http://test.com/data/dataflow/*/EXR/*/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/*/EXR"
+      query = DataQuery.from({
+        flow: 'EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates 2-parts dataflow in the correct 2.0.0 context', ->
+      expected = "http://test.com/data/dataflow/ECB/EXR/*/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'ECB,EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/ECB/EXR"
+      query = DataQuery.from({
+        flow: 'ECB,EXR'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'translates 3-parts dataflow in the correct 2.0.0 context', ->
+      expected = "http://test.com/data/dataflow/ECB/EXR/1.42/*?\
+      attributes=dsd&measures=all&includeHistory=false"
+      query = DataQuery.from({
+        flow: 'ECB,EXR,1.42'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+      expected = "http://test.com/data/dataflow/ECB/EXR/1.42"
+      query = DataQuery.from({
+        flow: 'ECB,EXR,1.42'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'rejects keys containing dimensions separated with + (2.0.0)', ->
+      query = DataQuery.from({
+        flow: 'ECB,EXR,1.42'
+        key: 'A+M.CHF'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, '+ not allowed in key in v2.0.0')
+
+      query = DataQuery.from({
+        flow: 'ECB,EXR,1.42'
+        key: 'A+M.CHF'
+      })
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service, true)
+      should.Throw(test, Error, '+ not allowed in key in v2.0.0')
 
   it 'throws an exception if no query is supplied', ->
     test = -> new UrlGenerator().getUrl()
@@ -611,7 +1335,23 @@ describe 'for availability queries', ->
       mode: 'available'
       references: 'none'
     })
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+    url = new UrlGenerator().getUrl(query, service)
+    url.should.equal expected
+
+  it 'generates a URL for a full availability query (2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/A..EUR.SP00.A/FREQ?\
+    mode=available&references=none\
+    &updatedAfter=2016-03-01T00:00:00Z'
+    query = AvailabilityQuery.from({
+      flow: 'EXR'
+      key: 'A..EUR.SP00.A'
+      component: 'FREQ'
+      updatedAfter: '2016-03-01T00:00:00Z'
+      mode: 'available'
+      references: 'none'
+    })
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
     url = new UrlGenerator().getUrl(query, service)
     url.should.equal expected
 
@@ -619,7 +1359,15 @@ describe 'for availability queries', ->
     expected = 'http://test.com/availableconstraint/EXR/A..EUR.SP00.A/all/all?\
     mode=exact&references=none'
     query = AvailabilityQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+    url = new UrlGenerator().getUrl(query, service)
+    url.should.equal expected
+
+  it 'generates a URL for a partial availability query (2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/*/*?\
+    mode=exact&references=none'
+    query = AvailabilityQuery.from({flow: 'EXR'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
     url = new UrlGenerator().getUrl(query, service)
     url.should.equal expected
 
@@ -627,7 +1375,7 @@ describe 'for availability queries', ->
     expected = 'http://test.com/availableconstraint/EXR/all/all/all?\
     mode=exact&references=none'
     query = AvailabilityQuery.from({flow: 'EXR'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
     url = new UrlGenerator().getUrl(query, service)
     url.should.equal expected
 
@@ -644,83 +1392,189 @@ describe 'for availability queries', ->
       mode: 'exact'
       references: 'none'
     })
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
+  it 'offers to skip default values for availability (2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR'
+    query = AvailabilityQuery.from({
+      flow: 'EXR'
+      mode: 'exact'
+      references: 'none'
+    })
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (key, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/A.CH'
+    query = AvailabilityQuery.from({flow: 'EXR', key: 'A.CH'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+  
   it 'offers to skip defaults but adds them when needed (provider)', ->
     expected = 'http://test.com/availableconstraint/EXR/all/ECB'
     query = AvailabilityQuery.from({flow: 'EXR', provider: 'ECB'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (component)', ->
     expected = 'http://test.com/availableconstraint/EXR/all/all/FREQ'
     query = AvailabilityQuery.from({flow: 'EXR', component: 'FREQ'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (component, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/*/FREQ'
+    query = AvailabilityQuery.from({flow: 'EXR', component: 'FREQ'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (mode)', ->
     expected = 'http://test.com/availableconstraint/EXR?mode=available'
     query = AvailabilityQuery.from({flow: 'EXR', mode: 'available'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
-  it 'offers to skip defaults but adds them when needed (references)', ->
+  it 'offers to skip defaults but adds them when needed (mode, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR\
+    ?mode=available'
+    query = AvailabilityQuery.from({flow: 'EXR', mode: 'available'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (refs)', ->
     expected = 'http://test.com/availableconstraint/EXR?references=codelist'
     query = AvailabilityQuery.from({flow: 'EXR', references: 'codelist'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (refs, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR\
+    ?references=codelist'
+    query = AvailabilityQuery.from({flow: 'EXR', references: 'codelist'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (start)', ->
     expected = 'http://test.com/availableconstraint/EXR?startPeriod=2007'
     query = AvailabilityQuery.from({flow: 'EXR', start: '2007'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (end)', ->
     expected = 'http://test.com/availableconstraint/EXR?endPeriod=2073'
     query = AvailabilityQuery.from({flow: 'EXR', end: '2073'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
-  it 'offers to skip defaults but adds them when needed (start & ed)', ->
+  it 'offers to skip defaults but adds them when needed (start & end)', ->
     expected = 'http://test.com/availableconstraint/EXR?startPeriod=2007&\
     endPeriod=2073'
     query = AvailabilityQuery.from({flow: 'EXR', start: '2007', end: '2073'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
-  it 'offers to skip defaults but adds them when needed (end)', ->
-    expected = 'http://test.com/availableconstraint/EXR?endPeriod=2073'
-    query = AvailabilityQuery.from({flow: 'EXR', end: '2073'})
-    service = Service.from({url: 'http://test.com'})
-    url = new UrlGenerator().getUrl(query, service, true)
-    url.should.equal expected
-
-  it 'offers to skip defaults but adds them when needed (updatedAfter)', ->
+  it 'offers to skip defaults but adds them when needed (upd)', ->
     expected = 'http://test.com/availableconstraint/EXR?\
     updatedAfter=2016-03-01T00:00:00Z'
     query = AvailabilityQuery.from({
       flow: 'EXR'
       updatedAfter: '2016-03-01T00:00:00Z'})
-    service = Service.from({url: 'http://test.com'})
+    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (upd, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR?\
+    updatedAfter=2016-03-01T00:00:00Z'
+    query = AvailabilityQuery.from({
+      flow: 'EXR'
+      updatedAfter: '2016-03-01T00:00:00Z'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (multi, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR?\
+    mode=available&updatedAfter=2016-03-01T00:00:00Z'
+    query = AvailabilityQuery.from({
+      flow: 'EXR'
+      updatedAfter: '2016-03-01T00:00:00Z',
+      mode: 'available'
+      })
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'throws an error when using provider with 2.0.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', provider: 'ECB'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service
+    should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+    query = AvailabilityQuery.from({flow: 'EXR', provider: 'ECB'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service, true
+    should.Throw(test, Error, 'provider not allowed in v2.0.0')
+
+  it 'throws an error when using start with 2.0.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', start: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service
+    should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+    query = AvailabilityQuery.from({flow: 'EXR', start: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service, true
+    should.Throw(test, Error, 'start not allowed in v2.0.0')
+
+  it 'throws an error when using end with 2.0.0', ->
+    query = AvailabilityQuery.from({flow: 'EXR', end: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service
+    should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+    query = AvailabilityQuery.from({flow: 'EXR', end: '2007'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl query, service, true
+    should.Throw(test, Error, 'end not allowed in v2.0.0')
+
+  it 'rejects keys containing dimensions separated with + (2.0.0)', ->
+    query = AvailabilityQuery.from({
+      flow: 'ECB,EXR,1.42'
+      key: 'A+M.CHF'
+    })
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl(query, service)
+    should.Throw(test, Error, '+ not allowed in key in v2.0.0')
+
+    query = AvailabilityQuery.from({
+      flow: 'ECB,EXR,1.42'
+      key: 'A+M.CHF'
+    })
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl(query, service, true)
+    should.Throw(test, Error, '+ not allowed in key in v2.0.0')
 
 describe 'for schema queries', ->
 
     it 'generates a URL for a schema query', ->
       expected = "http://sdw-wsrest.ecb.europa.eu/service/schema/dataflow\
-      /ECB/EXR/latest?explicitMeasure=false"
-      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB'})
+      /ECB/EXR/1.0?explicitMeasure=false"
+      query = SchemaQuery.from({context: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.0'})
       service = Service.ECB
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
@@ -753,7 +1607,7 @@ describe 'for schema queries', ->
       expected = "http://test.com/schema/dataflow/ECB/EXR?explicitMeasure=true"
       query = SchemaQuery.from(
         {context: 'dataflow', id: 'EXR', agency: 'ECB', explicit: true})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
       url.should.equal expected
 
@@ -772,6 +1626,63 @@ describe 'for schema queries', ->
       query = SchemaQuery.from(
         {context: 'dataflow', id: 'EXR', agency: 'ECB', explicit: true,
         obsDimension: 'TEST'})
-      service = Service.from({url: 'http://test.com'})
+      service = Service.from({url: 'http://test.com',  api: ApiVersion.v1_5_0})
       url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'supports metadataprovisionagreement since v2.0.0', ->
+      expected = "http://test.com/schema/metadataprovisionagreement/ECB/EXR?\
+      dimensionAtObservation=TEST"
+      query = SchemaQuery.from(
+        {context: 'metadataprovisionagreement', id: 'EXR', agency: 'ECB',
+        obsDimension: 'TEST'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service, true)
+      url.should.equal expected
+
+    it 'does not support metadataprovisionagreement before v2.0.0', ->
+      query = SchemaQuery.from(
+        {context: 'metadataprovisionagreement', id: 'EXR', agency: 'ECB',
+        obsDimension: 'TEST'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'metadataprovisionagreement not allowed in v1.5.0')
+
+    it 'does not support explicitMeasure starting with v2.0.0', ->
+      query = SchemaQuery.from(
+        {context: 'provisionagreement', id: 'EXR', agency: 'ECB',
+        obsDimension: 'TEST', explicit: true})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'explicit parameter not allowed in v2.0.0')
+
+    it 'does no longer use default explicitMeasure starting with v2.0.0', ->
+      expected = "http://test.com/schema/dataflow/ECB/EXR/1.0.0"
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.0.0'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
+      url.should.equal expected
+
+    it 'does not support semver before v2.0.0', ->
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', version: '~'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', version: '1.2+.42'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+      test = -> new UrlGenerator().getUrl(query, service)
+      should.Throw(test, Error, 'Semantic versioning not allowed in v1.5.0')
+
+    it 'rewrites version keywords since v2.0.0', ->
+      expected = "http://test.com/schema/dataflow/ECB/EXR/~?\
+      dimensionAtObservation=TEST"
+      query = SchemaQuery.from(
+        {context: 'dataflow', id: 'EXR', agency: 'ECB', version: 'latest',
+        obsDimension: 'TEST'})
+      service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+      url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
