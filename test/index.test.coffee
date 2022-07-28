@@ -231,7 +231,8 @@ describe 'API', ->
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
       url.should.contain 'availableconstraint'
-      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'EXR'
+      url.should.contain 'A..EUR.SP00.A'
 
     it 'creates a URL from an availability and service objects (mode)', ->
       q = {
@@ -244,7 +245,8 @@ describe 'API', ->
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
       url.should.contain 'availableconstraint'
-      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'EXR'
+      url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'mode=exact'
 
     it 'creates a URL from an availability and a service objects (component)', ->
@@ -258,7 +260,8 @@ describe 'API', ->
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
       url.should.contain 'availableconstraint'
-      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'EXR'
+      url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'FREQ'
 
     it 'creates a URL from an availability and a service objects (references)', ->
@@ -272,7 +275,8 @@ describe 'API', ->
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
       url.should.contain 'availableconstraint'
-      url.should.contain 'EXR/A..EUR.SP00.A'
+      url.should.contain 'EXR'
+      url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'references=all'
 
     it 'fails if the input is not of the expected type', ->
