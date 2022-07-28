@@ -138,8 +138,11 @@ createShortV2Url = (q, s) ->
   validateDataForV2 q, s
   u = createEntryPoint s
   fc = parseFlow q.flow
-  u += "data/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"
-  u += handleData2PathParams(q)
+  u += "data/dataflow/#{fc[0]}/#{fc[1]}"
+  pp = handleData2PathParams(q)
+  if fc[2] isnt "*" or pp isnt ''
+    u += "/#{fc[2]}"
+  u += pp
   u += handleData2QueryParams(q, s)
   u
  

@@ -933,7 +933,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip default values for data (v2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*"
+      expected = "http://test.com/data/dataflow/*/EXR"
       query = DataQuery.from({flow: 'EXR'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -971,7 +971,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (updatedAfter, 2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*?updatedAfter=2016-03-01T00:00:00Z"
+      expected = "http://test.com/data/dataflow/*/EXR?updatedAfter=2016-03-01T00:00:00Z"
       query = DataQuery.from({
         flow: 'EXR'
         updatedAfter: '2016-03-01T00:00:00Z'
@@ -988,7 +988,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (firstNObs, 2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*?firstNObservations=1"
+      expected = "http://test.com/data/dataflow/*/EXR?firstNObservations=1"
       query = DataQuery.from({flow: 'EXR', firstNObs: 1})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -1002,7 +1002,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (lastNObs, 2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*?lastNObservations=2"
+      expected = "http://test.com/data/dataflow/*/EXR?lastNObservations=2"
       query = DataQuery.from({flow: 'EXR', lastNObs: 2})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -1016,7 +1016,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (detail, 2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*?attributes=none&measures=all"
+      expected = "http://test.com/data/dataflow/*/EXR?attributes=none&measures=all"
       query = DataQuery.from({flow: 'EXR', detail: 'dataonly'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -1030,7 +1030,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (history, 2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*?includeHistory=true"
+      expected = "http://test.com/data/dataflow/*/EXR?includeHistory=true"
       query = DataQuery.from({flow: 'EXR', history: true})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -1044,7 +1044,7 @@ describe 'URL Generator', ->
       url.should.equal expected
 
     it 'offers to skip defaults but adds params when needed (obsDim, 2.0.0)', ->
-      expected = "http://test.com/data/dataflow/*/EXR/*?dimensionAtObservation=CURR"
+      expected = "http://test.com/data/dataflow/*/EXR?dimensionAtObservation=CURR"
       query = DataQuery.from({flow: 'EXR', obsDimension: 'CURR'})
       service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
       url = new UrlGenerator().getUrl(query, service, true)
@@ -1145,7 +1145,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/data/dataflow/*/EXR/*"
+      expected = "http://test.com/data/dataflow/*/EXR"
       query = DataQuery.from({
         flow: 'EXR'
         detail: 'full'
@@ -1165,7 +1165,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/data/dataflow/*/EXR/*?\
+      expected = "http://test.com/data/dataflow/*/EXR?\
       attributes=none&measures=all"
       query = DataQuery.from({
         flow: 'EXR'
@@ -1186,7 +1186,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/data/dataflow/*/EXR/*?\
+      expected = "http://test.com/data/dataflow/*/EXR?\
       attributes=none&measures=none"
       query = DataQuery.from({
         flow: 'EXR'
@@ -1207,7 +1207,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/data/dataflow/*/EXR/*?\
+      expected = "http://test.com/data/dataflow/*/EXR?\
       attributes=dataset,series&measures=none"
       query = DataQuery.from({
         flow: 'EXR'
@@ -1227,7 +1227,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/data/dataflow/*/EXR/*"
+      expected = "http://test.com/data/dataflow/*/EXR"
       query = DataQuery.from({
         flow: 'EXR'
       })
@@ -1245,7 +1245,7 @@ describe 'URL Generator', ->
       url = new UrlGenerator().getUrl(query, service)
       url.should.equal expected
 
-      expected = "http://test.com/data/dataflow/ECB/EXR/*"
+      expected = "http://test.com/data/dataflow/ECB/EXR"
       query = DataQuery.from({
         flow: 'ECB,EXR'
       })
