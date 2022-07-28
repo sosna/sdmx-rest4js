@@ -258,7 +258,8 @@ handleAvailabilityQueryParams = (q) ->
 handleAvailabilityV2PathParams = (q) ->
   path = []
   path.push q.component unless q.component is 'all'
-  path.push q.key if q.key isnt 'all' or path.length
+  k = if q.key is 'all' then '*' else q.key
+  path.push k if k isnt '*' or path.length
   if path.length then '/' + path.reverse().join('/') else ''
 
 handleAvailabilityV2QueryParams = (q) ->

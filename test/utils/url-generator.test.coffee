@@ -1421,6 +1421,13 @@ describe 'for availability queries', ->
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
+  it 'offers to skip defaults but adds them when needed (component, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/FREQ'
+    query = AvailabilityQuery.from({flow: 'EXR', component: 'FREQ'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
   it 'offers to skip defaults but adds them when needed (mode)', ->
     expected = 'http://test.com/availableconstraint/EXR?mode=available'
     query = AvailabilityQuery.from({flow: 'EXR', mode: 'available'})
@@ -1428,10 +1435,26 @@ describe 'for availability queries', ->
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
-  it 'offers to skip defaults but adds them when needed (references)', ->
+  it 'offers to skip defaults but adds them when needed (mode, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR\
+    ?mode=available'
+    query = AvailabilityQuery.from({flow: 'EXR', mode: 'available'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (refs)', ->
     expected = 'http://test.com/availableconstraint/EXR?references=codelist'
     query = AvailabilityQuery.from({flow: 'EXR', references: 'codelist'})
     service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (refs, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR\
+    ?references=codelist'
+    query = AvailabilityQuery.from({flow: 'EXR', references: 'codelist'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
@@ -1457,20 +1480,23 @@ describe 'for availability queries', ->
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
-  it 'offers to skip defaults but adds them when needed (end)', ->
-    expected = 'http://test.com/availableconstraint/EXR?endPeriod=2073'
-    query = AvailabilityQuery.from({flow: 'EXR', end: '2073'})
-    service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
-    url = new UrlGenerator().getUrl(query, service, true)
-    url.should.equal expected
-
-  it 'offers to skip defaults but adds them when needed (updatedAfter)', ->
+  it 'offers to skip defaults but adds them when needed (upd)', ->
     expected = 'http://test.com/availableconstraint/EXR?\
     updatedAfter=2016-03-01T00:00:00Z'
     query = AvailabilityQuery.from({
       flow: 'EXR'
       updatedAfter: '2016-03-01T00:00:00Z'})
     service = Service.from({url: 'http://test.com', api: 'v1.5.0'})
+    url = new UrlGenerator().getUrl(query, service, true)
+    url.should.equal expected
+
+  it 'offers to skip defaults but adds them when needed (upd, 2.0.0)', ->
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR?\
+    updatedAfter=2016-03-01T00:00:00Z'
+    query = AvailabilityQuery.from({
+      flow: 'EXR'
+      updatedAfter: '2016-03-01T00:00:00Z'})
+    service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
 
