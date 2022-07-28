@@ -1364,9 +1364,9 @@ describe 'for availability queries', ->
     url.should.equal expected
 
   it 'generates a URL for a partial availability query (2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/A..EUR.SP00.A/all?\
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/*/*?\
     mode=exact&references=none'
-    query = AvailabilityQuery.from({flow: 'EXR', key: 'A..EUR.SP00.A'})
+    query = AvailabilityQuery.from({flow: 'EXR'})
     service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
     url = new UrlGenerator().getUrl(query, service)
     url.should.equal expected
@@ -1422,7 +1422,7 @@ describe 'for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (component, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/FREQ'
+    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/*/FREQ'
     query = AvailabilityQuery.from({flow: 'EXR', component: 'FREQ'})
     service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)

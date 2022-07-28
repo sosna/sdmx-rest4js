@@ -227,8 +227,9 @@ createV2AvailUrl = (q, s) ->
   url = createEntryPoint s
   url += 'availableconstraint'
   fc = parseFlow q.flow
-  url += "/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"
-  url += "/#{q.key}/#{q.component}"
+  url += "/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/"
+  url += if q.key == "all" then "*/" else "#{q.key}/"
+  url += if q.component == "all" then "*" else "#{q.component}"
   url += "?mode=#{q.mode}&references=#{q.references}"
   url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   url
@@ -282,9 +283,10 @@ createShortV2AvailUrl = (q, s) ->
   u += "availableconstraint/dataflow/"
   fc = parseFlow q.flow
   u += "#{fc[0]}/#{fc[1]}"
-  if fc[2] isnt "*"
+  pp = handleAvailabilityV2PathParams(q)
+  if fc[2] isnt "*" or pp isnt ""
     u += "/#{fc[2]}"
-  u += handleAvailabilityV2PathParams(q)
+  u += pp
   u += handleAvailabilityV2QueryParams(q)
   u
 
