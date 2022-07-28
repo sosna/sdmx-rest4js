@@ -1533,6 +1533,23 @@ describe 'for availability queries', ->
     test = -> new UrlGenerator().getUrl query, service, true
     should.Throw(test, Error, 'end not allowed in v2.0.0')
 
+  it 'rejects keys containing dimensions separated with + (2.0.0)', ->
+    query = AvailabilityQuery.from({
+      flow: 'ECB,EXR,1.42'
+      key: 'A+M.CHF'
+    })
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl(query, service)
+    should.Throw(test, Error, '+ not allowed in key in v2.0.0')
+
+    query = AvailabilityQuery.from({
+      flow: 'ECB,EXR,1.42'
+      key: 'A+M.CHF'
+    })
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
+    test = -> new UrlGenerator().getUrl(query, service, true)
+    should.Throw(test, Error, '+ not allowed in key in v2.0.0')
+
 describe 'for schema queries', ->
 
     it 'generates a URL for a schema query', ->
