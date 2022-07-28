@@ -209,7 +209,7 @@ createShortMetadataQuery = (q, s) ->
   )
   u
 
-createAvailabilityQuery = (q, s) ->
+createV1AvailUrl = (q, s) ->
   url = createEntryPoint s
   url += 'availableconstraint'
   url += "/#{q.flow}/#{q.key}/#{q.provider}/#{q.component}"
@@ -218,6 +218,23 @@ createAvailabilityQuery = (q, s) ->
   url += "&endPeriod=#{q.end}" if q.end
   url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   url
+
+createV2AvailUrl = (q, s) ->
+  url = createEntryPoint s
+  url += 'availableconstraint'
+  fc = parseFlow q.flow
+  url += "/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}"
+  url += "/#{q.key}/#{q.component}"
+  url += "?mode=#{q.mode}&references=#{q.references}"
+  url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  url
+
+createAvailabilityQuery = (q, s) ->
+  if s.api in preSdmx3
+    createV1AvailUrl q, s
+  else
+    createV2AvailUrl q, s
+  
 
 handleAvailabilityPathParams = (q) ->
   path = []
@@ -235,12 +252,42 @@ handleAvailabilityQueryParams = (q) ->
   p.push "references=#{q.references}" unless q.references is 'none'
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
-createShortAvailabilityQuery = (q, s) ->
+handleAvailabilityV2PathParams = (q) ->
+  path = []
+  path.push q.component unless q.component is 'all'
+  path.push q.key if q.key isnt 'all' or path.length
+  if path.length then '/' + path.reverse().join('/') else ''
+
+handleAvailabilityV2QueryParams = (q) ->
+  p = []
+  p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  p.push "mode=#{q.mode}" unless q.mode is 'exact'
+  p.push "references=#{q.references}" unless q.references is 'none'
+  if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
+
+createShortV1AvailUrl = (q, s) ->
   u = createEntryPoint s
   u += "availableconstraint/#{q.flow}"
   u += handleAvailabilityPathParams(q)
   u += handleAvailabilityQueryParams(q)
   u
+
+createShortV2AvailUrl = (q, s) ->
+  u = createEntryPoint s
+  u += "availableconstraint/dataflow/"
+  fc = parseFlow q.flow
+  u += "#{fc[0]}/#{fc[1]}"
+  if fc[2] isnt "*"
+    u += "/#{fc[2]}"
+  u += handleAvailabilityV2PathParams(q)
+  u += handleAvailabilityV2QueryParams(q)
+  u
+
+createShortAvailabilityQuery = (q, s) ->
+  if s.api in preSdmx3
+    createShortV1AvailUrl q, s
+  else
+    createShortV2AvailUrl q, s
 
 createSchemaQuery = (q, s) ->
   u = createEntryPoint s
