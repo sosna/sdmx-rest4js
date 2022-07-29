@@ -1,3 +1,6 @@
+{ApiVersion} = require '../utils/api-version'
+{VersionNumber} = require '../utils/sdmx-patterns'
+
 createEntryPoint = (s) ->
   throw ReferenceError "#{s.url} is not a valid service" unless s.url
   url = s.url
@@ -23,6 +26,13 @@ validateDataForV2 = (q, s) ->
   if q.key.indexOf("\+") > -1
     throw Error "+ not allowed in key in #{s.api}"
 
+checkVersion = (q, s) ->
+  v = q.version
+  if s.api isnt ApiVersion.v2_0_0
+    throw Error "Semantic versioning not allowed in #{s.api}" \
+      unless v is 'latest' or v.match VersionNumber
+
 exports.createEntryPoint = createEntryPoint
 exports.parseFlow = parseFlow
 exports.validateDataForV2 = validateDataForV2
+exports.checkVersion = checkVersion
