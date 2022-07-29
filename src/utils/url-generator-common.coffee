@@ -2,7 +2,6 @@
 {VersionNumber} = require '../utils/sdmx-patterns'
 
 createEntryPoint = (s) ->
-  throw ReferenceError "#{s.url} is not a valid service" unless s.url
   url = s.url
   url = s.url + '/' unless s.url.endsWith('/')
   url
