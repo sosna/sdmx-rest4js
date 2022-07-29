@@ -157,7 +157,7 @@ resources =
 # The set of valid resources for the latest API version.
   LATEST: resourcesV6
 
-numbers = 
+numbers =
   v1_0_0: 0
   v1_0_1: 1
   v1_0_2: 2

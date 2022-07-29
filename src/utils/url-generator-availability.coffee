@@ -1,5 +1,6 @@
 {ApiNumber, ApiVersion, getKeyFromVersion} = require '../utils/api-version'
-{createEntryPoint, validateDataForV2, parseFlow} = require '../utils/url-generator-common'
+{createEntryPoint, validateDataForV2, parseFlow} =
+  require '../utils/url-generator-common'
 
 handleAvailabilityPathParams = (q) ->
   path = []
