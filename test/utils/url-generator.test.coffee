@@ -11,13 +11,9 @@ should = require('chai').should()
 describe 'URL Generator (generic)', ->
 
   it 'throws an exception if no query is supplied', ->
-    service = Service.from({
-      url: 'http://test.com'
-      api: ApiVersion.v2_0_0
-    })
-    test = -> new UrlGenerator().getUrl({}, service)
+    test = -> new UrlGenerator().getUrl()
     should.Throw(test, Error,
-      'not a valid SDMX data, metadata or availability query')
+      'A valid query must be supplied')
 
   it 'throws an exception if the input is not a data or a metadata query', ->
     service = Service.from({
@@ -25,8 +21,7 @@ describe 'URL Generator (generic)', ->
       api: ApiVersion.v2_0_0
     })
     test = -> new UrlGenerator().getUrl({test: 'Test'}, service)
-    should.Throw(test, TypeError,
-      'not a valid SDMX data, metadata or availability query')
+    should.Throw(test, TypeError, 'not a valid query')
 
   it 'throws an exception if no service is supplied', ->
     query = MetadataQuery.from({

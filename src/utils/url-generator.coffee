@@ -7,18 +7,18 @@
 generator = class Generator
 
   getUrl: (@query, @service, skipDefaults) ->
+    throw ReferenceError "A valid query must be supplied" unless @query
     throw ReferenceError "#{@service} is not a valid service"\
       unless @service and @service.url
-    if @query?.mode?
+    if @query.mode?
       new AvailabilityQueryHandler().handle(@query, @service, skipDefaults)
-    else if @query?.flow?
+    else if @query.flow?
       new DataQueryHandler().handle(@query, @service, skipDefaults)
-    else if @query?.resource?
+    else if @query.resource?
       new MetadataQueryHandler().handle(@query, @service, skipDefaults)
-    else if @query?.context?
+    else if @query.context?
       new SchemaQueryHandler().handle(@query, @service, skipDefaults)
     else
-      throw TypeError "#{@query} is not a valid SDMX data, metadata or \
-      availability query"
+      throw TypeError "#{@query} is not a valid query"
 
 exports.UrlGenerator = generator
