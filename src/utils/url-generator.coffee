@@ -6,8 +6,9 @@
 
 generator = class Generator
 
-  getUrl: (@query, service, skipDefaults) ->
-    @service = service ? ApiVersion.LATEST
+  getUrl: (@query, @service, skipDefaults) ->
+    throw ReferenceError "#{@service} is not a valid service"\
+      unless @service and @service.url
     if @query?.mode?
       new AvailabilityQueryHandler().handle(@query, @service, skipDefaults)
     else if @query?.flow?
