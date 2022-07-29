@@ -13,21 +13,19 @@ translateDetail = (detail) ->
   else
     "attributes=dsd&measures=all"
 
-createV1DataUrl = (query, service) ->
-  url = createEntryPoint service
-  url += "data/#{query.flow}/#{query.key}/#{query.provider}?"
-  if query.obsDimension
-    url += "dimensionAtObservation=#{query.obsDimension}&"
-  url += "detail=#{query.detail}"
-  if (service.api isnt ApiVersion.v1_0_0 and
-  service.api isnt ApiVersion.v1_0_1 and
-  service.api isnt ApiVersion.v1_0_2)
-    url += "&includeHistory=#{query.history}"
-  url += "&startPeriod=#{query.start}" if query.start
-  url += "&endPeriod=#{query.end}" if query.end
-  url += "&updatedAfter=#{query.updatedAfter}" if query.updatedAfter
-  url += "&firstNObservations=#{query.firstNObs}" if query.firstNObs
-  url += "&lastNObservations=#{query.lastNObs}" if query.lastNObs
+createV1DataUrl = (q, s, a) ->
+  url = createEntryPoint s
+  url += "data/#{q.flow}/#{q.key}/#{q.provider}?"
+  if q.obsDimension
+    url += "dimensionAtObservation=#{q.obsDimension}&"
+  url += "detail=#{q.detail}"
+  if a >= ApiNumber.v1_1_0
+    url += "&includeHistory=#{q.history}"
+  url += "&startPeriod=#{q.start}" if q.start
+  url += "&endPeriod=#{q.end}" if q.end
+  url += "&updatedAfter=#{q.updatedAfter}" if q.updatedAfter
+  url += "&firstNObservations=#{q.firstNObs}" if q.firstNObs
+  url += "&lastNObservations=#{q.lastNObs}" if q.lastNObs
   url
 
 createV2DataUrl = (q, s) ->
@@ -47,7 +45,7 @@ createV2DataUrl = (q, s) ->
 
 createDataQuery = (q, s, a) ->
   if a < ApiNumber.v2_0_0
-    createV1DataUrl q, s
+    createV1DataUrl q, s, a
   else
     createV2DataUrl q, s
 
@@ -62,17 +60,14 @@ handleData2PathParams = (q) ->
   path.push q.key if q.key isnt 'all' or path.length
   if path.length then '/' + path.reverse().join('/') else ''
 
-hasHistory = (q, s) ->
-  if (s.api isnt ApiVersion.v1_0_0 and
-  s.api isnt ApiVersion.v1_0_1 and
-  s.api isnt ApiVersion.v1_0_2 and
-  q.history) then true else false
+hasHistory = (q, s, a) ->
+  if (a >= ApiNumber.v1_1_0 and q.history) then true else false
 
-handleDataQueryParams = (q, s) ->
+handleDataQueryParams = (q, s, a) ->
   p = []
   p.push "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   p.push "detail=#{q.detail}" unless q.detail is 'full'
-  p.push "includeHistory=#{q.history}" if hasHistory(q, s)
+  p.push "includeHistory=#{q.history}" if hasHistory(q, s, a)
   p.push "startPeriod=#{q.start}" if q.start
   p.push "endPeriod=#{q.end}" if q.end
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
@@ -80,24 +75,24 @@ handleDataQueryParams = (q, s) ->
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
-handleData2QueryParams = (q, s) ->
+handleData2QueryParams = (q, s, a) ->
   p = []
   p.push "dimensionAtObservation=#{q.obsDimension}" if q.obsDimension
   p.push "#{translateDetail q.detail}" unless q.detail is 'full'
-  p.push "includeHistory=#{q.history}" if hasHistory(q, s)
+  p.push "includeHistory=#{q.history}" if hasHistory(q, s, a)
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   p.push "firstNObservations=#{q.firstNObs}" if q.firstNObs
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
-createShortV1Url = (q, s) ->
+createShortV1Url = (q, s, a) ->
   u = createEntryPoint s
   u += "data/#{q.flow}"
   u += handleDataPathParams(q)
-  u += handleDataQueryParams(q, s)
+  u += handleDataQueryParams(q, s, a)
   u
 
-createShortV2Url = (q, s) ->
+createShortV2Url = (q, s, a) ->
   validateDataForV2 q, s
   u = createEntryPoint s
   fc = parseFlow q.flow
@@ -106,14 +101,14 @@ createShortV2Url = (q, s) ->
   if fc[2] isnt "*" or pp isnt ''
     u += "/#{fc[2]}"
   u += pp
-  u += handleData2QueryParams(q, s)
+  u += handleData2QueryParams(q, s, a)
   u
  
 createShortDataQuery = (q, s, a) ->
   if a < ApiNumber.v2_0_0
-    createShortV1Url q, s
+    createShortV1Url q, s, a
   else
-    createShortV2Url q, s
+    createShortV2Url q, s, a
 
 handler = class Handler
 
