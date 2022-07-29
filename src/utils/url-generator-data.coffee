@@ -1,5 +1,6 @@
 {ApiNumber, ApiVersion, getKeyFromVersion} = require '../utils/api-version'
-{createEntryPoint, validateDataForV2, parseFlow} = require '../utils/url-generator-common'
+{createEntryPoint, validateDataForV2, parseFlow, checkMultipleItems} =
+  require '../utils/url-generator-common'
 {DataDetail} = require '../data/data-detail'
 
 translateDetail = (detail) ->
@@ -113,10 +114,6 @@ createShortDataQuery = (q, s, a) ->
     createShortV1Url q, s
   else
     createShortV2Url q, s
-
-checkMultipleItems = (i, s, r, a) ->
-  if a < ApiNumber.v1_3_0 and /\+/.test i
-    throw Error "Multiple #{r} not allowed in #{s.api}"
 
 handler = class Handler
 

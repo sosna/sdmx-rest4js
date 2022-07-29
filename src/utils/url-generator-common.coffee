@@ -1,4 +1,4 @@
-{ApiVersion} = require '../utils/api-version'
+{ApiVersion, ApiNumber} = require '../utils/api-version'
 {VersionNumber} = require '../utils/sdmx-patterns'
 
 createEntryPoint = (s) ->
@@ -32,7 +32,12 @@ checkVersion = (q, s) ->
     throw Error "Semantic versioning not allowed in #{s.api}" \
       unless v is 'latest' or v.match VersionNumber
 
+checkMultipleItems = (i, s, r, a) ->
+  if a < ApiNumber.v1_3_0 and /\+/.test i
+    throw Error "Multiple #{r} not allowed in #{s.api}"
+
 exports.createEntryPoint = createEntryPoint
 exports.parseFlow = parseFlow
 exports.validateDataForV2 = validateDataForV2
 exports.checkVersion = checkVersion
+exports.checkMultipleItems = checkMultipleItems
