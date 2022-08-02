@@ -30,6 +30,18 @@ describe 'Data queries', ->
     q.should.have.property('attributes').that.equals 'dsd'
     q.should.have.property('measures').that.equals 'all'
 
+  it 'has the expected defaults, even when nothing gets passed', ->
+    q = DataQuery2.from null
+    q.should.have.property('context').that.equals '*=*:*(*)'
+    q.should.have.property('key').that.equals '*'
+    q.should.have.property('updatedAfter').that.is.undefined
+    q.should.have.property('firstNObs').that.is.undefined
+    q.should.have.property('lastNObs').that.is.undefined
+    q.should.have.property('obsDimension').that.is.undefined
+    q.should.have.property('history').that.is.false
+    q.should.have.property('attributes').that.equals 'dsd'
+    q.should.have.property('measures').that.equals 'all'
+
   describe 'when setting the context', ->
 
     it 'throws an exception when the context is invalid', ->
@@ -78,6 +90,10 @@ describe 'Data queries', ->
 
     it 'throws an exception if the value for the key is invalid', ->
       test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', key: 'M.CHF+NOK.EUR..'})
+      should.Throw(test, Error, 'Not a valid data query')
+
+    it 'throws an exception if one of the values for the key is invalid', ->
+      test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', key: 'M.CHF.EUR,M.USD+GBP.EUR'})
       should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the updatedAfter timestamp', ->
@@ -154,6 +170,10 @@ describe 'Data queries', ->
       test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', attributes: '&1'})
       should.Throw(test, Error, 'Not a valid data query')
 
+    it 'throws an exception if one of the values for attributes is invalid', ->
+      test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', attributes: 'UNIT,&1'})
+      should.Throw(test, Error, 'Not a valid data query')
+
   describe 'when setting the measures to be returned', ->
 
     it 'a string representing one predefined set of measures can be passed', ->
@@ -168,4 +188,8 @@ describe 'Data queries', ->
 
     it 'throws an exception if value for measures is invalid', ->
       test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', measures: '&1'})
+      should.Throw(test, Error, 'Not a valid data query')
+
+    it 'throws an exception if one of the values for measures is invalid', ->
+      test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', measures: 'TURNOVER,&1'})
       should.Throw(test, Error, 'Not a valid data query')
