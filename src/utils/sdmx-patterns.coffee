@@ -109,6 +109,25 @@ FlowRefType = /// ^
   )
   $ ///
 
+ContextType = ///
+  (datastructure|dataflow|provisionagreement)
+  ///
+
+
+ContextRefType = /// ^
+  (
+    (#{ContextType.source} | \*)            # The context
+    =                                       # Then a separator
+    (#{NestedNCNameIDType.source} | \*)     # Then the agency
+    :                                       # Then a separator
+    (#{IDType.source} | \*)                 # Then the artefact ID
+    \(                                      # Then an open parenthesis  
+    (#{VersionNumber.source} | #{SemVer.source} | \*) # Then the version
+    \)                                      # Then a closing parenthesis
+  )
+  $ ///
+
+
 ProviderRefType = ///
   (#{NestedNCNameIDType.source},)? # May start with the agency owning the scheme
   #{IDType.source}                 # The id of the provider
@@ -166,3 +185,4 @@ exports.Sdmx3SeriesKeyType = Sdmx3SeriesKeyType
 exports.MultipleIDType = MultipleIDType
 exports.MultipleVersionsType = MultipleVersionsType
 exports.MultipleNestedIDType = MultipleNestedIDType
+exports.ContextRefType = ContextRefType

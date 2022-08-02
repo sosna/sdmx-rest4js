@@ -1,9 +1,10 @@
-{FlowRefType, Sdmx3SeriesKeyType, NCNameIDType} =
+{ContextRefType, Sdmx3SeriesKeyType, NCNameIDType} =
   require '../utils/sdmx-patterns'
 {isValidPattern, isValidDate, createErrorMessage} =
   require '../utils/validators'
 
 defaults =
+  context: '*=*:*(*)'
   key: '*'
   history: false
   attributes: 'dsd'
@@ -44,7 +45,7 @@ isValidKey = (input, name, errors) ->
   valid
 
 ValidQuery =
-  flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
+  context: (i, e) -> isValidPattern(i, ContextRefType, 'context', e)
   key: (i, e) -> isValidKey(i, 'series key', e)
   updatedAfter: (i, e) -> not i or isValidDate(i, 'updatedAfter', e)
   firstNObs: (i, e) -> not i or isValidNObs(i, 'firstNObs', e)
@@ -67,11 +68,12 @@ isValidQuery = (q) ->
 query = class DataQuery
 
   @from: (opts) ->
+    context = opts?.context ? defaults.context
     key = opts?.key ? defaults.key
     attrs = opts?.attributes ? defaults.attributes
     measures = opts?.measures ? defaults.measures
     query =
-      flow: opts?.flow
+      context: context
       key: key
       updatedAfter: opts?.updatedAfter
       firstNObs: opts?.firstNObs
