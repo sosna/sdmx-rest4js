@@ -48,49 +48,27 @@ describe 'Data queries', ->
 
     it 'a string representing the key can be used', ->
       flow = 'EXR'
-      key = '.CHF+NOK.EUR..2'
+      key = 'M.CHF.EUR.SP00.A'
       q = DataQuery2.from({flow: flow, key: key})
       q.should.have.property('flow').that.equals flow
       q.should.have.property('key').that.equals key
 
-    it 'an array of arrays can be used to build the key', ->
-      values = [
-        ['D']
-        ['NOK', 'RUB', 'CHF']
-        ['EUR']
-        []
-        ['A']
-      ]
-      query = DataQuery2.from({flow: 'EXR', key: values})
-      query.should.have.property('flow').that.equals 'EXR'
-      query.should.have.property('key').that.equals 'D.NOK+RUB+CHF.EUR..A'
+    it 'a string with wildcarded values can be used', ->
+      flow = 'EXR'
+      key = 'M.*.EUR.SP00.*'
+      q = DataQuery2.from({flow: flow, key: key})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('key').that.equals key
 
-    it 'a mixed array can be used to build the key', ->
-      values = [
-        'D'
-        ['NOK', 'RUB', 'CHF']
-        ''
-        'SP00'
-        undefined
-      ]
-      query = DataQuery2.from({flow: 'EXR', key: values})
-      query.should.have.property('flow').that.equals 'EXR'
-      query.should.have.property('key').that.equals 'D.NOK+RUB+CHF..SP00.'
-
-    it 'an exotic array can be used to build the key', ->
-      values = [
-        ''
-        ['NOK', 'RUB', 'CHF']
-        ['EUR']
-        undefined
-        null
-      ]
-      query = DataQuery2.from({flow: 'EXR', key: values})
-      query.should.have.property('flow').that.equals 'EXR'
-      query.should.have.property('key').that.equals '.NOK+RUB+CHF.EUR..'
+    it 'a string with multiple keys can be used', ->
+      flow = 'EXR'
+      key = 'M.CHF.EUR.SP00.A,D.CHF.EUR.SP00.A'
+      q = DataQuery2.from({flow: flow, key: key})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('key').that.equals key
 
     it 'throws an exception if the value for the key is invalid', ->
-      test = -> DataQuery2.from({flow: 'EXR', key: '1%'})
+      test = -> DataQuery2.from({flow: 'EXR', key: 'M.CHF+NOK.EUR..'})
       should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the updatedAfter timestamp', ->

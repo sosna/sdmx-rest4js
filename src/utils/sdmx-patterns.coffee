@@ -90,6 +90,14 @@ SeriesKeyType = /// ^
   )*
   $ ///
 
+Sdmx3SeriesKeyType = /// ^
+  (\* | #{IDType.source})?    # One star or a dimension value
+  (
+    [.]                       # Potentially followed by a dot
+    (\* | #{IDType.source})?  # and repeating above pattern
+  )*
+$ ///
+
 FlowRefType = /// ^
   (
   #{IDType.source}
@@ -154,6 +162,7 @@ exports.MultipleProviderRefType = MultipleProviderRefType
 exports.AgenciesRefType = MultipleAgenciesRefType
 exports.ReportingPeriodType = ReportingPeriodType
 exports.SeriesKeyType = SeriesKeyType
+exports.Sdmx3SeriesKeyType = Sdmx3SeriesKeyType
 exports.MultipleIDType = MultipleIDType
 exports.MultipleVersionsType = MultipleVersionsType
 exports.MultipleNestedIDType = MultipleNestedIDType
