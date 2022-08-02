@@ -7,6 +7,8 @@
 defaults =
   key: 'all'
   history: false
+  attributes: 'dsd'
+  measures: 'all'
 
 isValidHistory = (input, errors) ->
   valid = typeof input is 'boolean'
@@ -20,6 +22,17 @@ isValidNObs = (input, name, errors) ->
   integer" unless valid
   valid
 
+isValidComp = (input, name, errors) ->
+  valid = true
+  if input.indexOf(",") > -1
+    for i in input.split ","
+      r = isValidPattern(i, NCNameIDType, name, errors)
+      valid = false unless r
+  else
+    r = isValidPattern(input, NCNameIDType, name, errors)
+    valid = false unless r
+  valid
+
 ValidQuery =
   flow: (i, e) -> isValidPattern(i, FlowRefType, 'flows', e)
   key: (i, e) -> isValidPattern(i, SeriesKeyType, 'series key', e)
@@ -29,6 +42,8 @@ ValidQuery =
   obsDimension: (i, e) ->
     not i or isValidPattern(i, NCNameIDType, 'obs dimension', e)
   history: (i, e) -> isValidHistory(i, e)
+  attributes: (i, e) -> isValidComp(i, 'attributes', e)
+  measures: (i, e) -> isValidComp(i, 'measures', e)
 
 isValidQuery = (q) ->
   errors = []
@@ -47,6 +62,8 @@ query = class DataQuery
   @from: (opts) ->
     key = opts?.key ? defaults.key
     key = toKeyString key if Array.isArray key
+    attrs = opts?.attributes ? defaults.attributes
+    measures = opts?.measures ? defaults.measures
     query =
       flow: opts?.flow
       key: key
@@ -55,6 +72,8 @@ query = class DataQuery
       lastNObs: opts?.lastNObs
       obsDimension: opts?.obsDimension
       history: opts?.history ? defaults.history
+      attributes: attrs
+      measures: measures
     input = isValidQuery query
     throw Error createErrorMessage(input.errors, 'data query') \
       unless input.isValid

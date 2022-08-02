@@ -15,6 +15,8 @@ describe 'Data queries', ->
     q.should.have.property 'lastNObs'
     q.should.have.property 'obsDimension'
     q.should.have.property 'history'
+    q.should.have.property 'attributes'
+    q.should.have.property 'measures'
 
   it 'has the expected defaults', ->
     flow = 'EXR'
@@ -26,6 +28,8 @@ describe 'Data queries', ->
     q.should.have.property('lastNObs').that.is.undefined
     q.should.have.property('obsDimension').that.is.undefined
     q.should.have.property('history').that.is.false
+    q.should.have.property('attributes').that.equals 'dsd'
+    q.should.have.property('measures').that.equals 'all'
 
   describe 'when setting the flow', ->
 
@@ -153,4 +157,44 @@ describe 'Data queries', ->
 
     it 'throws an exception if the value for history is not a boolean', ->
       test = -> DataQuery2.from({flow: 'EXR', history: 'test'})
+      should.Throw(test, Error, 'Not a valid data query')
+
+  describe 'when setting the attributes to be returned', ->
+
+    it 'a string representing one set of attributes can be passed', ->
+      flow = 'ECB,EXR,latest'
+      attrs = 'msd'
+      q = DataQuery2.from({flow: flow, attributes: attrs})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('attributes').that.equals attrs
+
+    it 'a string representing multiple sets of attributes can be passed', ->
+      flow = 'ECB,EXR,latest'
+      attrs = 'msd,dataset,UNIT'
+      q = DataQuery2.from({flow: flow, attributes: attrs})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('attributes').that.equals attrs
+
+    it 'throws an exception if value for attributes is invalid', ->
+      test = -> DataQuery2.from({flow: 'EXR', attributes: '&1'})
+      should.Throw(test, Error, 'Not a valid data query')
+
+  describe 'when setting the measures to be returned', ->
+
+    it 'a string representing one predefined set of measures can be passed', ->
+      flow = 'ECB,EXR,latest'
+      m = 'all'
+      q = DataQuery2.from({flow: flow, measures: m})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('measures').that.equals m
+
+    it 'a string representing multiple measures can be passed', ->
+      flow = 'ECB,EXR,latest'
+      m = 'TURNOVER,OPEN_INTEREST'
+      q = DataQuery2.from({flow: flow, measures: m})
+      q.should.have.property('flow').that.equals flow
+      q.should.have.property('measures').that.equals m
+
+    it 'throws an exception if value for measures is invalid', ->
+      test = -> DataQuery2.from({flow: 'EXR', measures: '&1'})
       should.Throw(test, Error, 'Not a valid data query')
