@@ -22,7 +22,7 @@ describe 'Data queries', ->
     flow = 'EXR'
     q = DataQuery2.from {flow: flow}
     q.should.have.property('flow').that.equals flow
-    q.should.have.property('key').that.equals 'all'
+    q.should.have.property('key').that.equals '*'
     q.should.have.property('updatedAfter').that.is.undefined
     q.should.have.property('firstNObs').that.is.undefined
     q.should.have.property('lastNObs').that.is.undefined

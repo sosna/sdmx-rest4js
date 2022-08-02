@@ -4,7 +4,7 @@
   require '../utils/validators'
 
 defaults =
-  key: 'all'
+  key: '*'
   history: false
   attributes: 'dsd'
   measures: 'all'
