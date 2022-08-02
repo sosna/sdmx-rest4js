@@ -1,7 +1,6 @@
-{DataDetail} = require './data-detail'
 {FlowRefType, Sdmx3SeriesKeyType, NCNameIDType} =
   require '../utils/sdmx-patterns'
-{isValidEnum, isValidPattern, isValidPeriod, isValidDate, createErrorMessage} =
+{isValidPattern, isValidDate, createErrorMessage} =
   require '../utils/validators'
 
 defaults =
