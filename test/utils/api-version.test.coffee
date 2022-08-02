@@ -2,6 +2,8 @@ should = require('chai').should()
 
 {ApiVersion} = require '../../src/utils/api-version'
 {ApiResources} = require '../../src/utils/api-version'
+{getKeyFromVersion} = require '../../src/utils/api-version'
+
 
 describe 'API versions', ->
 
@@ -196,3 +198,12 @@ describe 'API resources', ->
 
   it 'contains all the expected resources for the latest version and only those', ->
     ApiResources.LATEST.should.eql expectedResourcesV6
+
+describe 'Translator', ->
+
+  it 'translates version numbers into keys', ->
+    api = ApiVersion.v2_0_0
+    k = getKeyFromVersion(api)
+    a = ApiVersion[k]
+    console.log(k)
+    api.should.equal a
