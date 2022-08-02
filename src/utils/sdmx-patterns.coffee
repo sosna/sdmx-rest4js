@@ -109,25 +109,6 @@ FlowRefType = /// ^
   )
   $ ///
 
-ContextType = ///
-  (datastructure|dataflow|provisionagreement)
-  ///
-
-
-ContextRefType = /// ^
-  (
-    (#{ContextType.source} | \*)            # The context
-    =                                       # Then a separator
-    (#{NestedNCNameIDType.source} | \*)     # Then the agency
-    :                                       # Then a separator
-    (#{IDType.source} | \*)                 # Then the artefact ID
-    \(                                      # Then an open parenthesis  
-    (#{VersionNumber.source} | #{SemVer.source} | \*) # Then the version
-    \)                                      # Then a closing parenthesis
-  )
-  $ ///
-
-
 ProviderRefType = ///
   (#{NestedNCNameIDType.source},)? # May start with the agency owning the scheme
   #{IDType.source}                 # The id of the provider
@@ -139,18 +120,26 @@ MultipleProviderRefType = /// ^
 
 Sdmx_3_0_all = ///\*///
 
-MultipleAgenciesRefType = /// ^
+MultipleAgencies = ///
   (
   #{Sdmx_3_0_all.source}
   | #{NestedNCNameIDType.source}([+,]#{NestedNCNameIDType.source})*
   )
+  ///
+
+MultipleAgenciesRefType = /// ^
+  #{MultipleAgencies.source}
   $///
 
-MultipleIDType = /// ^
+MultipleIDs = /// 
   (
   #{Sdmx_3_0_all.source}
   | #{IDType.source}([+,]#{IDType.source})*
   )
+  ///
+
+MultipleIDType = /// ^
+  #{MultipleIDs.source}
   $///
 
 MultipleNestedIDType = /// ^
@@ -160,12 +149,43 @@ MultipleNestedIDType = /// ^
   )
   $///
 
+MultipleVersions = ///
+  (
+    #{Sdmx_3_0_all.source}
+    | #{VersionType.source}([,]#{VersionType.source})*
+  )
+  ///
+
 MultipleVersionsType = /// ^
   #{VersionType.source}([+,]#{VersionType.source})*
   $///
 
 ReportingPeriodType = /// ^
   \d{4}-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
+  $ ///
+
+ContextType = ///
+  (datastructure|dataflow|provisionagreement)
+  ///
+
+MultipleContextType = ///
+  (
+    #{Sdmx_3_0_all.source}
+    | #{ContextType.source}([+,]#{ContextType.source})*
+  )
+  ///
+
+ContextRefType = /// ^
+  (
+    #{MultipleContextType.source} # The context
+    =                             # Then the separator between context & agency
+    #{MultipleAgencies.source}    # Then one or more agencies
+    :                             # Then the separator between agency & id
+    #{MultipleIDs.source}         # Then one or more artefact IDs
+    \(                            # Then an open parenthesis  
+    #{MultipleVersions.source}    # Then one or more versions
+    \)                            # Then a closing parenthesis
+  )
   $ ///
 
 exports.NCNameIDType = NCNameIDTypeAlone

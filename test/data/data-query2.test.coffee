@@ -54,10 +54,10 @@ describe 'Data queries', ->
       q = DataQuery2.from({context: c})
       q.should.have.property('context').that.equals c
 
-    # it 'accepts multiple values', ->
-    #   c = 'dataflow=BIS:BIS_CBS,BIS_LBS(*)'
-    #   q = DataQuery2.from({context: c})
-    #   q.should.have.property('context').that.equals c
+    it 'accepts multiple values', ->
+      c = 'dataflow=BIS:BIS_CBS,BIS_LBS(*)'
+      q = DataQuery2.from({context: c})
+      q.should.have.property('context').that.equals c
 
   describe 'when setting the key', ->
 
