@@ -1,4 +1,4 @@
-{ContextRefType, Sdmx3SeriesKeyType, NCNameIDType} =
+{ContextRefType, Sdmx3SeriesKeyType, NCNameIDType, FiltersType} =
   require '../utils/sdmx-patterns'
 {isValidPattern, isValidDate, createErrorMessage} =
   require '../utils/validators'
@@ -9,6 +9,7 @@ defaults =
   history: false
   attributes: 'dsd'
   measures: 'all'
+  filters: []
 
 isValidHistory = (input, errors) ->
   valid = typeof input is 'boolean'
@@ -44,6 +45,14 @@ isValidKey = (input, name, errors) ->
     valid = false unless r
   valid
 
+isValidFilters = (input, name, errors) ->
+  valid = true
+  for filter in input
+    r = isValidPattern(filter, FiltersType, name, errors)
+    valid = false unless r
+  valid
+
+
 ValidQuery =
   context: (i, e) -> isValidPattern(i, ContextRefType, 'context', e)
   key: (i, e) -> isValidKey(i, 'series key', e)
@@ -55,6 +64,7 @@ ValidQuery =
   history: (i, e) -> isValidHistory(i, e)
   attributes: (i, e) -> isValidComp(i, 'attributes', e)
   measures: (i, e) -> isValidComp(i, 'measures', e)
+  filters: (i, e) -> isValidFilters(i, 'filters', e)
 
 isValidQuery = (q) ->
   errors = []
@@ -72,6 +82,8 @@ query = class DataQuery
     key = opts?.key ? defaults.key
     attrs = opts?.attributes ? defaults.attributes
     measures = opts?.measures ? defaults.measures
+    filters = opts?.filters ? defaults.filters
+    filters = [filters] if not Array.isArray filters
     query =
       context: context
       key: key
@@ -82,6 +94,7 @@ query = class DataQuery
       history: opts?.history ? defaults.history
       attributes: attrs
       measures: measures
+      filters: filters
     input = isValidQuery query
     throw Error createErrorMessage(input.errors, 'data query') \
       unless input.isValid

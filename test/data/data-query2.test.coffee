@@ -17,6 +17,7 @@ describe 'Data queries', ->
     q.should.have.property 'history'
     q.should.have.property 'attributes'
     q.should.have.property 'measures'
+    q.should.have.property 'filters'
 
   it 'has the expected defaults', ->
     q = DataQuery2.from {}
@@ -29,6 +30,8 @@ describe 'Data queries', ->
     q.should.have.property('history').that.is.false
     q.should.have.property('attributes').that.equals 'dsd'
     q.should.have.property('measures').that.equals 'all'
+    q.should.have.property('filters').that.is.instanceOf Array
+    q.should.have.property('filters').that.has.lengthOf 0
 
   it 'has the expected defaults, even when nothing gets passed', ->
     q = DataQuery2.from null
@@ -41,6 +44,8 @@ describe 'Data queries', ->
     q.should.have.property('history').that.is.false
     q.should.have.property('attributes').that.equals 'dsd'
     q.should.have.property('measures').that.equals 'all'
+    q.should.have.property('filters').that.has.lengthOf 0
+
 
   describe 'when setting the context', ->
 
@@ -193,3 +198,31 @@ describe 'Data queries', ->
     it 'throws an exception if one of the values for measures is invalid', ->
       test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', measures: 'TURNOVER,&1'})
       should.Throw(test, Error, 'Not a valid data query')
+
+  describe 'when setting the filters to be applied', ->
+
+    it 'a string representing one filter can be passed', ->
+      f = 'FREQ=A'
+      q = DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', filters: f})
+      q.should.have.property('filters').that.has.lengthOf 1
+      r = q.filters[0]
+      r.should.equal f
+
+    it 'an array representing multiple filters can be passed', ->
+      f1 = 'FREQ=A'
+      f2 = 'TIME_PERIOD=ge:2020-01+le:2020-12,2022-08'
+      q = DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', filters: [f1, f2]})
+      q.should.have.property('filters').that.has.lengthOf 2
+      r1 = q.filters[0]
+      r1.should.equal f1
+      r2 = q.filters[1]
+      r2.should.equal f2
+
+    it 'throws an exception if the filter is invalid', ->
+      test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', filters: 'FREQ=badop:UNIT'})
+      should.Throw(test, Error, 'Not a valid data query')
+
+    it 'throws an exception if one of the filters is invalid', ->
+      test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', filters: ['FREQ=A', '$1']})
+      should.Throw(test, Error, 'Not a valid data query')
+

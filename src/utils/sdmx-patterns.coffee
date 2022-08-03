@@ -188,6 +188,24 @@ ContextRefType = /// ^
   )
   $ ///
 
+Operators = ///
+  (eq|ne|lt|le|gt|ge|co|nc|sw|ew)
+  ///
+
+FilterValue = ///
+  (
+    (#{Operators.source}:)?#{IDType.source}
+  )
+  ///
+
+FiltersType = /// ^
+  (
+    #{NCNameIDType.source}
+    =                             
+    #{FilterValue.source}([+,]#{FilterValue.source})*
+  )
+  $ ///
+
 exports.NCNameIDType = NCNameIDTypeAlone
 exports.NestedNCNameIDType = NestedNCNameIDTypeAlone
 exports.IDType = IDTypeAlone
@@ -206,3 +224,4 @@ exports.MultipleIDType = MultipleIDType
 exports.MultipleVersionsType = MultipleVersionsType
 exports.MultipleNestedIDType = MultipleNestedIDType
 exports.ContextRefType = ContextRefType
+exports.FiltersType = FiltersType
