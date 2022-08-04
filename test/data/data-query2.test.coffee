@@ -1,6 +1,5 @@
 should = require('chai').should()
 
-{DataDetail} = require '../../src/data/data-detail'
 {DataQuery2} = require '../../src/data/data-query2'
 
 describe 'Data queries', ->
