@@ -2,7 +2,7 @@
 {createEntryPoint, validateDataForV2, parseContext, parseFilter} =
   require '../utils/url-generator-common'
 
-createDataQuery = (q, s, a) ->
+createDataQuery = (q, s) ->
   validateDataForV2 q, s
   url = createEntryPoint s
   fc = parseContext q.context
@@ -32,7 +32,7 @@ handleDataPathParams = (q) ->
   p.push c[0] if c[0] isnt '*' or p.length
   if p.length then '/' + p.reverse().join('/') else ''
 
-handleDataQueryParams = (q, s, a) ->
+handleDataQueryParams = (q) ->
   p = []
   if q.filters
     for filter in q.filters
@@ -47,13 +47,13 @@ handleDataQueryParams = (q, s, a) ->
   p.push "lastNObservations=#{q.lastNObs}" if q.lastNObs
   if p.length > 0 then '?' + p.reduceRight (x, y) -> x + '&' + y else ''
 
-createShortDataQuery = (q, s, a) ->
+createShortDataQuery = (q, s) ->
   validateDataForV2 q, s
   u = createEntryPoint s
   u += 'data'
   p = handleDataPathParams(q)
   u += p
-  u += handleDataQueryParams(q, s, a)
+  u += handleDataQueryParams(q)
   u
 
 handler = class Handler
@@ -63,8 +63,8 @@ handler = class Handler
     if api < ApiNumber.v2_0_0
       throw Error "SDMX 3.0 queries not allowed in #{s.api}"
     else if skip
-      createShortDataQuery(q, s, api)
+      createShortDataQuery(q, s)
     else
-      createDataQuery(q, s, api)
+      createDataQuery(q, s)
 
 exports.DataQuery2Handler = handler
