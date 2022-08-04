@@ -100,7 +100,7 @@ describe 'SDMX 3.0 availability queries', ->
       query.should.have.property('component').that.equals cp
 
     it 'a string representing multilpe component ids can be passed', ->
-      cp = 'A'
+      cp = 'A,B'
       query = AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', component: cp})
       query.should.have.property('component').that.equals cp
 

@@ -34,8 +34,13 @@ isValidFilters = (input, name, errors) ->
 isValidComp = (input, name, errors) ->
   valid = true
   if input isnt '*'
-    r = isValidPattern(input, NestedNCNameIDType, name, errors)
-    valid = false unless r
+    if input.indexOf(",") > -1
+      for i in input.split ","
+        r = isValidPattern(i, NestedNCNameIDType, name, errors)
+        valid = false unless r
+    else
+      r = isValidPattern(input, NestedNCNameIDType, name, errors)
+      valid = false unless r
   valid
 
 ValidQuery =
