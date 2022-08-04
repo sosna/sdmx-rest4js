@@ -1,4 +1,5 @@
 {DataQuery} = require './data/data-query'
+{DataQuery2} = require './data/data-query2'
 {DataFormat} = require './data/data-format'
 {DataDetail} = require './data/data-detail'
 {MetadataQuery} = require './metadata/metadata-query'
@@ -174,6 +175,54 @@ getService = (input) ->
 #
 getDataQuery = (input) ->
   return DataQuery.from input
+
+#
+# Get an SDMX 3.0 RESTful data query.
+#
+# The expected properties (and their default values) are:
+# - *context* (optional) - the reference to the context (default: *=*:*(*)).
+# - *key* (optional) - the key of the data to be returned (default: all).
+# - *updatedAfter* (optional) - instructs the service to return what has
+#   changed since the supplied time stamp.
+# - *firstNObs* (optional) - the number of observations to be returned,
+#   starting from the first observation.
+# - *lastNObs* (optional) - the number of observations to be returned,
+#   starting from the last observation.
+# - *obsDimension* (optional) - the ID of the dimension to be attached at the
+#   observation level (default TIME_PERIOD).
+# - *history* (optional) - Whether previous versions of the data should be
+#   returned (default: false).
+# - *attributes* (optional) - The attributes to be returned (default: dsd).
+# - *measures* (optional) - The measures to be returned (default: all).
+# - *filters* (optional) - The component filters to be applied.
+#
+# @example Create a query for all data belonging to the CBS dataflow, 
+# maintained by the BIS
+#   sdmxrest.getDataQuery({context: 'dataflow=BIS:EXR(*)'})
+#
+# @example Create a query for EXR data, matching values A for the 1st 
+# dimension, any value for the 2nd dimension, EUR, SP00 and A for the 3rd, 4th
+# and 5th dimensions respectively
+#   sdmxrest.getDataQuery({context: 'dataflow=*:EXR(*)', key: 'A..EUR.SP00.A'})
+#
+# @example Create a query for the last observation of the EXR data matching the
+#  supplied key
+#   sdmxrest.getDataQuery({context: 'dataflow=*:EXR(*)', key: 'A.*.EUR.SP00.A',
+#     lastNObs: 1})
+#
+# @example Create a query to get what has changed for the EXR data since
+#   the supplied point in time
+#   sdmxrest.getDataQuery({context: 'dataflow=*:EXR(*)',
+#     updatedAfter: '2016-03-17T14:38:00Z'})
+#
+# @param [Object] input an object with the desired filters for the query
+#
+# @throw an error in case a) the mandatory flow is not supplied or b) a value
+# not compliant with the SDMX 2.1 RESTful specification is supplied for one of
+# the properties.
+#
+getDataQuery2 = (input) ->
+  return DataQuery2.from input
 
 #
 # Get an SDMX 2.1 RESTful metadata query.
@@ -380,6 +429,7 @@ module.exports =
   getService: getService
   services: services
   getDataQuery: getDataQuery
+  getDataQuery2: getDataQuery2
   getMetadataQuery: getMetadataQuery
   getAvailabilityQuery: getAvailabilityQuery
   getSchemaQuery: getSchemaQuery
