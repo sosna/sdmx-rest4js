@@ -131,7 +131,7 @@ MultipleAgenciesRefType = /// ^
   #{MultipleAgencies.source}
   $///
 
-MultipleIDs = /// 
+MultipleIDs = ///
   (
   #{Sdmx_3_0_all.source}
   | #{IDType.source}([+,]#{IDType.source})*
@@ -182,7 +182,7 @@ ContextRefType = /// ^
     #{MultipleAgencies.source}    # Then one or more agencies
     :                             # Then the separator between agency & id
     #{MultipleIDs.source}         # Then one or more artefact IDs
-    \(                            # Then an open parenthesis  
+    \(                            # Then an open parenthesis
     #{MultipleVersions.source}    # Then one or more versions
     \)                            # Then a closing parenthesis
   )
@@ -201,7 +201,7 @@ FilterValue = ///
 FiltersType = /// ^
   (
     #{NCNameIDType.source}
-    =                             
+    =
     #{FilterValue.source}([+,]#{FilterValue.source})*
   )
   $ ///

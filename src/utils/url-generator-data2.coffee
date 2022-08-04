@@ -35,7 +35,7 @@ handleDataPathParams = (q) ->
   p.push c[3] if c[3] isnt '*' or p.length
   p.push c[2] if c[2] isnt '*' or p.length
   p.push c[1] if c[1] isnt '*' or p.length
-  p.push c[0] if c[0] isnt '*' or p.length    
+  p.push c[0] if c[0] isnt '*' or p.length
   if p.length then '/' + p.reverse().join('/') else ''
 
 handleDataQueryParams = (q, s, a) ->
