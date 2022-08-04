@@ -111,6 +111,10 @@ describe 'SDMX 3.0 availability queries', ->
       test = -> AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', component: 'A*'})
       should.Throw(test, Error, 'Not a valid availability query')
 
+    it 'throws an exception one of the component ids is invalid', ->
+      test = -> AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', component: 'A,Q*'})
+      should.Throw(test, Error, 'Not a valid availability query')  
+
   describe 'when setting the updatedAfter timestamp', ->
 
     it 'a string representing a timestamp can be passed', ->
