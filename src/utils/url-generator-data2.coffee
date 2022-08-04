@@ -73,4 +73,4 @@ handler = class Handler
     else
       createDataQuery(q, s, api)
 
-exports.Data2QueryHandler = handler
+exports.DataQuery2Handler = handler
