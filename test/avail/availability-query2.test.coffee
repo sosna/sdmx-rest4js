@@ -99,6 +99,11 @@ describe 'SDMX 3.0 availability queries', ->
       query = AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', component: cp})
       query.should.have.property('component').that.equals cp
 
+    it 'a string representing multilpe component ids can be passed', ->
+      cp = 'A'
+      query = AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', component: cp})
+      query.should.have.property('component').that.equals cp
+
     it 'throws an exception if the component id is invalid', ->
       test = -> AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', component: ' '})
       should.Throw(test, Error, 'Not a valid availability query')
