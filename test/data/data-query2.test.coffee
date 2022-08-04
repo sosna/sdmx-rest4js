@@ -2,7 +2,7 @@ should = require('chai').should()
 
 {DataQuery2} = require '../../src/data/data-query2'
 
-describe 'Data queries', ->
+describe 'SDMX 3.0 data queries', ->
 
   it 'has the expected properties', ->
     q = DataQuery2.from {}
