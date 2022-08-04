@@ -60,9 +60,23 @@ isValidQuery = (q) ->
     break unless isValid
   {isValid: isValid, errors: errors}
 
+expected = [
+  "context"
+  "key"
+  "component"
+  "updatedAfter"
+  "filters"
+  "mode"
+  "references"
+]
+
 query = class AvailabilityQuery
 
   @from: (opts) ->
+    if opts
+      for own k, v of opts
+        throw Error createErrorMessage([], 'availability query') \
+        unless k in expected
     context = opts?.context ? defaults.context
     key = opts?.key ? defaults.key
     filters = opts?.filters ? defaults.filters

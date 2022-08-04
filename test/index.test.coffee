@@ -12,8 +12,10 @@ describe 'API', ->
     sdmxrest.should.have.property 'getService'
     sdmxrest.should.have.property('services').that.is.an 'array'
     sdmxrest.should.have.property 'getDataQuery'
+    sdmxrest.should.have.property 'getDataQuery2'
     sdmxrest.should.have.property 'getMetadataQuery'
     sdmxrest.should.have.property 'getAvailabilityQuery'
+    sdmxrest.should.have.property 'getAvailabilityQuery2'
     sdmxrest.should.have.property 'getSchemaQuery'
     sdmxrest.should.have.property 'getUrl'
     sdmxrest.should.have.property 'request'
@@ -120,6 +122,33 @@ describe 'API', ->
       test = -> sdmxrest.getDataQuery {test: 'TEST'}
       should.Throw(test, Error, 'Not a valid data query')
 
+  describe 'when using getDataQuery2()', ->
+
+    it 'offers to create a data query from properties', ->
+      input = {
+        context: 'dataflow=ECB:EXR(*)'
+        key: 'A..EUR.SP00.A'
+      }
+      query = sdmxrest.getDataQuery2 input
+      query.should.be.an 'object'
+      query.should.have.property('context').that.equals input.context
+      query.should.have.property('key').that.equals input.key
+      query.should.have.property('updatedAfter').that.is.undefined
+      query.should.have.property('firstNObs').that.is.undefined
+      query.should.have.property('lastNObs').that.is.undefined
+      query.should.have.property('obsDimension').that.is.undefined
+      query.should.have.property('history').that.is.false
+      query.should.have.property('attributes').that.equals 'dsd'
+      query.should.have.property('measures').that.equals 'all'
+      query.should.have.property('filters').that.is.instanceOf Array
+      query.should.have.property('filters').that.has.lengthOf 0
+
+    it 'fails if the input is not of the expected type', ->
+      t = {}
+      t["test"] = "test2"
+      test = -> sdmxrest.getDataQuery2 t
+      should.Throw(test, Error, 'Not a valid data query')
+
   describe 'when using getMetadataQuery()', ->
 
     it 'offers to create a metadata query from properties', ->
@@ -168,6 +197,28 @@ describe 'API', ->
       should.Throw(test, Error, 'Not a valid availability query')
 
       test = -> sdmxrest.getAvailabilityQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid availability query')
+
+  describe 'when using getAvailabilityQuery2()', ->
+
+    it 'offers to create an availability query from properties', ->
+      input = {
+        context: 'dataflow=ECB:EXR(*)'
+        key: 'A..EUR.SP00.A'
+      }
+      query = sdmxrest.getAvailabilityQuery2 input
+      query.should.be.an 'object'      
+      query.should.have.property('context').that.equals input.context
+      query.should.have.property('key').that.equals input.key
+      query.should.have.property('component').that.equals '*'
+      query.should.have.property('updatedAfter').that.is.undefined
+      query.should.have.property('filters').that.is.instanceOf Array
+      query.should.have.property('filters').that.has.lengthOf 0
+      query.should.have.property('mode').that.equals 'exact'
+      query.should.have.property('references').that.equals 'none'
+
+    it 'fails if the input is not of the expected type', ->
+      test = -> sdmxrest.getAvailabilityQuery2 {test: 'TEST'}
       should.Throw(test, Error, 'Not a valid availability query')
 
   describe 'when using getSchemaQuery()', ->

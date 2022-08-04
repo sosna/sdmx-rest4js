@@ -38,6 +38,10 @@ describe 'SDMX 3.0 availability queries', ->
     q.should.have.property('mode').that.equals 'exact'
     q.should.have.property('references').that.equals 'none'
 
+  
+  it 'throws an exception if the input is not as expected', ->
+    test = -> AvailabilityQuery2.from({test: 'test'})
+    should.Throw(test, Error, 'Not a valid availability query')
 
   describe 'when setting the context', ->
 
@@ -159,19 +163,19 @@ describe 'SDMX 3.0 availability queries', ->
   describe 'when setting the processing mode', ->
     it 'a string representing the amount of details can be passed', ->
       mode = AvailabilityMode.AVAILABLE
-      query = AvailabilityQuery2.from({flow: 'EXR', mode: mode})
+      query = AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', mode: mode})
       query.should.have.property('mode').that.equals mode
 
     it 'throws an exception if the value for mode is unknown', ->
-      test = -> AvailabilityQuery2.from({flow: 'EXR', mode: 'test'})
+      test = -> AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', mode: 'test'})
       should.Throw(test, Error, 'Not a valid availability query')
 
   describe 'when setting the references', ->
     it 'a string representing the references to be resolved can be passed', ->
       refs = AvailabilityReferences.CONCEPT_SCHEME
-      query = AvailabilityQuery2.from({flow: 'EXR', references: refs})
+      query = AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', references: refs})
       query.should.have.property('references').that.equals refs
 
     it 'throws an exception if the value for references is unknown', ->
-      test = -> AvailabilityQuery2.from({flow: 'dataflow', references: 'ref'})
+      test = -> AvailabilityQuery2.from({context: 'dataflow=BIS:CBS(1.0)', references: 'ref'})
       should.Throw(test, Error, 'Not a valid availability query')
