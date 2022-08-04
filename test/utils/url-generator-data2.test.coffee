@@ -153,3 +153,9 @@ describe 'URL Generator for data queries', ->
     service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
     url = new UrlGenerator().getUrl(query, service, true)
     url.should.equal expected
+
+  it 'throws an error when used against pre-SDMX 3.0 services', ->
+    query = DataQuery2.from({context: 'dataflow=*:EXR(*)'})
+    service = Service.from({url: 'http://test.com', api: ApiVersion.v1_5_0})
+    test = -> new UrlGenerator().getUrl(query, service)
+    should.Throw(test, Error, 'SDMX 3.0 queries not allowed in v1.5.0')

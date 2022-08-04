@@ -66,6 +66,8 @@ handler = class Handler
 
   handle: (q, s, skip) ->
     api = ApiNumber[getKeyFromVersion(s.api)]
+    if api < ApiNumber.v2_0_0
+      throw Error "SDMX 3.0 queries not allowed in #{s.api}"
     if skip
       createShortDataQuery(q, s, api)
     else
