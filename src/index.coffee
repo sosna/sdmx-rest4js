@@ -8,6 +8,7 @@
 {MetadataReferences} = require './metadata/metadata-references'
 {MetadataType} = require './metadata/metadata-type'
 {AvailabilityQuery} = require './avail/availability-query'
+{AvailabilityQuery2} = require './avail/availability-query2'
 {AvailabilityMode} = require './avail/availability-mode'
 {AvailabilityReferences} = require './avail/availability-references'
 {SchemaQuery} = require './schema/schema-query'
@@ -287,6 +288,32 @@ getAvailabilityQuery = (input) ->
   return AvailabilityQuery.from input
 
 #
+# Get an SDMX 3.0 RESTful availability query.
+#
+# The expected properties (and their default values) are:
+# - *context* (optional) - the reference to the context (default: *=*:*(*)).
+# - *key* (optional) - the key of the data to be returned (default: all)
+# - *component* (optional) - the id of the dimension for which to obtain
+#   availability information (default: all)
+# - *updatedAfter* (optional) - instructs the service to return what has
+#   changed since the supplied time stamp.
+# - *mode* (optional) - the possible processing modes (default: exact)
+# - *references* (optional) - the references to be returned (default: none)
+# - *filters* (optional) - The component filters to be applied.
+# 
+# @example Create an availability query for the ECB EXR dataflow
+#   sdmxrest.getAvailabilityQuery({context: 'dataflow=ECB:EXR(*)'})
+#
+# @param [Object] input an object with the desired characteristics of the query
+#
+# @throw an error in case a) the mandatory flow is not supplied or b) a value
+# not compliant with the SDMX 2.1 RESTful specification is supplied for one of
+# the properties.
+#
+getAvailabilityQuery2 = (input) ->
+  return AvailabilityQuery2.from input
+
+#
 # Get an SDMX 2.1 RESTful schema query.
 #
 # The expected properties (and their default values) are:
@@ -432,6 +459,7 @@ module.exports =
   getDataQuery2: getDataQuery2
   getMetadataQuery: getMetadataQuery
   getAvailabilityQuery: getAvailabilityQuery
+  getAvailabilityQuery2: getAvailabilityQuery2
   getSchemaQuery: getSchemaQuery
   getUrl: getUrl
   request: request
