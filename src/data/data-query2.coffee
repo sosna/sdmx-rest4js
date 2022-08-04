@@ -74,10 +74,27 @@ isValidQuery = (q) ->
     break unless isValid
   {isValid: isValid, errors: errors}
 
+expected = [
+  "context"
+  "key"
+  "updatedAfter"
+  "firstNObs"
+  "lastNObs"
+  "obsDimension"
+  "history"
+  "attributes"
+  "measures"
+  "filters"
+]
+
 # A query for data, as defined by the SDMX RESTful API.
 query = class DataQuery
 
   @from: (opts) ->
+    if opts
+      for own k, v of opts
+        throw Error createErrorMessage([], 'data query') \
+        unless k in expected
     context = opts?.context ? defaults.context
     key = opts?.key ? defaults.key
     attrs = opts?.attributes ? defaults.attributes

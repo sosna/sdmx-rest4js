@@ -45,6 +45,9 @@ describe 'SDMX 3.0 data queries', ->
     q.should.have.property('measures').that.equals 'all'
     q.should.have.property('filters').that.has.lengthOf 0
 
+  it 'throws an exception if the input is not as expected', ->
+    test = -> DataQuery2.from({test: 'test'})
+    should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the context', ->
 
@@ -224,4 +227,3 @@ describe 'SDMX 3.0 data queries', ->
     it 'throws an exception if one of the filters is invalid', ->
       test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', filters: ['FREQ=A', '$1']})
       should.Throw(test, Error, 'Not a valid data query')
-
