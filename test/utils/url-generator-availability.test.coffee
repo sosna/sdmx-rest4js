@@ -27,7 +27,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'generates a URL for a full availability query (2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/A..EUR.SP00.A/FREQ?\
+    expected = 'http://test.com/availability/dataflow/*/EXR/*/A..EUR.SP00.A/FREQ?\
     mode=available&references=none\
     &updatedAfter=2016-03-01T00:00:00Z'
     query = AvailabilityQuery.from({
@@ -51,7 +51,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'generates a URL for a partial availability query (2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/*/*?\
+    expected = 'http://test.com/availability/dataflow/*/EXR/*/*/*?\
     mode=exact&references=none'
     query = AvailabilityQuery.from({flow: 'EXR'})
     service = Service.from({url: 'http://test.com', api: ApiVersion.v2_0_0})
@@ -84,7 +84,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip default values for availability (2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR'
+    expected = 'http://test.com/availability/dataflow/*/EXR'
     query = AvailabilityQuery.from({
       flow: 'EXR'
       mode: 'exact'
@@ -95,7 +95,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (key, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/A.CH'
+    expected = 'http://test.com/availability/dataflow/*/EXR/*/A.CH'
     query = AvailabilityQuery.from({flow: 'EXR', key: 'A.CH'})
     service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)
@@ -116,7 +116,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (component, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR/*/*/FREQ'
+    expected = 'http://test.com/availability/dataflow/*/EXR/*/*/FREQ'
     query = AvailabilityQuery.from({flow: 'EXR', component: 'FREQ'})
     service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
     url = new UrlGenerator().getUrl(query, service, true)
@@ -130,7 +130,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (mode, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR\
+    expected = 'http://test.com/availability/dataflow/*/EXR\
     ?mode=available'
     query = AvailabilityQuery.from({flow: 'EXR', mode: 'available'})
     service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
@@ -145,7 +145,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (refs, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR\
+    expected = 'http://test.com/availability/dataflow/*/EXR\
     ?references=codelist'
     query = AvailabilityQuery.from({flow: 'EXR', references: 'codelist'})
     service = Service.from({url: 'http://test.com', api: 'v2.0.0'})
@@ -185,7 +185,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (upd, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR?\
+    expected = 'http://test.com/availability/dataflow/*/EXR?\
     updatedAfter=2016-03-01T00:00:00Z'
     query = AvailabilityQuery.from({
       flow: 'EXR'
@@ -195,7 +195,7 @@ describe 'URL Generator for availability queries', ->
     url.should.equal expected
 
   it 'offers to skip defaults but adds them when needed (multi, 2.0.0)', ->
-    expected = 'http://test.com/availableconstraint/dataflow/*/EXR?\
+    expected = 'http://test.com/availability/dataflow/*/EXR?\
     mode=available&updatedAfter=2016-03-01T00:00:00Z'
     query = AvailabilityQuery.from({
       flow: 'EXR'

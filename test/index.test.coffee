@@ -230,7 +230,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
 
@@ -244,7 +244,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'mode=exact'
@@ -259,7 +259,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'FREQ'
@@ -274,7 +274,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'references=all'
