@@ -1,5 +1,6 @@
 {ApiVersion} = require '../utils/api-version'
 {AvailabilityQueryHandler} = require '../utils/url-generator-availability'
+{AvailabilityQuery2Handler} = require '../utils/url-generator-availability2'
 {SchemaQueryHandler} = require '../utils/url-generator-schema'
 {DataQueryHandler} = require '../utils/url-generator-data'
 {Data2QueryHandler} = require '../utils/url-generator-data2'
@@ -13,6 +14,8 @@ generator = class Generator
       unless @service and @service.url
     if @query.context? and @query.attributes?
       new Data2QueryHandler().handle(@query, @service, skipDefaults)
+    else if @query.context? and @query.mode?
+      new AvailabilityQuery2Handler().handle(@query, @service, skipDefaults)
     else if @query.mode?
       new AvailabilityQueryHandler().handle(@query, @service, skipDefaults)
     else if @query.flow?
