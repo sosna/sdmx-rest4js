@@ -1,12 +1,6 @@
 {ApiNumber, ApiVersion, getKeyFromVersion} = require '../utils/api-version'
-{createEntryPoint, validateDataForV2, parseContext} =
+{createEntryPoint, validateDataForV2, parseContext, parseFilter} =
   require '../utils/url-generator-common'
-
-filterPattern = ///
-  (.*)=(.*)
-///
-
-parseFilter = (f) -> f.match(filterPattern)[1..2]
 
 createDataQuery = (q, s, a) ->
   validateDataForV2 q, s

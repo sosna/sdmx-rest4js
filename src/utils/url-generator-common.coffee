@@ -21,6 +21,11 @@ contextPattern = ///
 
 parseContext = (f) -> f.match(contextPattern)[1..4]
 
+filterPattern = ///
+  (.*)=(.*)
+///
+
+parseFilter = (f) -> f.match(filterPattern)[1..2]
 
 validateDataForV2 = (q, s) ->
   if q.provider? and q.provider isnt "all"
@@ -48,3 +53,4 @@ exports.validateDataForV2 = validateDataForV2
 exports.checkVersion = checkVersion
 exports.checkMultipleItems = checkMultipleItems
 exports.parseContext = parseContext
+exports.parseFilter = parseFilter
