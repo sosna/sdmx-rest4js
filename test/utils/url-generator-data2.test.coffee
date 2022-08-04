@@ -5,7 +5,7 @@ should = require('chai').should()
 {DataQuery2} = require '../../src/data/data-query2'
 {UrlGenerator} = require '../../src/utils/url-generator'
 
-describe 'URL Generator for data queries', ->
+describe 'URL Generator for SDMX 3.0 data queries', ->
 
   it 'generates a URL for a full data query', ->
     expected = "http://test.com/data/dataflow/*/EXR/*/A..EUR.SP00.A\
