@@ -15,8 +15,15 @@ parseFlow = (f) ->
   else
     parts
 
+contextPattern = ///
+  (.*)=(.*):(.*)\((.*)\)
+///
+
+parseContext = (f) -> f.match(contextPattern)[1..4]
+
+
 validateDataForV2 = (q, s) ->
-  if q.provider isnt "all"
+  if q.provider? and q.provider isnt "all"
     throw Error "provider not allowed in #{s.api}"
   if q.start
     throw Error "start not allowed in #{s.api}"
@@ -40,3 +47,4 @@ exports.parseFlow = parseFlow
 exports.validateDataForV2 = validateDataForV2
 exports.checkVersion = checkVersion
 exports.checkMultipleItems = checkMultipleItems
+exports.parseContext = parseContext

@@ -90,6 +90,14 @@ SeriesKeyType = /// ^
   )*
   $ ///
 
+Sdmx3SeriesKeyType = /// ^
+  (\* | #{IDType.source})?    # One star or a dimension value
+  (
+    [.]                       # Potentially followed by a dot
+    (\* | #{IDType.source})?  # and repeating above pattern
+  )*
+$ ///
+
 FlowRefType = /// ^
   (
   #{IDType.source}
@@ -112,18 +120,26 @@ MultipleProviderRefType = /// ^
 
 Sdmx_3_0_all = ///\*///
 
-MultipleAgenciesRefType = /// ^
+MultipleAgencies = ///
   (
   #{Sdmx_3_0_all.source}
   | #{NestedNCNameIDType.source}([+,]#{NestedNCNameIDType.source})*
   )
+  ///
+
+MultipleAgenciesRefType = /// ^
+  #{MultipleAgencies.source}
   $///
 
-MultipleIDType = /// ^
+MultipleIDs = ///
   (
   #{Sdmx_3_0_all.source}
   | #{IDType.source}([+,]#{IDType.source})*
   )
+  ///
+
+MultipleIDType = /// ^
+  #{MultipleIDs.source}
   $///
 
 MultipleNestedIDType = /// ^
@@ -133,12 +149,61 @@ MultipleNestedIDType = /// ^
   )
   $///
 
+MultipleVersions = ///
+  (
+    #{Sdmx_3_0_all.source}
+    | #{VersionType.source}([,]#{VersionType.source})*
+  )
+  ///
+
 MultipleVersionsType = /// ^
   #{VersionType.source}([+,]#{VersionType.source})*
   $///
 
 ReportingPeriodType = /// ^
   \d{4}-([ASTQ]\d{1}|[MW]\d{2}|[D]\d{3})
+  $ ///
+
+ContextType = ///
+  (datastructure|dataflow|provisionagreement)
+  ///
+
+MultipleContextType = ///
+  (
+    #{Sdmx_3_0_all.source}
+    | #{ContextType.source}([+,]#{ContextType.source})*
+  )
+  ///
+
+ContextRefType = /// ^
+  (
+    #{MultipleContextType.source} # The context
+    =                             # Then the separator between context & agency
+    #{MultipleAgencies.source}    # Then one or more agencies
+    :                             # Then the separator between agency & id
+    #{MultipleIDs.source}         # Then one or more artefact IDs
+    \(                            # Then an open parenthesis
+    #{MultipleVersions.source}    # Then one or more versions
+    \)                            # Then a closing parenthesis
+  )
+  $ ///
+
+Operators = ///
+  (eq|ne|lt|le|gt|ge|co|nc|sw|ew)
+  ///
+
+FilterValue = ///
+  (
+    (#{Operators.source}:)?#{IDType.source}
+  )
+  ///
+
+FiltersType = /// ^
+  (
+    #{NCNameIDType.source}
+    =
+    #{FilterValue.source}([+,]#{FilterValue.source})*
+  )
   $ ///
 
 exports.NCNameIDType = NCNameIDTypeAlone
@@ -154,6 +219,9 @@ exports.MultipleProviderRefType = MultipleProviderRefType
 exports.AgenciesRefType = MultipleAgenciesRefType
 exports.ReportingPeriodType = ReportingPeriodType
 exports.SeriesKeyType = SeriesKeyType
+exports.Sdmx3SeriesKeyType = Sdmx3SeriesKeyType
 exports.MultipleIDType = MultipleIDType
 exports.MultipleVersionsType = MultipleVersionsType
 exports.MultipleNestedIDType = MultipleNestedIDType
+exports.ContextRefType = ContextRefType
+exports.FiltersType = FiltersType
