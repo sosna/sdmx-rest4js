@@ -197,11 +197,11 @@ getDataQuery = (input) ->
 # - *measures* (optional) - The measures to be returned (default: all).
 # - *filters* (optional) - The component filters to be applied.
 #
-# @example Create a query for all data belonging to the CBS dataflow, 
+# @example Create a query for all data belonging to the CBS dataflow,
 # maintained by the BIS
 #   sdmxrest.getDataQuery({context: 'dataflow=BIS:EXR(*)'})
 #
-# @example Create a query for EXR data, matching values A for the 1st 
+# @example Create a query for EXR data, matching values A for the 1st
 # dimension, any value for the 2nd dimension, EUR, SP00 and A for the 3rd, 4th
 # and 5th dimensions respectively
 #   sdmxrest.getDataQuery({context: 'dataflow=*:EXR(*)', key: 'A..EUR.SP00.A'})
@@ -300,7 +300,7 @@ getAvailabilityQuery = (input) ->
 # - *mode* (optional) - the possible processing modes (default: exact)
 # - *references* (optional) - the references to be returned (default: none)
 # - *filters* (optional) - The component filters to be applied.
-# 
+#
 # @example Create an availability query for the ECB EXR dataflow
 #   sdmxrest.getAvailabilityQuery({context: 'dataflow=ECB:EXR(*)'})
 #
