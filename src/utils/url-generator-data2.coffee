@@ -13,7 +13,7 @@ createDataQuery = (q, s, a) ->
   url = createEntryPoint s
   fc = parseContext q.context
   url += "data/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{fc[3]}/"
-  url += if q.key == "all" then "*?" else "#{q.key}?"
+  url += "#{q.key}?"
   if q.filters
     for filter in q.filters
       f = parseFilter filter
