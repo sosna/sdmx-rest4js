@@ -1,5 +1,5 @@
 {ApiNumber, ApiVersion, getKeyFromVersion} = require '../utils/api-version'
-{createEntryPoint, validateDataForV2, parseContext} =
+{createEntryPoint, validateDataForV2, parseContext, parseFilter} =
   require '../utils/url-generator-common'
 
 handlePathParams = (q) ->
@@ -15,6 +15,10 @@ handlePathParams = (q) ->
 
 handleQueryParams = (q) ->
   p = []
+  if q.filters
+    for filter in q.filters
+      f = parseFilter filter
+      p.push "c[#{f[0]}]=#{f[1]}"
   p.push "updatedAfter=#{q.updatedAfter}" if q.updatedAfter
   p.push "mode=#{q.mode}" unless q.mode is 'exact'
   p.push "references=#{q.references}" unless q.references is 'none'
@@ -23,7 +27,7 @@ handleQueryParams = (q) ->
 createShortAvailabilityQuery = (q, s, api_number) ->
   validateDataForV2 q, s
   u = createEntryPoint s
-  u += "availableconstraint"
+  u += "availability"
   p = handlePathParams(q)
   u += p
   u += handleQueryParams(q)
@@ -33,7 +37,7 @@ createAvailabilityQuery = (q, s, api_number) ->
   validateDataForV2 q, s
   url = createEntryPoint s
   fc = parseContext q.context
-  url += "availableconstraint/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{fc[3]}/"
+  url += "availability/#{fc[0]}/#{fc[1]}/#{fc[2]}/#{fc[3]}/"
   url += "#{q.key}/"
   url += "#{q.component}?"
   if q.filters
