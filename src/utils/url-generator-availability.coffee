@@ -42,7 +42,7 @@ createShortV1AvailUrl = (q, s) ->
 createShortV2AvailUrl = (q, s) ->
   validateDataForV2 q, s
   u = createEntryPoint s
-  u += "availableconstraint/dataflow/"
+  u += "availability/dataflow/"
   fc = parseFlow q.flow
   u += "#{fc[0]}/#{fc[1]}"
   pp = handleAvailabilityV2PathParams(q)
@@ -65,7 +65,7 @@ createV1AvailUrl = (q, s) ->
 createV2AvailUrl = (q, s) ->
   validateDataForV2 q, s
   url = createEntryPoint s
-  url += 'availableconstraint'
+  url += 'availability'
   fc = parseFlow q.flow
   url += "/dataflow/#{fc[0]}/#{fc[1]}/#{fc[2]}/"
   url += if q.key == "all" then "*/" else "#{q.key}/"

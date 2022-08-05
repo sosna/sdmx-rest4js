@@ -1,8 +1,9 @@
 {ApiVersion} = require '../utils/api-version'
 {AvailabilityQueryHandler} = require '../utils/url-generator-availability'
+{AvailabilityQuery2Handler} = require '../utils/url-generator-availability2'
 {SchemaQueryHandler} = require '../utils/url-generator-schema'
 {DataQueryHandler} = require '../utils/url-generator-data'
-{Data2QueryHandler} = require '../utils/url-generator-data2'
+{DataQuery2Handler} = require '../utils/url-generator-data2'
 {MetadataQueryHandler} = require '../utils/url-generator-metadata'
 
 generator = class Generator
@@ -12,7 +13,9 @@ generator = class Generator
     throw ReferenceError "#{@service} is not a valid service"\
       unless @service and @service.url
     if @query.context? and @query.attributes?
-      new Data2QueryHandler().handle(@query, @service, skipDefaults)
+      new DataQuery2Handler().handle(@query, @service, skipDefaults)
+    else if @query.context? and @query.mode?
+      new AvailabilityQuery2Handler().handle(@query, @service, skipDefaults)
     else if @query.mode?
       new AvailabilityQueryHandler().handle(@query, @service, skipDefaults)
     else if @query.flow?

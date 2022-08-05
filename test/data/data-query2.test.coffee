@@ -1,9 +1,8 @@
 should = require('chai').should()
 
-{DataDetail} = require '../../src/data/data-detail'
 {DataQuery2} = require '../../src/data/data-query2'
 
-describe 'Data queries', ->
+describe 'SDMX 3.0 data queries', ->
 
   it 'has the expected properties', ->
     q = DataQuery2.from {}
@@ -46,6 +45,9 @@ describe 'Data queries', ->
     q.should.have.property('measures').that.equals 'all'
     q.should.have.property('filters').that.has.lengthOf 0
 
+  it 'throws an exception if the input is not as expected', ->
+    test = -> DataQuery2.from({test: 'test'})
+    should.Throw(test, Error, 'Not a valid data query')
 
   describe 'when setting the context', ->
 
@@ -225,4 +227,3 @@ describe 'Data queries', ->
     it 'throws an exception if one of the filters is invalid', ->
       test = -> DataQuery2.from({context: 'dataflow=BIS:CBS(1.0)', filters: ['FREQ=A', '$1']})
       should.Throw(test, Error, 'Not a valid data query')
-
