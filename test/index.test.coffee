@@ -12,8 +12,10 @@ describe 'API', ->
     sdmxrest.should.have.property 'getService'
     sdmxrest.should.have.property('services').that.is.an 'array'
     sdmxrest.should.have.property 'getDataQuery'
+    sdmxrest.should.have.property 'getDataQuery2'
     sdmxrest.should.have.property 'getMetadataQuery'
     sdmxrest.should.have.property 'getAvailabilityQuery'
+    sdmxrest.should.have.property 'getAvailabilityQuery2'
     sdmxrest.should.have.property 'getSchemaQuery'
     sdmxrest.should.have.property 'getUrl'
     sdmxrest.should.have.property 'request'
@@ -120,6 +122,33 @@ describe 'API', ->
       test = -> sdmxrest.getDataQuery {test: 'TEST'}
       should.Throw(test, Error, 'Not a valid data query')
 
+  describe 'when using getDataQuery2()', ->
+
+    it 'offers to create a data query from properties', ->
+      input = {
+        context: 'dataflow=ECB:EXR(*)'
+        key: 'A..EUR.SP00.A'
+      }
+      query = sdmxrest.getDataQuery2 input
+      query.should.be.an 'object'
+      query.should.have.property('context').that.equals input.context
+      query.should.have.property('key').that.equals input.key
+      query.should.have.property('updatedAfter').that.is.undefined
+      query.should.have.property('firstNObs').that.is.undefined
+      query.should.have.property('lastNObs').that.is.undefined
+      query.should.have.property('obsDimension').that.is.undefined
+      query.should.have.property('history').that.is.false
+      query.should.have.property('attributes').that.equals 'dsd'
+      query.should.have.property('measures').that.equals 'all'
+      query.should.have.property('filters').that.is.instanceOf Array
+      query.should.have.property('filters').that.has.lengthOf 0
+
+    it 'fails if the input is not of the expected type', ->
+      t = {}
+      t["test"] = "test2"
+      test = -> sdmxrest.getDataQuery2 t
+      should.Throw(test, Error, 'Not a valid data query')
+
   describe 'when using getMetadataQuery()', ->
 
     it 'offers to create a metadata query from properties', ->
@@ -168,6 +197,28 @@ describe 'API', ->
       should.Throw(test, Error, 'Not a valid availability query')
 
       test = -> sdmxrest.getAvailabilityQuery {test: 'TEST'}
+      should.Throw(test, Error, 'Not a valid availability query')
+
+  describe 'when using getAvailabilityQuery2()', ->
+
+    it 'offers to create an availability query from properties', ->
+      input = {
+        context: 'dataflow=ECB:EXR(*)'
+        key: 'A..EUR.SP00.A'
+      }
+      query = sdmxrest.getAvailabilityQuery2 input
+      query.should.be.an 'object'      
+      query.should.have.property('context').that.equals input.context
+      query.should.have.property('key').that.equals input.key
+      query.should.have.property('component').that.equals '*'
+      query.should.have.property('updatedAfter').that.is.undefined
+      query.should.have.property('filters').that.is.instanceOf Array
+      query.should.have.property('filters').that.has.lengthOf 0
+      query.should.have.property('mode').that.equals 'exact'
+      query.should.have.property('references').that.equals 'none'
+
+    it 'fails if the input is not of the expected type', ->
+      test = -> sdmxrest.getAvailabilityQuery2 {test: 'TEST'}
       should.Throw(test, Error, 'Not a valid availability query')
 
   describe 'when using getSchemaQuery()', ->
@@ -230,7 +281,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
 
@@ -244,7 +295,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'mode=exact'
@@ -259,7 +310,7 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'FREQ'
@@ -274,10 +325,125 @@ describe 'API', ->
       url = sdmxrest.getUrl q, s
       url.should.be.a 'string'
       url.should.contain 'http://ws-entry-point'
-      url.should.contain 'availableconstraint'
+      url.should.contain 'availability'
       url.should.contain 'EXR'
       url.should.contain 'A..EUR.SP00.A'
       url.should.contain 'references=all'
+
+    it 'creates a URL from an availability2 and service objects (mode)', ->
+      q = {mode: 'exact'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availability/'
+      url.should.contain 'mode=exact'
+
+    it 'creates a URL from an availability2 and a service objects (component)', ->
+      q = {component: 'FREQ'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availability/'
+      url.should.contain 'FREQ'
+
+    it 'creates a URL from an availability2 and a service objects (references)', ->
+      q = {references: 'all'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'availability/'
+      url.should.contain 'references=all'
+
+    it 'creates a URL from a data2 query and a service objects (context)', ->
+      q = {'context': 'dataflow=BIS:CBS(1.0)'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/dataflow/BIS/CBS/1.0'
+
+    it 'creates a URL from a data2 query and a service objects (key)', ->
+      q = {'key': 'A.CHF.EUR'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*/A.CHF.EUR'
+
+    it 'creates a URL from a data2 query and a service objects (filters)', ->
+      q = {'filters': 'REF_AREA=CH'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'c[REF_AREA]=CH'
+
+    it 'creates a URL from a data2 query and a service objects (firstNObs)', ->
+      q = {'firstNObs': 1}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'firstNObservations=1'
+
+    it 'creates a URL from a data2 query and a service objects (lastnObs)', ->
+      q = {'lastNObs': 1}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'lastNObservations=1'
+
+    it 'creates a URL from a data2 query and a service objects (obsDimension)', ->
+      q = {'obsDimension': 'CUR'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'dimensionAtObservation=CUR'
+
+    it 'creates a URL from a data2 query and a service objects (history)', ->
+      q = {'history': true}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'includeHistory=true'
+
+    it 'creates a URL from a data2 query and a service objects (attributes)', ->
+      q = {'attributes': 'msd'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'attributes=msd'
+
+    it 'creates a URL from a data2 query and a service objects (measures)', ->
+      q = {'measures': 'none'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'measures=none'
+
+    it 'creates a URL from a data2 query and a service objects (updatedAfter)', ->
+      q = {'updatedAfter': '2016-03-04T09:57:00Z'}
+      s = sdmxrest.getService({url: 'http://ws-entry-point'});
+      url = sdmxrest.getUrl q, s
+      url.should.be.a 'string'
+      url.should.contain 'http://ws-entry-point'
+      url.should.contain 'data/*/*/*/*'
+      url.should.contain 'updatedAfter=2016-03-04T09:57:00Z'
 
     it 'fails if the input is not of the expected type', ->
       test = -> sdmxrest.getUrl undefined, sdmxrest.getService 'ECB'

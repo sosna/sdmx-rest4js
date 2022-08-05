@@ -157,5 +157,21 @@ resources =
 # The set of valid resources for the latest API version.
   LATEST: resourcesV6
 
+numbers =
+  v1_0_0: 0
+  v1_0_1: 1
+  v1_0_2: 2
+  v1_1_0: 3
+  v1_2_0: 4
+  v1_3_0: 5
+  v1_4_0: 6
+  v1_5_0: 7
+  v2_0_0: 8
+
+getKeyFromVersion = (v) ->
+  v.replace /\./g, "_"
+
 exports.ApiVersion = Object.freeze versions
 exports.ApiResources = Object.freeze resources
+exports.ApiNumber = Object.freeze numbers
+exports.getKeyFromVersion = getKeyFromVersion
