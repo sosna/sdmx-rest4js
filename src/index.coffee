@@ -361,16 +361,25 @@ getUrl = (query, service) ->
   throw ReferenceError 'Not a valid service' unless service
   throw ReferenceError 'Not a valid query' unless query
   s = getService service
-  q = if (query.mode? or \
-  (query.flow? and query.references?) or \
-  (query.flow? and query.component?))
+  q = if query.resource?
+    getMetadataQuery query
+  else if query.context? and query.agency?
+    getSchemaQuery query
+  else if query.flow? and \
+  (query.references? or query.component? \
+  or query.mode?)
     getAvailabilityQuery query
+  else if query.references? or query.component? \
+  or query.mode?
+    getAvailabilityQuery2 query
   else if query.flow?
     getDataQuery query
-  else if query.resource?
-    getMetadataQuery query
-  else if query.context?
-    getSchemaQuery query
+  else if query.context? or query.key? or query.filters? \
+  or query.firstNObs? or query.lastNObs? or query.obsDimension? \
+  or query.history? or query.attributes? or query.measures? \
+  or query.updatedAfter?
+    getDataQuery2 query
+  else
   throw Error 'Not a valid query' unless q
   return new UrlGenerator().getUrl q, s
 
