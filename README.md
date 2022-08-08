@@ -30,4 +30,6 @@ sdmxrest.request(query, 'ECB') // ECB is one of the predefined services
   .catch(function(error){console.log("something went wrong: " + error)});
 ```
 
+This library is compliant with both SDMX 2.1 and SDMX 3.0.
+
 For more information and examples, check the [Wiki](https://github.com/sosna/sdmx-rest4js/wiki).
